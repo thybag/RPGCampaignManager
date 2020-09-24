@@ -41,7 +41,7 @@ const panelEditTpl = function(data, action) {
             </div>
             <div>
                 <label>Geo</label>
-                <input name="geo" type="text" value="${data.geo || ''}">
+                <textarea name="geo">${data.geo || ''}</textarea>
             </div>
             <button class='saveEntity'>save</button>
         </div>
@@ -76,7 +76,7 @@ export default Component.define({
         }
         // Else make new!
         this.mode = 'new';
-        this.content = {data: {category: entity.category, name: entity.name}, links: {'create': this.content.links.create}};
+        this.content = {data: {category: entity.category, name: entity.name, geo: entity.geo}, links: {'create': this.content.links.create}};
         return this.render();
     },
     editEntity: function() {
@@ -88,7 +88,7 @@ export default Component.define({
             data: {
                 'name': this.el.querySelector("input[name=title]").value,
                 'category': this.el.querySelector("input[name=category]").value,
-                'geo': this.el.querySelector("input[name=geo]").value
+                'geo': this.el.querySelector("textarea[name=geo]").value
             }
         };
 

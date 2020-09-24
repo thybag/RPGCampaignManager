@@ -40,20 +40,16 @@ export default Component.define({
 		        img.onerror = reject;
 		});
     	
-    	console.log(img);
-    	
     	let width = Math.round(img.width/10);
     	let height = Math.round(img.height/10);
 
-    	console.log(width, height);
-
-    	console.log("make");
 	 	this.map = L.map('map', {
 	        crs: L.CRS.Simple,
 	        zoomSnap: 0.20,
 	        maxZoom: 4,
 	        minZoom: 1
 	    });
+        // Config
 	    var bounds = [[0,0], [height,width]];
 	    var image = L.imageOverlay(map.data.path, bounds).addTo(this.map);
 	    this.map.fitBounds(bounds);    
@@ -77,12 +73,11 @@ export default Component.define({
 	        }});
 	    }}).addTo(map);
 	*/
-	    this.map.on('pm:create', function(x){
-	        x.layer.properties = {"test":"hi"};
-	          //var person = prompt("Lofi!");
-	          console.log(x);
-
-	        console.log("save");
+	    this.map.on('pm:create', (item) => {
+            console.log(item);
+            let geoItem = item.layer.toGeoJSON();
+            console.log(geoItem);
+            return this.state.data.entity = {'action': 'create', 'geo': JSON.stringify(geoItem)};
 	    });
     },
     render: async function ()

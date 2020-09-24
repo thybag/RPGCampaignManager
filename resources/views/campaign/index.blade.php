@@ -38,7 +38,8 @@
         padding:1rem;
         box-sizing: border-box;
         overflow-x:auto;
-        box-shadow: 1px 1px 5px 2px #444;
+        box-shadow: none;
+        
 
     }
     .panel.min {
@@ -48,7 +49,7 @@
         right:20px;
         left:auto;
         top:50px;
-        box-shadow: none;
+        box-shadow: 1px 1px 5px 2px #444;
     }
 
     .panel input {
@@ -56,7 +57,7 @@
         width: 400px;
     }
 
-    .panel-block textarea {
+    textarea {
         width: 100%;
         line-height:1.3rem;
         font-size:1rem;
@@ -70,7 +71,8 @@
     }
     .panel .form div label { flex:1; }
     .panel .form div input { flex:3; }
-     
+    .panel .form div textarea { flex:3; }
+
     .panel-block .controls {
         border-bottom: solid 1px #000;
         text-align: right;
@@ -115,7 +117,6 @@
         margin-bottom: 1rem;
      }
 
-
     .wrapper {
         display:flex;
     }
@@ -125,7 +126,7 @@
         height: calc(100vh - 37px);
         box-sizing: border-box;
         background-color:#515278;
-       
+        overflow-x: auto;
     }
     .content-nav input {
         box-sizing: border-box;
@@ -144,9 +145,9 @@
     .content-nav a {
          color: #fff;
          display:block;
-         padding:.4rem;
+         padding:.2rem;
          text-decoration: none;
-         border-top: solid 1px;
+         border-top: solid 1px #706f7e;
          font-size:0.9rem;
     }
     .content-nav a:first-child{

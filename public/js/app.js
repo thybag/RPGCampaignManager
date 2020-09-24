@@ -15281,6 +15281,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   createMap: function () {
     var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(map) {
+      var _this2 = this;
+
       var img, width, height, bounds, image;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
         while (1) {
@@ -15305,17 +15307,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 3:
               img = _context2.sent;
-              console.log(img);
               width = Math.round(img.width / 10);
               height = Math.round(img.height / 10);
-              console.log(width, height);
-              console.log("make");
               this.map = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.map('map', {
                 crs: leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.CRS.Simple,
                 zoomSnap: 0.20,
                 maxZoom: 4,
                 minZoom: 1
-              });
+              }); // Config
+
               bounds = [[0, 0], [height, width]];
               image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(map.data.path, bounds).addTo(this.map);
               this.map.fitBounds(bounds);
@@ -15339,16 +15339,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }}).addTo(map);
               */
 
-              this.map.on('pm:create', function (x) {
-                x.layer.properties = {
-                  "test": "hi"
-                }; //var person = prompt("Lofi!");
-
-                console.log(x);
-                console.log("save");
+              this.map.on('pm:create', function (item) {
+                console.log(item);
+                var geoItem = item.layer.toGeoJSON();
+                console.log(geoItem);
+                return _this2.state.data.entity = {
+                  'action': 'create',
+                  'geo': JSON.stringify(geoItem)
+                };
               });
 
-            case 17:
+            case 14:
             case "end":
               return _context2.stop();
           }
@@ -15472,7 +15473,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
       break;
   }
 
-  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <div>\n                <label>Geo</label>\n                <input name=\"geo\" type=\"text\" value=\"").concat(data.geo || '', "\">\n            </div>\n            <button class='saveEntity'>save</button>\n        </div>\n    ");
+  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <div>\n                <label>Geo</label>\n                <textarea name=\"geo\">").concat(data.geo || '', "</textarea>\n            </div>\n            <button class='saveEntity'>save</button>\n        </div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15507,7 +15508,8 @@ var panelEditTpl = function panelEditTpl(data, action) {
     this.content = {
       data: {
         category: _entity.category,
-        name: _entity.name
+        name: _entity.name,
+        geo: _entity.geo
       },
       links: {
         'create': this.content.links.create
@@ -15530,7 +15532,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
                 data: {
                   'name': this.el.querySelector("input[name=title]").value,
                   'category': this.el.querySelector("input[name=category]").value,
-                  'geo': this.el.querySelector("input[name=geo]").value
+                  'geo': this.el.querySelector("textarea[name=geo]").value
                 }
               };
 
