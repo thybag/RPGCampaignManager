@@ -22,9 +22,14 @@ class BaseResource extends JsonResource
            	} elseif(sizeof($data) == 0){
            		$results[$inc] = [];
             } else {
-            	// Is collection? 
-	            $resource = $data->first()->getResouce();
-	            $results[$inc] = $resource::collection($data);;
+            	if (is_a($data, 'Illuminate\Support\Collection')) {
+                    $resource = $data->first()->getResource();
+                    $results[$inc] = $resource::collection($data);
+                } else {
+                    $resource = $data->getResource();
+                    $results[$inc] = new $resource($data);
+                }
+	            
 	            //or singular
 	            // //new $resource($data->first())
 	            //

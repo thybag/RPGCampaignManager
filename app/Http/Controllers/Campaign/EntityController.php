@@ -39,9 +39,10 @@ class EntityController extends Controller
     public function store(Request $request, Campaign $campaign)
     {
         $entity = new Entity([
-            'name' => $request->input('data.name'),
-            'category' => $request->input('data.category'),
-            'geo' => $request->input('data.geo')
+            'name'      => $request->input('data.name'),
+            'category'  => $request->input('data.category'),
+            'map_id'    => $request->input('data.map_id'),
+            'geo'       => $request->input('data.geo')
         ]);
 
         $campaign->entities()->save($entity);

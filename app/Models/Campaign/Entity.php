@@ -2,9 +2,9 @@
 
 namespace App\Models\Campaign;
 
+use App\Models\Model;
 use Illuminate\Support\Str;
 use App\Models\Campaign\Entity\Block;
-use Illuminate\Database\Eloquent\Model;
 
 class Entity extends Model
 {
@@ -24,6 +24,7 @@ class Entity extends Model
     protected $fillable = [
         'name',
         'category',
+        'map_id',
         'geo'
     ];
 

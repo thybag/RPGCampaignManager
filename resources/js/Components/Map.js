@@ -13,7 +13,7 @@ export default Component.define({
         		return this.clearMap();
         	}
 
-        	let data = await fetch("2/map/"+tab);
+        	let data = await fetch("2/map/"+tab+"?include=entities");
         	let json = await data.json();
 
             this.createMap(json);
@@ -49,35 +49,36 @@ export default Component.define({
 	        maxZoom: 4,
 	        minZoom: 1
 	    });
+
         // Config
 	    var bounds = [[0,0], [height,width]];
 	    var image = L.imageOverlay(map.data.path, bounds).addTo(this.map);
 	    this.map.fitBounds(bounds);    
 	   	this.map.setZoom(1.4);
-	   	
-	    this.map.pm.Draw.setPathOptions({custom:"prop"})
 
 	    this.map.pm.addControls({
 	      position: 'topleft',
+          drawCircle: false,
+          drawPolyline: false,
+          drawCircleMarker: false
 	    });
-	    /*
-	    let data = await fetch("json.json");
-	    let json = await data.json();
 
-	    L.geoJson(json, {onEachFeature: function(f,l){
-	        l.on({
-	            'click': function(x){ 
-	                updateLayer({
-	                    "name": x.target.feature.properties.id
-	                });
-	        }});
-	    }}).addTo(map);
-	*/
+        map.data.entities.map((m) => {
+            L.geoJson(JSON.parse(m.data.geo), {
+                onEachFeature: (f,l) => {
+                    l.on({
+                        'click': (x) => { 
+                            console.log(m.id);
+                            this.state.trigger('map:show', {'entity': m.id});
+                        }
+                    });
+                }
+            }).addTo(this.map);
+
+        });
+
 	    this.map.on('pm:create', (item) => {
-            console.log(item);
-            let geoItem = item.layer.toGeoJSON();
-            console.log(geoItem);
-            return this.state.data.entity = {'action': 'create', 'geo': JSON.stringify(geoItem)};
+            this.state.trigger('map:create', {geo: item});
 	    });
     },
     render: async function ()

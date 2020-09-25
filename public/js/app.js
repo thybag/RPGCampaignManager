@@ -14311,14 +14311,28 @@ const Component = function() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const Model = function(data) {
+/**
+ * Basic model to watch data. Will fire events on changed parts of data tree.
+ * 
+ */
+const Model = function(_data) {
     let parent = this;
     // Cache data access/edit
-    this._cache = new WeakMap();
-    this._data = data;
+    let _cache = new WeakMap();
+    let _original = JSON.parse(JSON.stringify(_data));
+
     // Eventing
     this._events = {};
-    this._listeners = {};
+    this._listeners = [];
+
+    // Dete
+    this.applyChanges = function(ctx)
+    {   
+        // Detect changes to data
+        let change = this.detectChanges(ctx.split('.'), _original, _data);
+        // Update internal data to match
+        if (change !== 'NONE') this.commitChanges(ctx.split('.'), _original, _data);
+    }
 
     // Create watcher proxy
     function newProxy(result, context) {
@@ -14326,39 +14340,61 @@ const Model = function(data) {
             get: function(obj, prop, receiver)
             {
                 let ctx = context ? context + '.' + prop : prop;
-                // Trigger read event
-                parent.trigger("read", ctx);
-
                 let result = Reflect.get(obj, prop);
                 if (typeof result === 'object') {
                     result = newProxy(result, ctx);
                 }
+
+                // Trigger read event
+                parent.trigger("read", ctx);
                 return result;
             },
             set: function(obj, prop, value) {
+                let success = Reflect.set(obj, prop, value);
                 let ctx = context ? context + '.' + prop : prop;
-
-                // Trigger create/update/change events
-                if (obj[prop]) {
-                    parent.trigger("update:"+ctx, value);
-                } else {
-                    parent.trigger("create:"+ctx, value);
-                }
-                parent.trigger("change", ctx, value);
-
-                Reflect.set(obj, prop, value);
-                return true;
+                // Detect changes and fire relevent events
+                parent.applyChanges(ctx);
+                
+                return success;
             }
         };
         // Config proxy or get from cache
-        const resultProxy = parent._cache.get(result) || new Proxy(result, proxyTraps);
-        parent._cache.set(result, resultProxy);
+        const resultProxy = _cache.get(result) || new Proxy(result, proxyTraps);
+        _cache.set(result, resultProxy);
         return resultProxy;
     }
-
     // Watch changes via proxy
-    this.data = newProxy(this._data, '');
+    this.data = newProxy(_data, '');    
 }
+// get attribute
+Model.prototype.get = function(key, fallback = null)
+{
+    let data = this.data, keys = key.split('.');
+    // Traverse dots
+    for (let k =0; k < keys.length; k++) {
+        // Fallback if key missing
+        if (!(keys[k] in data)) return fallback;
+        data = data[keys[k]];
+    }
+    return data;
+}
+// Set attribute
+Model.prototype.set = function(key, value)
+{
+    let data = this.data, keys = key.split('.');
+    // Traverse dots
+    for (let k =0; k < keys.length-1; k++) {
+        // Fallback if key missing
+        if (!(keys[k] in data)){
+            data = data[keys[k]] = {};
+        } else {
+            data = data[keys[k]];
+        }
+    }
+    // Set last key manually as primatives will copy
+    return data[keys[keys.length-1]] = value;
+}
+// Trigger event
 Model.prototype.trigger = function(event, ...args) {
     // Fire own event
     for (let i of this._events[event] || []) {
@@ -14371,20 +14407,142 @@ Model.prototype.trigger = function(event, ...args) {
     }
 
     // Fire listeners
-    for(let listener of Object.values(this._listeners)) {
+    for(let listener of this._listeners) {
         listener.trigger(event, ...args);
     }
 }
+// Add event
 Model.prototype.on = function(key, method) {
-        (this._events[key] = this._events[key] || []).push([event, method]);
+    (this._events[key] = this._events[key] || []).push([key, method]);
+    return this;
+}
+// Remove event
+Model.prototype.off = function(key, method) {
+    if (!this._events[key]) return this;
+
+    // Delete all listners if no method
+    if (!method) {
+        delete this._events[key];
         return this;
-}  
+    }
+    // Else only one with method
+    for (let evt in this._events[key]) {
+        if(this._events[key][evt][1] == method) {
+            this._events[key].splice(evt, 1);
+        }
+    }
+
+    return this;
+}
+// Add listener
 Model.prototype.addListener = function (listener) {
     if (typeof listener.trigger !== 'function'){
         throw 'Unsupported listener type provided. Must implement trigger method.'
     }
-    this._listeners[listener] = listener;
+    this._listeners.push(listener);
+    return this;
 }
+// Remove listener
+Model.prototype.removeListener = function (listener) {
+    let idx = this._listeners.indexOf(listener);
+    if (idx !== -1) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1);
+    }
+    return this;
+}
+
+// Util to clone object
+Model.prototype.copy = function(data)
+{
+    return (typeof data == 'object') ? JSON.parse(JSON.stringify(data)) : data;
+}
+// Detect change type for a primative
+Model.prototype.detectChangeType = function(original, updated)
+{
+    if(!original) return "CREATE"; // additional key added to our new data
+    if(!updated) return "REMOVE"; // old key removed from our new data
+    if(original==updated) return "NONE"; // data unchanged between the two keys
+
+    return "UPDATE"; // A mix - so an update
+}
+// Detect changes in watched data
+Model.prototype.detectChanges = function (keys, original, updated, namespace = '')
+{
+    // Detect any changes in the affected data path
+    // (keys is an array start from root the the affected location)
+    let next = keys.shift();
+    let returnType = 'UPDATE';
+    let _changes = [];
+    namespace = namespace ? `${namespace}.${next}` : next;
+
+    // Get values we're comparing
+    original = original ? original[next] : undefined;
+    updated = updated ? updated[next] : undefined;
+
+    // Target key not yet reached, dig on to the next key
+    if (keys.length != 0) returnType = this.detectChanges(this.copy(keys), original, updated, namespace);
+   
+    // Target depth reached. 
+    if (keys.length == 0) {
+        // Detect attribute changes to children
+        if (typeof updated == 'object' || typeof original == 'object') {
+            // Check for field changes
+            let fields = new Set([ 
+                ...(updated) ? Object.keys(updated) : [],
+                ...(original) ? Object.keys(original) : []
+            ]);
+
+            let results = [];
+            for (let key of fields) {
+                results.push(this.detectChanges([key], original, updated, namespace));
+            }
+            // Object checks
+            if(!original) returnType = 'CREATE';
+            if(!updated) returnType = 'REMOVE'; 
+            if (results.every(function(val){ return val == 'NONE'})) {
+                returnType = 'NONE';
+            }
+        } else {
+            // Else, detect change type on this specific attribute
+            returnType = this.detectChangeType(original, updated);
+        }
+    }
+
+    // Fire change type events
+    switch (returnType) {
+        case 'CREATE':
+            this.trigger("create:"+namespace, updated);
+            break;
+        case 'UPDATE':
+            this.trigger("update:"+namespace, updated, original);
+            break;
+        case 'REMOVE':
+            this.trigger("remove:"+namespace, original);
+            break;
+        case 'NONE':
+            this.trigger("unchanged:"+namespace);
+            break;
+    }
+
+    // Fire general change events
+    this.trigger("change:"+namespace, returnType, updated, original);
+    this.trigger("change", returnType, namespace, updated, original);
+
+    return returnType;
+}
+// Apply change to original, so new changes can be detected
+Model.prototype.commitChanges = function(keys, original, updated){
+    let next = keys.shift();
+    // Insert either at most accurate point, or where original deoes not yet exist
+    if (keys.length == 0  || !original[next]) {
+        original[next] = this.copy(updated[next]);
+        return;
+    }
+    return this.commitChanges(keys, original[next], updated[next]);
+}
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = (Model);
 
 /***/ }),
@@ -15247,7 +15405,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 _context.next = 4;
-                return fetch("2/map/" + tab);
+                return fetch("2/map/" + tab + "?include=entities");
 
               case 4:
                 data = _context.sent;
@@ -15320,33 +15478,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(map.data.path, bounds).addTo(this.map);
               this.map.fitBounds(bounds);
               this.map.setZoom(1.4);
-              this.map.pm.Draw.setPathOptions({
-                custom: "prop"
-              });
               this.map.pm.addControls({
-                position: 'topleft'
+                position: 'topleft',
+                drawCircle: false,
+                drawPolyline: false,
+                drawCircleMarker: false
               });
-              /*
-              let data = await fetch("json.json");
-              let json = await data.json();
-                L.geoJson(json, {onEachFeature: function(f,l){
-                  l.on({
-                      'click': function(x){ 
-                          updateLayer({
-                              "name": x.target.feature.properties.id
-                          });
-                  }});
-              }}).addTo(map);
-              */
+              map.data.entities.map(function (m) {
+                leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.geoJson(JSON.parse(m.data.geo), {
+                  onEachFeature: function onEachFeature(f, l) {
+                    l.on({
+                      'click': function click(x) {
+                        console.log(m.id);
 
+                        _this2.state.trigger('map:show', {
+                          'entity': m.id
+                        });
+                      }
+                    });
+                  }
+                }).addTo(_this2.map);
+              });
               this.map.on('pm:create', function (item) {
-                console.log(item);
-                var geoItem = item.layer.toGeoJSON();
-                console.log(geoItem);
-                return _this2.state.data.entity = {
-                  'action': 'create',
-                  'geo': JSON.stringify(geoItem)
-                };
+                _this2.state.trigger('map:create', {
+                  geo: item
+                });
               });
 
             case 14:
@@ -15454,7 +15610,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <div>\n            <button class='editEntity'>rename</button>\n            <h2>".concat(title, "</h2>\n        </div>\n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <div>\n            <button class='editEntity'>rename</button><button class='hidePanel'>X</button>\n            <h2>".concat(title, "</h2>\n        </div>\n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15473,7 +15629,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
       break;
   }
 
-  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <div>\n                <label>Geo</label>\n                <textarea name=\"geo\">").concat(data.geo || '', "</textarea>\n            </div>\n            <button class='saveEntity'>save</button>\n        </div>\n    ");
+  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <button class='saveEntity'>save</button><button class='hidePanel'>cancel</button>\n        </div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15487,29 +15643,28 @@ var panelEditTpl = function panelEditTpl(data, action) {
     this.listenTo(this.state);
   },
   content: null,
-  mode: 'view',
+  mode: 'hide',
   events: {
     // Sections
     "click .add": "addContentSection",
     // Entity
     "click .saveEntity": "saveEntity",
     "click .editEntity": "editEntity",
+    "click .hidePanel": "hidePanel",
     // Model events
     "update:tab": "updatePanelDisplay",
-    "update:entity": "entity"
+    "map:create": "newEntity",
+    "map:show": "showEntity",
+    "update:entity": "showEntity"
   },
-  entity: function entity(_entity) {
-    if (_entity.action == 'view') {
-      return this.showContent(_entity.entity);
-    } // Else make new!
-
-
+  newEntity: function newEntity(entity) {
+    // Else make new!
     this.mode = 'new';
     this.content = {
       data: {
-        category: _entity.category,
-        name: _entity.name,
-        geo: _entity.geo
+        category: entity.category,
+        name: entity.name,
+        geo: entity.geo
       },
       links: {
         'create': this.content.links.create
@@ -15517,9 +15672,15 @@ var panelEditTpl = function panelEditTpl(data, action) {
     };
     return this.render();
   },
+  showEntity: function showEntity(entity) {
+    return this.showContent(entity.entity);
+  },
   editEntity: function editEntity() {
     this.mode = 'edit';
     this.render();
+  },
+  hidePanel: function hidePanel() {
+    return this.el.classList.add('hide');
   },
   saveEntity: function () {
     var _saveEntity = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -15528,39 +15689,44 @@ var panelEditTpl = function panelEditTpl(data, action) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              console.log(this.content.data.geo);
               payload = {
                 data: {
                   'name': this.el.querySelector("input[name=title]").value,
-                  'category': this.el.querySelector("input[name=category]").value,
-                  'geo': this.el.querySelector("textarea[name=geo]").value
+                  'category': this.el.querySelector("input[name=category]").value
                 }
-              };
+              }; // Add geo data
+
+              if (this.content.data.geo) {
+                payload.data.map_id = this.state.data.tab;
+                payload.data.geo = JSON.stringify(this.content.data.geo.layer.toGeoJSON());
+              }
 
               if (!(this.mode == 'edit')) {
-                _context.next = 7;
+                _context.next = 9;
                 break;
               }
 
-              _context.next = 4;
+              _context.next = 6;
               return this.state.request('PUT', this.content.links.update + '?include=blocks', payload);
 
-            case 4:
+            case 6:
               this.content = _context.sent;
-              _context.next = 10;
+              _context.next = 12;
               break;
 
-            case 7:
-              _context.next = 9;
+            case 9:
+              _context.next = 11;
               return this.state.request('POST', this.content.links.create + '?include=blocks', payload);
 
-            case 9:
+            case 11:
               this.content = _context.sent;
 
-            case 10:
+            case 12:
               this.mode = 'view';
               this.render();
 
-            case 12:
+            case 14:
             case "end":
               return _context.stop();
           }
@@ -15584,6 +15750,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
   render: function render() {
     this.clearChildren();
     this.el.innerHTML = '';
+    this.el.classList.remove('hide');
 
     switch (this.mode) {
       case 'view':
@@ -15964,10 +16131,15 @@ var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
 });
 var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_5__["default"].make({
   state: Bus
-}); // Global events
+});
+var History = window.history; // Global events
 
 Bus.on('update:tab', function (tab) {
   console.log("tab set to " + tab);
+});
+Bus.on('change', function (a, b, n, o) {
+  console.log(a, b, n, o); //console.log(a,b);
+  //console.log(Bus.data);
 });
 document.addEventListener('DOMContentLoaded', function () {
   Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Go!

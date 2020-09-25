@@ -23,6 +23,7 @@ class EntityResource extends BaseResource
             'category'   => $this->category,
             'name'       => $this->name,
             'slug'       => $this->slug,
+            'map_id'     => $this->map_id,
             'geo'        => $this->geo,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -4,7 +4,7 @@ import Section from './Section.js';
 const panelTpl = function(title) {
     const tpl = `
         <div>
-            <button class='editEntity'>rename</button>
+            <button class='editEntity'>rename</button><button class='hidePanel'>X</button>
             <h2>${title}</h2>
         </div>
         <div class='panel-content'>
@@ -39,11 +39,7 @@ const panelEditTpl = function(data, action) {
                 <label>Category</label>
                 <input name="category" type="text" value="${data.category || ''}">
             </div>
-            <div>
-                <label>Geo</label>
-                <textarea name="geo">${data.geo || ''}</textarea>
-            </div>
-            <button class='saveEntity'>save</button>
+            <button class='saveEntity'>save</button><button class='hidePanel'>cancel</button>
         </div>
     `;
     const template = document.createElement('div');
@@ -59,38 +55,52 @@ export default Component.define({
         this.listenTo(this.state);
     },
     content: null,
-    mode: 'view',
+    mode: 'hide',
     events: {
         // Sections
         "click .add": "addContentSection",
         // Entity
         "click .saveEntity": "saveEntity",
         "click .editEntity": "editEntity",
+        "click .hidePanel": "hidePanel",
         // Model events
         "update:tab": "updatePanelDisplay",
-        "update:entity": "entity"
+        
+        "map:create": "newEntity",
+        "map:show": "showEntity",
+        "update:entity": "showEntity",
     },
-    entity: function(entity) {
-        if (entity.action == 'view') {
-            return this.showContent(entity.entity);
-        }
+    newEntity: function(entity)
+    {
         // Else make new!
         this.mode = 'new';
         this.content = {data: {category: entity.category, name: entity.name, geo: entity.geo}, links: {'create': this.content.links.create}};
         return this.render();
     },
+    showEntity: function(entity) {
+        return this.showContent(entity.entity);
+    },
     editEntity: function() {
         this.mode = 'edit';
         this.render();
     },
+    hidePanel: function(){
+        return this.el.classList.add('hide');
+    },
     saveEntity: async function() {
+
+        console.log(this.content.data.geo);
         let payload = {
             data: {
                 'name': this.el.querySelector("input[name=title]").value,
                 'category': this.el.querySelector("input[name=category]").value,
-                'geo': this.el.querySelector("textarea[name=geo]").value
             }
         };
+        // Add geo data
+        if (this.content.data.geo) {
+            payload.data.map_id = this.state.data.tab;
+            payload.data.geo = JSON.stringify(this.content.data.geo.layer.toGeoJSON());
+        }
 
         if(this.mode == 'edit') {
             this.content = await this.state.request('PUT', this.content.links.update + '?include=blocks', payload);
@@ -111,6 +121,7 @@ export default Component.define({
     render: function() {
         this.clearChildren();
         this.el.innerHTML = '';
+        this.el.classList.remove('hide');
 
         switch (this.mode) {
             case 'view':

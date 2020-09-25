@@ -51,6 +51,9 @@
         top:50px;
         box-shadow: 1px 1px 5px 2px #444;
     }
+    .panel.min.hide {
+        display: none;
+    }
 
     .panel input {
         padding: .5rem;

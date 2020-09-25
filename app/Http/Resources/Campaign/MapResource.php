@@ -7,7 +7,8 @@ use App\Http\Resources\BaseResource;
 class MapResource extends BaseResource
 {
     protected $includes = [
-        'campaign'
+        'campaign',
+        'entities'
     ];
 
     /**

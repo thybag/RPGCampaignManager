@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Model;
 use App\Models\Campaign\Map;
 use App\Models\Campaign\Entity;
-use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {

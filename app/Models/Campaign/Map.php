@@ -2,7 +2,8 @@
 
 namespace App\Models\Campaign;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
+use App\Models\Campaign\Entity;
 
 class Map extends Model
 {
@@ -10,5 +11,10 @@ class Map extends Model
         'name',
         'path'
     ];
+
+    public function entities()
+    {
+        return $this->hasMany(Entity::class);
+    }
 
 }

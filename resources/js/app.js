@@ -28,10 +28,17 @@ const nav = NavBar.make({state: Bus});
 const panel = Panel.make({state: Bus});
 const map = Map.make({state: Bus});
 const contentNav = ContentNav.make({state: Bus});
+const History = window.history;
 
 // Global events
 Bus.on('update:tab', function(tab){
 	console.log("tab set to "+ tab);
+});
+
+Bus.on('change', function(a, b, n, o){
+    console.log(a, b, n, o);
+    //console.log(a,b);
+    //console.log(Bus.data);
 });
 
 document.addEventListener('DOMContentLoaded', function(){
