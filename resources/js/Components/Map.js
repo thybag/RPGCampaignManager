@@ -69,7 +69,7 @@ export default Component.define({
                     l.on({
                         'click': (x) => { 
                             console.log(m.id);
-                            this.state.trigger('map:show', {'entity': m.id});
+                            this.state.trigger('entity:show', {'entity': m.id});
                         }
                     });
                 }
@@ -78,7 +78,7 @@ export default Component.define({
         });
 
 	    this.map.on('pm:create', (item) => {
-            this.state.trigger('map:create', {geo: item});
+            this.state.trigger('entity:create', {geo: item, category: 'Location'});
 	    });
     },
     render: async function ()

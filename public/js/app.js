@@ -15342,16 +15342,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   render: function render() {},
   addEntity: function addEntity(e) {
-    this.state.data.entity = {
-      'action': 'create',
+    this.state.trigger('entity:create', {
       'category': e.dataset.category
-    };
+    });
   },
   viewEntity: function viewEntity(e) {
-    this.state.data.entity = {
-      'action': 'view',
+    this.state.trigger('entity:show', {
       'entity': e.dataset.entity
-    };
+    });
   }
 }));
 
@@ -15491,7 +15489,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       'click': function click(x) {
                         console.log(m.id);
 
-                        _this2.state.trigger('map:show', {
+                        _this2.state.trigger('entity:show', {
                           'entity': m.id
                         });
                       }
@@ -15500,8 +15498,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }).addTo(_this2.map);
               });
               this.map.on('pm:create', function (item) {
-                _this2.state.trigger('map:create', {
-                  geo: item
+                _this2.state.trigger('entity:create', {
+                  geo: item,
+                  category: 'Location'
                 });
               });
 
@@ -15629,7 +15628,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
       break;
   }
 
-  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <button class='saveEntity'>save</button><button class='hidePanel'>cancel</button>\n        </div>\n    ");
+  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <button class='saveEntity'>save</button><button class='cancelEntity'>cancel</button>\n        </div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15651,13 +15650,13 @@ var panelEditTpl = function panelEditTpl(data, action) {
     "click .saveEntity": "saveEntity",
     "click .editEntity": "editEntity",
     "click .hidePanel": "hidePanel",
+    "click .cancelEntity": "cancelEntity",
     // Model events
     "update:tab": "updatePanelDisplay",
-    "map:create": "newEntity",
-    "map:show": "showEntity",
-    "update:entity": "showEntity"
+    "entity:create": "createEntity",
+    "entity:show": "showEntity"
   },
-  newEntity: function newEntity(entity) {
+  createEntity: function createEntity(entity) {
     // Else make new!
     this.mode = 'new';
     this.content = {
@@ -15673,11 +15672,18 @@ var panelEditTpl = function panelEditTpl(data, action) {
     return this.render();
   },
   showEntity: function showEntity(entity) {
+    // Store entity
+    this.state.data.entity = entity.entity;
     return this.showContent(entity.entity);
   },
   editEntity: function editEntity() {
     this.mode = 'edit';
     this.render();
+  },
+  cancelEntity: function cancelEntity() {
+    this.showEntity({
+      'entity': this.state.data.entity
+    });
   },
   hidePanel: function hidePanel() {
     return this.el.classList.add('hide');
@@ -15783,6 +15789,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
   renderEdit: function renderEdit() {
     var template = panelEditTpl(this.content.data, this.mode);
     this.el.appendChild(template);
+    this.el.querySelector('input[name=title]').focus();
   },
   clearChildren: function clearChildren() {
     this.children.map(function (i) {
@@ -16142,9 +16149,7 @@ Bus.on('change', function (a, b, n, o) {
   //console.log(Bus.data);
 });
 document.addEventListener('DOMContentLoaded', function () {
-  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Go!
-
-  Bus.trigger('update:entity', Bus.data.entity);
+  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 });
 
 /***/ }),

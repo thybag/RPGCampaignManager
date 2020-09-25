@@ -39,7 +39,7 @@ const panelEditTpl = function(data, action) {
                 <label>Category</label>
                 <input name="category" type="text" value="${data.category || ''}">
             </div>
-            <button class='saveEntity'>save</button><button class='hidePanel'>cancel</button>
+            <button class='saveEntity'>save</button><button class='cancelEntity'>cancel</button>
         </div>
     `;
     const template = document.createElement('div');
@@ -63,14 +63,15 @@ export default Component.define({
         "click .saveEntity": "saveEntity",
         "click .editEntity": "editEntity",
         "click .hidePanel": "hidePanel",
+        "click .cancelEntity": "cancelEntity",
+
+
         // Model events
         "update:tab": "updatePanelDisplay",
-        
-        "map:create": "newEntity",
-        "map:show": "showEntity",
-        "update:entity": "showEntity",
+        "entity:create": "createEntity",
+        "entity:show": "showEntity",
     },
-    newEntity: function(entity)
+    createEntity: function(entity)
     {
         // Else make new!
         this.mode = 'new';
@@ -78,11 +79,16 @@ export default Component.define({
         return this.render();
     },
     showEntity: function(entity) {
+        // Store entity
+        this.state.data.entity = entity.entity;
         return this.showContent(entity.entity);
     },
     editEntity: function() {
         this.mode = 'edit';
         this.render();
+    },
+    cancelEntity: function(){
+        this.showEntity({'entity': this.state.data.entity});
     },
     hidePanel: function(){
         return this.el.classList.add('hide');
@@ -148,6 +154,7 @@ export default Component.define({
     renderEdit: function () {
         let template = panelEditTpl(this.content.data, this.mode);
         this.el.appendChild(template);
+        this.el.querySelector('input[name=title]').focus();
     },
     clearChildren: function () {
         this.children.map(function(i){

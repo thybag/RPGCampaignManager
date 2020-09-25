@@ -14,10 +14,10 @@ export default Component.define({
 
     },
     addEntity: function(e){
-        this.state.data.entity = {'action': 'create', 'category': e.dataset.category};
+        this.state.trigger('entity:create', {'category': e.dataset.category});
     },
     viewEntity: function(e)
     {
-        this.state.data.entity = {'action': 'view', 'entity': e.dataset.entity};  
+        this.state.trigger('entity:show', {'entity': e.dataset.entity});
     }
 });

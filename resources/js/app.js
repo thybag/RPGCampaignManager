@@ -43,8 +43,6 @@ Bus.on('change', function(a, b, n, o){
 
 document.addEventListener('DOMContentLoaded', function(){
 	Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-	// Go!
-	Bus.trigger('update:entity', Bus.data.entity);
 });
 
 
