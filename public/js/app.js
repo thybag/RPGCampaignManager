@@ -15383,6 +15383,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   el: document.querySelector('#map'),
   map: null,
+  mapLookup: {},
   initialize: function initialize() {
     var _this = this;
 
@@ -15427,13 +15428,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _ref.apply(this, arguments);
       };
     }());
+    this.state.on('entity:show', function (e) {
+      if (_this.hasMarker(e.entity)) {
+        _this.highLightMarker(e.entity);
+      }
+    });
   },
   clearMap: function clearMap() {
     if (this.map) {
       this.map.off();
       this.map.remove();
+      this.mapLookup = {};
       this.map = null;
     }
+  },
+  hasMarker: function hasMarker(e_id) {
+    return this.mapLookup[e_id];
+  },
+  highLightMarker: function highLightMarker(id) {
+    var marker = this.mapLookup[id],
+        l;
+
+    if (marker.getLatLng) {
+      //https://github.com/pointhi/leaflet-color-markers
+      marker.setIcon(new leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png'
+      })); // l = marker.getLatLng();
+    } else {// l = marker.getLatLngs()[0][0];
+      } // this.map.setView(l);
+
   },
   createMap: function () {
     var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(map) {
@@ -15493,7 +15516,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           'entity': m.id
                         });
                       }
-                    });
+                    }); // Let us lookup "linked" marker easily
+
+                    _this2.mapLookup[m.id] = l;
                   }
                 }).addTo(_this2.map);
               });
@@ -15695,13 +15720,13 @@ var panelEditTpl = function panelEditTpl(data, action) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              console.log(this.content.data.geo);
               payload = {
                 data: {
                   'name': this.el.querySelector("input[name=title]").value,
                   'category': this.el.querySelector("input[name=category]").value
                 }
-              }; // Add geo data
+              };
+              console.log(this.content.data.geo); // Add geo data
 
               if (this.content.data.geo) {
                 payload.data.map_id = this.state.data.tab;

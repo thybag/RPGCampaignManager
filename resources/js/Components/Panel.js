@@ -94,14 +94,13 @@ export default Component.define({
         return this.el.classList.add('hide');
     },
     saveEntity: async function() {
-
-        console.log(this.content.data.geo);
         let payload = {
             data: {
                 'name': this.el.querySelector("input[name=title]").value,
                 'category': this.el.querySelector("input[name=category]").value,
             }
         };
+        console.log(this.content.data.geo);
         // Add geo data
         if (this.content.data.geo) {
             payload.data.map_id = this.state.data.tab;

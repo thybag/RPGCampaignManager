@@ -5,6 +5,7 @@ import '@geoman-io/leaflet-geoman-free';
 export default Component.define({
     el: document.querySelector('#map'),
     map: null,
+    mapLookup: {},
     initialize: function () {
         // Listen to state
         this.state.on('update:tab', async (tab) => {
@@ -18,14 +19,39 @@ export default Component.define({
 
             this.createMap(json);
         });
+
+        this.state.on('entity:show', (e) => {
+            if(this.hasMarker(e.entity)) {
+                this.highLightMarker(e.entity);
+            }
+        });
     },
     clearMap: function()
     {
     	if(this.map) {
     		this.map.off();
   			this.map.remove();
+            this.mapLookup = {};
   			this.map = null;
     	}
+    },
+    hasMarker: function(e_id){
+        return (this.mapLookup[e_id]);
+    },
+    highLightMarker: function(id)
+    {
+        let marker = this.mapLookup[id], l;
+        if (marker.getLatLng) {
+            //https://github.com/pointhi/leaflet-color-markers
+            marker.setIcon(new L.Icon({
+                 iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            }));
+
+           // l = marker.getLatLng();
+        }else {
+           // l = marker.getLatLngs()[0][0];
+        }
+       // this.map.setView(l);
     },
     createMap: async function(map) {
     	if (this.map) {
@@ -49,7 +75,6 @@ export default Component.define({
 	        maxZoom: 4,
 	        minZoom: 1
 	    });
-
         // Config
 	    var bounds = [[0,0], [height,width]];
 	    var image = L.imageOverlay(map.data.path, bounds).addTo(this.map);
@@ -65,13 +90,15 @@ export default Component.define({
 
         map.data.entities.map((m) => {
             L.geoJson(JSON.parse(m.data.geo), {
-                onEachFeature: (f,l) => {
+                onEachFeature: (f, l) => {
                     l.on({
                         'click': (x) => { 
                             console.log(m.id);
                             this.state.trigger('entity:show', {'entity': m.id});
                         }
                     });
+                    // Let us lookup "linked" marker easily
+                    this.mapLookup[m.id] = l;
                 }
             }).addTo(this.map);
 
