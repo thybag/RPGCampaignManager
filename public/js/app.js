@@ -15869,10 +15869,9 @@ var panelEditTpl = function panelEditTpl(data, action) {
                 break;
               }
 
-              return _context2.abrupt("return", this.state.data.entity = {
-                'action': 'create',
+              return _context2.abrupt("return", this.state.trigger('entity:create', {
                 'name': entity
-              });
+              }));
 
             case 12:
             case "end":
@@ -15907,6 +15906,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! marked/marked.min.js */ "./node_modules/marked/marked.min.js");
 /* harmony import */ var marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2__);
 
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -16064,10 +16065,10 @@ var editTpl = function editTpl(content) {
   },
   showLinkedContent: function showLinkedContent(e) {
     var link = e.dataset.link.replace(/ /g, '-');
-    this.state.data.entity = {
-      'action': 'view',
+    console.log(_typeof(link));
+    this.state.trigger('entity:show', {
       'entity': link
-    };
+    });
   },
   setHeight: function setHeight(e) {
     e.style.height = 0;

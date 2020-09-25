@@ -89,7 +89,8 @@ export default Component.define({
     },
     showLinkedContent: function(e) {
         let link = e.dataset.link.replace(/ /g,'-');
-        this.state.data.entity = {'action': 'view', 'entity': link};
+        console.log(typeof link);
+        this.state.trigger('entity:show', {'entity': link});
     },
     setHeight: function(e)
     {

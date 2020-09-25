@@ -184,7 +184,7 @@ export default Component.define({
         }
 
         if (data.status == 404) {
-            return this.state.data.entity = {'action': 'create', 'name': entity};
+            return this.state.trigger('entity:create', {'name': entity});
         }
     }
 });
