@@ -15428,8 +15428,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _ref.apply(this, arguments);
       };
     }());
-    this.state.on('entity:show', function (e) {
+    /*
+    this.state.on('entity:show', (e) => {
+        if(this.hasMarker(e.entity)) {
+            this.highLightMarker(e.entity);
+        }
+    });*/
+
+    this.state.on('map:focus', function (e) {
+      console.log("map:focus", e.entity);
+
+      if (!e.map != 1) {}
+
       if (_this.hasMarker(e.entity)) {
+        console.log("found marker");
+
         _this.highLightMarker(e.entity);
       }
     });
@@ -15445,6 +15458,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   hasMarker: function hasMarker(e_id) {
     return this.mapLookup[e_id];
   },
+  _offsetPoi: function _offsetPoi(latlng) {
+    var offset = this.map.getSize().divideBy(4).x;
+    var x = this.map.latLngToContainerPoint(latlng).x + offset;
+    var y = this.map.latLngToContainerPoint(latlng).y;
+    return this.map.containerPointToLatLng([x, y]);
+  },
   highLightMarker: function highLightMarker(id) {
     var marker = this.mapLookup[id],
         l;
@@ -15453,10 +15472,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       //https://github.com/pointhi/leaflet-color-markers
       marker.setIcon(new leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png'
-      })); // l = marker.getLatLng();
-    } else {// l = marker.getLatLngs()[0][0];
-      } // this.map.setView(l);
+      }));
+      l = marker.getLatLng();
+    } else {
+      l = marker.getLatLngs()[0][0];
+    }
 
+    this.map.panTo(this._offsetPoi(l));
   },
   createMap: function () {
     var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(map) {
@@ -15634,7 +15656,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <div>\n            <button class='editEntity'>rename</button><button class='hidePanel'>X</button>\n            <h2>".concat(title, "</h2>\n        </div>\n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            <span class='hidePanel'>X</span>\n\n            <span class='editEntity menu'>&#x22ef;</span>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'>Locate</span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15676,10 +15698,19 @@ var panelEditTpl = function panelEditTpl(data, action) {
     "click .editEntity": "editEntity",
     "click .hidePanel": "hidePanel",
     "click .cancelEntity": "cancelEntity",
+    "click .poi": "showOnMap",
     // Model events
     "update:tab": "updatePanelDisplay",
     "entity:create": "createEntity",
     "entity:show": "showEntity"
+  },
+  showOnMap: function showOnMap() {
+    console.log('showOnMap');
+    console.log(this.content.data);
+    this.state.trigger('map:focus', {
+      map: this.content.data.map_id,
+      entity: this.content.id
+    });
   },
   createEntity: function createEntity(entity) {
     // Else make new!
@@ -15688,7 +15719,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
       data: {
         category: entity.category,
         name: entity.name,
-        geo: entity.geo
+        _geo: entity.geo
       },
       links: {
         'create': this.content.links.create
@@ -15728,9 +15759,9 @@ var panelEditTpl = function panelEditTpl(data, action) {
               };
               console.log(this.content.data.geo); // Add geo data
 
-              if (this.content.data.geo) {
+              if (this.content.data._geo) {
                 payload.data.map_id = this.state.data.tab;
-                payload.data.geo = JSON.stringify(this.content.data.geo.layer.toGeoJSON());
+                payload.data.geo = JSON.stringify(this.content.data._geo.layer.toGeoJSON());
               }
 
               if (!(this.mode == 'edit')) {

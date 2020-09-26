@@ -19,9 +19,21 @@ export default Component.define({
 
             this.createMap(json);
         });
-
+        /*
         this.state.on('entity:show', (e) => {
             if(this.hasMarker(e.entity)) {
+                this.highLightMarker(e.entity);
+            }
+        });*/
+
+        this.state.on('map:focus', (e) => {
+            console.log("map:focus", e.entity);
+            if (!e.map != 1){
+
+            }
+
+            if (this.hasMarker(e.entity)) {
+                console.log("found marker");
                 this.highLightMarker(e.entity);
             }
         });
@@ -38,6 +50,12 @@ export default Component.define({
     hasMarker: function(e_id){
         return (this.mapLookup[e_id]);
     },
+    _offsetPoi: function(latlng){
+        let offset = this.map.getSize().divideBy(4).x;
+        let x = this.map.latLngToContainerPoint(latlng).x + offset;
+        let y = this.map.latLngToContainerPoint(latlng).y;
+        return this.map.containerPointToLatLng([x, y]);
+    },
     highLightMarker: function(id)
     {
         let marker = this.mapLookup[id], l;
@@ -47,11 +65,12 @@ export default Component.define({
                  iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
             }));
 
-           // l = marker.getLatLng();
+            l = marker.getLatLng();
         }else {
-           // l = marker.getLatLngs()[0][0];
+           l = marker.getLatLngs()[0][0];
         }
-       // this.map.setView(l);
+        this.map.panTo(this._offsetPoi(l));
+       
     },
     createMap: async function(map) {
     	if (this.map) {

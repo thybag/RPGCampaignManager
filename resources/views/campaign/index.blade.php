@@ -39,9 +39,16 @@
         box-sizing: border-box;
         overflow-x:auto;
         box-shadow: none;
-        
-
     }
+
+    .panel .menu {
+        float: right;
+        font-size: 2.4rem;
+        line-height: .5rem;
+        height: 16px;
+        cursor:pointer;
+    }
+
     .panel.min {
         position: absolute;
         width: 550px;
@@ -51,10 +58,68 @@
         top:50px;
         box-shadow: 1px 1px 5px 2px #444;
     }
+
     .panel.min.hide {
         display: none;
     }
 
+    .panel .hidePanel {
+        display:none;
+        float:right;
+        cursor:pointer;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+    }
+    .panel.min .hidePanel {
+       /* display:block;*/
+
+    }
+    .panel header {
+        margin-bottom:1rem;
+    }
+    .panel header h2 {
+        margin-bottom:.6rem;
+    }
+    .panel header .poi {
+        background-image: url(../images/map/marker-icon-2x-blue.png);
+        background-repeat: no-repeat;
+        background-size: 11px;
+        background-position: 5px;
+        border: solid 1px #9495bf;
+        display: inline-block;
+        border-radius: 5px;
+        padding: .2rem;
+        padding-left: 22px;
+        line-height: 1rem;
+        padding-right: .3rem;
+        cursor: pointer;
+    }
+    /*
+    .panel .poi {
+        background-color: #9495bf;
+        border: solid 2px #515278;
+        vertical-align: bottom;
+        background-image: url(../images/map/marker-icon-2x-blue.png);
+        background-repeat: no-repeat;
+        background-size: 25px;
+        background-position: 10px 5px;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        width: 45px;
+        float: right;
+        padding-top: 50px;
+        text-align: center;
+        padding-bottom: 5px;
+    }
+    #080924
+    solid 1px #706f7e
+*/
+
+    .panel h2 {
+        margin-top:0;
+        margin-bottom:1rem;
+    }
     .panel input {
         padding: .5rem;
         width: 400px;

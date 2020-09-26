@@ -80,11 +80,13 @@ class EntityController extends Controller
      */
     public function update(Request $request, Campaign $campaign, Entity $entity)
     {
-        $entity->update([
-            'name' => $request->input('data.name'),
-            'category' => $request->input('data.category'),
-            'geo' => $request->input('data.geo')
-        ]);
+        $updates = [];
+        if ($request->has('data.name')) $updates['name'] = $request->input('data.name');
+        if ($request->has('data.category')) $updates['category'] = $request->input('data.category');
+        if ($request->has('data.map_id')) $updates['map_id'] = $request->input('data.map_id');
+        if ($request->has('data.geo')) $updates['geo'] = $request->input('data.geo');
+
+        $entity->update($updates);
         return new EntityResource($entity);
     }
 

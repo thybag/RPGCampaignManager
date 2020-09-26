@@ -3,10 +3,15 @@ import Section from './Section.js';
 
 const panelTpl = function(title) {
     const tpl = `
-        <div>
-            <button class='editEntity'>rename</button><button class='hidePanel'>X</button>
+        <header>
+            <span class='hidePanel'>X</span>
+
+            <span class='editEntity menu'>&#x22ef;</span>
+        
             <h2>${title}</h2>
-        </div>
+            <span class='poi'>Locate</span>
+        </header>
+        
         <div class='panel-content'>
         </div>
         <div class='controls'><button class='add'>Add Content Section</button></div>
@@ -64,18 +69,24 @@ export default Component.define({
         "click .editEntity": "editEntity",
         "click .hidePanel": "hidePanel",
         "click .cancelEntity": "cancelEntity",
-
+        "click .poi": "showOnMap",
 
         // Model events
         "update:tab": "updatePanelDisplay",
         "entity:create": "createEntity",
         "entity:show": "showEntity",
     },
+    showOnMap: function()
+    { 
+        console.log('showOnMap');
+        console.log(this.content.data);
+        this.state.trigger('map:focus', {map: this.content.data.map_id, entity: this.content.id});
+    },
     createEntity: function(entity)
     {
         // Else make new!
         this.mode = 'new';
-        this.content = {data: {category: entity.category, name: entity.name, geo: entity.geo}, links: {'create': this.content.links.create}};
+        this.content = {data: {category: entity.category, name: entity.name, _geo: entity.geo}, links: {'create': this.content.links.create}};
         return this.render();
     },
     showEntity: function(entity) {
@@ -102,9 +113,9 @@ export default Component.define({
         };
         console.log(this.content.data.geo);
         // Add geo data
-        if (this.content.data.geo) {
+        if (this.content.data._geo) {
             payload.data.map_id = this.state.data.tab;
-            payload.data.geo = JSON.stringify(this.content.data.geo.layer.toGeoJSON());
+            payload.data.geo = JSON.stringify(this.content.data._geo.layer.toGeoJSON());
         }
 
         if(this.mode == 'edit') {
