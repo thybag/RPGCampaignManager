@@ -15,10 +15,10 @@ class MapController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Campaign $campaign)
     {
-        //
-    }
+        // Manage maps
+         return view('map.index', ['maps' => $campaign->maps]);    }
 
     /**
      * Show the form for creating a new resource.
