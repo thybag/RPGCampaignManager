@@ -90,6 +90,11 @@ export default Component.define({
         return this.render();
     },
     showEntity: function(entity) {
+        // Clean up, if unsaved entity
+        if (this.content && this.content.data._geo) {
+            this.content.data._geo.layer.remove();
+        }  
+
         // Store entity
         this.state.data.entity = entity.entity;
         return this.showContent(entity.entity);
@@ -99,6 +104,9 @@ export default Component.define({
         this.render();
     },
     cancelEntity: function(){
+        if (this.content.data._geo) {
+            this.content.data._geo.layer.remove();
+        }    
         this.showEntity({'entity': this.state.data.entity});
     },
     hidePanel: function(){
@@ -119,14 +127,12 @@ export default Component.define({
         }
 
         let results;
-
         if(this.mode == 'edit') {
             results = await this.state.request('PUT', this.content.links.update + '?include=blocks', payload);
         } else {
             results = await this.state.request('POST', this.content.links.create + '?include=blocks', payload);
         }
         this.content = await results.json();
-
 
         this.mode = 'view';
         this.render();

@@ -15549,6 +15549,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   geo: item,
                   category: 'Location'
                 });
+
+                _this2.map.pm.Draw.disable();
               });
 
             case 14:
@@ -15601,33 +15603,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
   el: document.querySelector('.bar'),
   initialize: function initialize() {
-    var _this = this;
-
     // Listen to state
-    this.state.on('update:tab', function () {
-      _this.render();
-    });
+    this.state.on('update:tab', function () {});
   },
   events: {
-    "click .bar nav a[data-tab]": "viewTab",
-    "click .bar nav a.new": "addNewMap",
-    "batman:test": 'hi'
-  },
-  render: function render() {
-    console.log("render triggered"); // Set selected state
-  },
-  addNewMap: function addNewMap() {
-    console.log("Add map model?");
+    "click .bar nav a[data-tab]": "viewTab"
   },
   viewTab: function viewTab(e) {
     this.state.data.tab = e.dataset.tab;
-  },
-  hi: function hi() {
-    console.log("I WORK YAY VIRTUAL EVENT");
+
+    _toConsumableArray(e.parentNode.children).map(function (x) {
+      x.classList.remove('selected');
+    });
+
+    e.classList.add('selected');
   }
 }));
 
@@ -15728,7 +15733,12 @@ var panelEditTpl = function panelEditTpl(data, action) {
     return this.render();
   },
   showEntity: function showEntity(entity) {
-    // Store entity
+    // Clean up, if unsaved entity
+    if (this.content && this.content.data._geo) {
+      this.content.data._geo.layer.remove();
+    } // Store entity
+
+
     this.state.data.entity = entity.entity;
     return this.showContent(entity.entity);
   },
@@ -15737,6 +15747,10 @@ var panelEditTpl = function panelEditTpl(data, action) {
     this.render();
   },
   cancelEntity: function cancelEntity() {
+    if (this.content.data._geo) {
+      this.content.data._geo.layer.remove();
+    }
+
     this.showEntity({
       'entity': this.state.data.entity
     });

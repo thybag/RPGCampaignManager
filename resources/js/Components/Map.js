@@ -125,6 +125,7 @@ export default Component.define({
 
 	    this.map.on('pm:create', (item) => {
             this.state.trigger('entity:create', {geo: item, category: 'Location'});
+            this.map.pm.Draw.disable();
 	    });
     },
     render: async function ()

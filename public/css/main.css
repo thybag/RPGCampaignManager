@@ -247,24 +247,32 @@ button.editEntity {
   font-size: 1rem;
   display: inline-block;
   font-weight: normal;
-  width: 210px;
+  width: 205px;
   box-sizing: border-box;
-  border-right: solid 1px #444;
   padding: 8px 1rem;
   margin: 0;
+  padding-right: 0;
 }
 .bar nav {
   display: inline-block;
+  font-size: 0;
 }
 .bar nav a {
   color: #fff;
   display: inline-block;
   border-right: solid 1px #444;
+  border-left: solid 1px #444;
   padding: 8px;
   text-decoration: none;
+  font-size: 1rem;
+  margin-left: -1px;
 }
 .bar nav a.selected {
   background: #515278;
+  background: #515278;
+  border-radius: 1rem;
+  padding: 1px 4px;
+  margin: 4px;
 }
 
 .mainMenu {
@@ -286,7 +294,7 @@ button.editEntity {
   border-left: 0.3em solid transparent;
 }
 
-nav .container {
+.container {
   max-width: 960px;
   position: relative;
   margin: 0 2rem;

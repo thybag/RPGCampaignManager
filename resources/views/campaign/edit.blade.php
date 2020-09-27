@@ -5,7 +5,6 @@
 @section('content')
     <style>
         .form {border: solid 1px; padding:1rem;max-width:400px; margin:0 auto;}
-   
     </style>
     <div class="container">
         <form class="form" method="POST" action="{{url('campaign/')}}" enctype="multipart/form-data">

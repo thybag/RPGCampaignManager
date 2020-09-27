@@ -1,7 +1,7 @@
 @extends('layouts.wrapper')
 
 @section('nav')
-        <a href="#" data-tab='content'>Content</a>
+        <a href="#" data-tab='content' class="selected">Content</a>
         @foreach ($campaign->maps as $map)
             <a href="#{{$map->id}}" data-tab='{{$map->id}}'>{{$map->name}}</a>
         @endforeach

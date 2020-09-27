@@ -227,26 +227,33 @@
             font-size:1rem;
             display:inline-block;
             font-weight: normal;
-            width:210px;
+            width:205px;
             box-sizing: border-box;
-            border-right: solid 1px #444;
             padding:8px 1rem;
             margin:0;
+            padding-right:0;
         }
         nav {
             display:inline-block;
+            font-size: 0;
 
             a {
                 color:#fff;
                 display:inline-block;
                 border-right: solid 1px #444;
+                border-left: solid 1px #444;
                 padding:8px;
                 text-decoration: none;
-                
+                font-size: 1rem;
+                margin-left:-1px;
             }
 
             a.selected {
                 background:#515278;
+                background: #515278;
+                border-radius: 1rem;
+                padding: 1px 4px;
+                margin:4px;
             }
         }
     }
@@ -269,8 +276,6 @@
         border-bottom: 0;
         border-left: 0.3em solid transparent;
     }
-
-    nav 
 
    .container {
         max-width: 960px;
