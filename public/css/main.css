@@ -11,9 +11,9 @@ body {
 
 .panel {
   position: absolute;
-  left: 200px;
+  left: 210px;
   top: 37px;
-  width: calc(100vw - 200px);
+  width: calc(100vw - 210px);
   height: calc(100vh - 37px);
   background: #fff;
   z-index: 999999;
@@ -33,7 +33,8 @@ body {
 
 .panel.min {
   position: absolute;
-  width: 550px;
+  width: 31vw;
+  min-width: 400px;
   height: calc(100vh - 110px);
   right: 20px;
   left: auto;
@@ -118,21 +119,21 @@ textarea {
   min-height: 120px;
 }
 
-.panel .form div {
+.form div {
   display: flex;
-  justify-content: flex-end;
   margin-bottom: 1rem;
 }
-
-.panel .form div label {
+.form div label {
   flex: 1;
 }
-
-.panel .form div input {
+.form div input {
   flex: 3;
 }
-
-.panel .form div textarea {
+.form div > div {
+  flex: 3;
+  margin-bottom: 0;
+}
+.form div textarea {
   flex: 3;
 }
 
@@ -143,12 +144,21 @@ textarea {
   margin-bottom: 1rem;
 }
 
-button {
+button, .button, input[type=submit] {
   background: #515278;
   border: none;
   padding: 0.5rem 1rem;
   color: #fff;
   cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-block;
+  line-height: 1rem;
+  vertical-align: top;
+}
+
+.button.right {
+  float: right;
 }
 
 button.add {
@@ -190,7 +200,7 @@ button.editEntity {
 }
 
 .content-nav {
-  width: 200px;
+  width: 210px;
   height: calc(100vh - 37px);
   box-sizing: border-box;
   background-color: #515278;
@@ -230,28 +240,31 @@ button.editEntity {
   background: #080924;
   color: #fff;
 }
-
+.bar a {
+  color: #fff;
+}
 .bar h1 {
   font-size: 1rem;
   display: inline-block;
   font-weight: normal;
-  width: 200px;
+  width: 210px;
   box-sizing: border-box;
   border-right: solid 1px #444;
   padding: 8px 1rem;
   margin: 0;
 }
-
 .bar nav {
   display: inline-block;
 }
-
 .bar nav a {
   color: #fff;
   display: inline-block;
   border-right: solid 1px #444;
   padding: 8px;
   text-decoration: none;
+}
+.bar nav a.selected {
+  background: #515278;
 }
 
 .mainMenu {
@@ -273,11 +286,7 @@ button.editEntity {
   border-left: 0.3em solid transparent;
 }
 
-nav a.selected {
-  background: #515278;
-}
-
-.container {
+nav .container {
   max-width: 960px;
   position: relative;
   margin: 0 2rem;

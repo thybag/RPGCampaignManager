@@ -17,4 +17,13 @@ class Map extends Model
         return $this->hasMany(Entity::class);
     }
 
+    public function getPreviewAttribute()
+    {
+    	return asset('storage/'.str_replace('.', '_preview.', $this->path));
+    }
+    public function getMapURLAttribute()
+    {
+    	return asset('storage/'.$this->path);
+    }
+
 }

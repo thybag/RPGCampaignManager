@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Soon</title>
+    <title>RPG Campaign Manager</title>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
@@ -23,12 +23,12 @@
 
 <body>
 <div class="bar">
-    <h1>Campaign Manager</h1>
+    <a href="{{url('/')}}" ><h1>RPG Campaign Manager</h1></a>
 
     <nav>
         @yield('nav')
     </nav>
-    <a href="#" class='mainMenu'>Bob Smith</a>
+    <a href="{{url('/')}}" class='mainMenu'>Bob Smith</a>
     <!--
         Campaign Settings
         Main menu

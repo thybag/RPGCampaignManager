@@ -15497,7 +15497,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _context2.next = 3;
               return new Promise(function (resolve, reject) {
                 var img = document.createElement('img');
-                img.src = map.data.path;
+                img.src = map.data.mapUrl;
 
                 img.onload = function () {
                   return resolve(img);
@@ -15518,7 +15518,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }); // Config
 
               bounds = [[0, 0], [height, width]];
-              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(map.data.path, bounds).addTo(this.map);
+              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(map.data.mapUrl, bounds).addTo(this.map);
               this.map.fitBounds(bounds);
               this.map.setZoom(1.4);
               this.map.pm.addControls({

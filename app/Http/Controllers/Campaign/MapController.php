@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Campaign;
 
+use Image;
+use Storage;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Map;
@@ -18,16 +20,17 @@ class MapController extends Controller
     public function index(Campaign $campaign)
     {
         // Manage maps
-         return view('map.index', ['campaign' => $campaign]);    }
+        return view('map.index', ['campaign' => $campaign]);
+    }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Campaign $campaign)
     {
-        //
+        return view('map.edit', ['campaign' => $campaign]);
     }
 
     /**
@@ -36,9 +39,29 @@ class MapController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Campaign $campaign, Request $request)
     {
-        //
+      // dd(  ,);
+
+        $img = $request->file('image');
+        $ext = $img->getClientOriginalExtension();
+        $hash = md5_file($img->getRealPath());
+        $img->storeAs("{$campaign->user_id}/{$campaign->id}", "{$hash}.{$ext}", 'public');
+
+        $preview = Image::make($img)->resize(400, 400, 
+        function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        })->encode();
+
+        Storage::disk('public')->put("{$campaign->user_id}/{$campaign->id}/{$hash}_preview.{$ext}", $preview);
+
+        $campaign->maps()->save(Map::make([
+            'name'  => $request->name,
+            'path' => "{$campaign->user_id}/{$campaign->id}/{$hash}.{$ext}"
+        ]));
+
+        return redirect(url("campaign/{$campaign->id}/map"));
     }
 
     /**
@@ -58,9 +81,9 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function edit(Map $map)
+    public function edit(Campaign $campaign, Map $map)
     {
-        //
+        return view('map.edit', ['campaign' => $campaign, 'map' => $map]);
     }
 
     /**
@@ -70,9 +93,15 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Map $map)
+    public function update(Request $request, Campaign $campaign, Map $map)
     {
-        //
+        $updates = ['name' => $request->name];
+        if ($request->file('image')) {
+
+        }
+
+        $map->update($updates);
+        return redirect(url("campaign/{$campaign->id}/map"));
     }
 
     /**

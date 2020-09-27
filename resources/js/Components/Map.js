@@ -80,7 +80,7 @@ export default Component.define({
     	// Load image
     	let img = await new Promise((resolve, reject) => {
     			let img = document.createElement('img');
-    			img.src = map.data.path;
+    			img.src = map.data.mapUrl;
 		        img.onload = () => resolve(img);
 		        img.onerror = reject;
 		});
@@ -96,7 +96,7 @@ export default Component.define({
 	    });
         // Config
 	    var bounds = [[0,0], [height,width]];
-	    var image = L.imageOverlay(map.data.path, bounds).addTo(this.map);
+	    var image = L.imageOverlay(map.data.mapUrl, bounds).addTo(this.map);
 	    this.map.fitBounds(bounds);    
 	   	this.map.setZoom(1.4);
 

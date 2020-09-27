@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
+use App\Models\Campaign\Entity;
 
 class CampaignController extends Controller
 {
@@ -40,7 +41,7 @@ class CampaignController extends Controller
      */
     public function create()
     {
-        dd("create");
+        return view('campaign.edit');
     }
 
     /**
@@ -51,7 +52,14 @@ class CampaignController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+        $campaign = Campaign::make($request->only(['name', 'description']));
+        $user->campaigns()->save($campaign);
+
+        // Welcome campaign
+        $campaign->entities()->save(Entity::make(['name'=> 'Hello World', 'category'=>'Location']));
+
+        return redirect(url('campaign/'.$campaign->id));
     }
 
 

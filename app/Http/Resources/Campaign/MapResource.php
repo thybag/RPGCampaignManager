@@ -24,6 +24,8 @@ class MapResource extends BaseResource
             'type' => 'map',
             'name' => $this->name,
             'path' => $this->path,
+            'mapUrl' => $this->mapURL,
+            'preview' => $this->preview,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
