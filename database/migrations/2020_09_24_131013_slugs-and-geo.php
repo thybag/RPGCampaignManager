@@ -16,7 +16,8 @@ class SlugsAndGeo extends Migration
         Schema::table('entities', function (Blueprint $table) {
             $table->string('slug')->after('name');
             $table->text('geo')->nullable()->after('type');
-            $table->rename('type', 'category');
+            $table->renameColumn('type', 'category');
+           
         });
     }
 
@@ -30,7 +31,7 @@ class SlugsAndGeo extends Migration
         Schema::table('entities', function (Blueprint $table) {
             $table->dropColumn('slug');
             $table->dropColumn('geo');
-            $table->rename('category', 'type');
+            $table->renameColumn('category', 'type');
         });
     }
 }
