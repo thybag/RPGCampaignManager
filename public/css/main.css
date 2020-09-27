@@ -401,7 +401,6 @@ button.editEntity {
   color: #000;
   text-align: left;
   position: relative;
-  max-width: 33%;
 }
 .map-preview button {
   border-radius: 0;
