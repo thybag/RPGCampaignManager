@@ -1,3 +1,7 @@
+    $header-primary: #080924;
+    $secondary: #515278;
+    $secondary-alt: #51527899;
+
      body {
         margin:0;
         font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
@@ -114,19 +118,54 @@
         min-height:120px;
     }
 
+/*
+padding:1rem;max-width:400px; margin:0 auto;
+ */
+
+@mixin box {
+    border: 1px solid rgba(8, 9, 36, 0.5);
+    margin: 0 auto;
+    border-radius: 2px;
+    margin-bottom:1rem;
+
+    header {
+        background-color: $header-primary; //rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        padding:.75rem;
+        margin-bottom:1rem;
+
+        h2, h1 {padding:0; margin:0; font-size:1rem; color: #fff;}
+    }
+
+    footer {
+        padding: 0 1rem 1rem 1rem;
+    }
+}
 
     .form {
-        div {
-            display: flex;
-            margin-bottom:1rem;
+        @include box;
+        width:66%;
+        
 
+        
 
-            label { flex:1; }
-            input { flex:3; }
-            & > div { flex:3; margin-bottom: 0}
-            textarea { flex:3; }
+      
+
+        & > div {
+            padding:0 1rem 1rem 1rem;
+
+            label {
+                display:block;
+                margin-bottom:.4rem;
+            }
+
+            input, textarea {
+                border: 1px solid #ccc;
+                box-shadow: inset 0 1px 3px #ddd;
+                padding:.4rem;
+                width: calc(100% - 1rem);
+            }
         }
-
     }
 
     .panel-block .controls {
@@ -147,10 +186,22 @@
         display: inline-block;
         line-height: 1rem;
         vertical-align: top;
+        border: solid 2px $header-primary;
+        border-radius: 3px;
     }
-    .button.right {
+    .button.right, button.right,input[type='submit'].right {
         float:right;
     }
+
+    .button.cancel {
+        border: solid 2px $secondary;
+        background-color: $secondary-alt;
+    }
+   
+
+
+
+
     button.add {
         margin: 0 auto;
         width: 200px;
@@ -219,7 +270,7 @@
     }
 
     .bar {
-        background:#080924;
+        background: $header-primary;
         color: #fff;
 
         a {color:#fff;}
@@ -316,20 +367,35 @@
         color:#555;
     }
 
-    .map-preview {
-        display:block;
-        border: solid 1px #000;
+    .manage-maps {
+        @include box;
 
-        background-size: cover;
+        .row {
+            margin: 0 1rem;
+        }
+
+
+    }
+
+    .map-preview {
+        
+        border: 1px solid rgba(8, 9, 36, 0.5);
+        display:block;
+
+
 
         text-decoration: none;
         color:#000;
         text-align:left;    
         position: relative;
+        max-width:33%;
+
+        button {border-radius:0; border:0}
 
     }
      .map-preview img {
         width:100%;
+        border-bottom: 1px solid rgba(8, 9, 36, 0.5);
      }
      .map-preview div {
         padding:.5rem;

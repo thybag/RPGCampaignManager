@@ -6,6 +6,7 @@ use Auth;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Entity;
+use App\Models\Campaign\Entity\Block;
 
 class CampaignController extends Controller
 {
@@ -57,7 +58,10 @@ class CampaignController extends Controller
         $user->campaigns()->save($campaign);
 
         // Welcome campaign
-        $campaign->entities()->save(Entity::make(['name'=> 'Hello World', 'category'=>'Location']));
+        $entity = Entity::make(['name'=> 'Welcome to '.$campaign->name, 'category'=>'Introduction']);
+        $campaign->entities()->save($entity );
+        $block = Block::make(['type'=>'text', 'content'=> 'Welcome to your new campaign! Hit edit to update this content with whatever you like.']);
+        $entity->blocks()->save($block);
 
         return redirect(url('campaign/'.$campaign->id));
     }

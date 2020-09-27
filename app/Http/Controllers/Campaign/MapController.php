@@ -41,8 +41,6 @@ class MapController extends Controller
      */
     public function store(Campaign $campaign, Request $request)
     {
-      // dd(  ,);
-
         $img = $request->file('image');
         $ext = $img->getClientOriginalExtension();
         $hash = md5_file($img->getRealPath());

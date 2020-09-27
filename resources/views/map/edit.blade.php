@@ -4,20 +4,17 @@
         <a href="{{url('campaign/'.$campaign->id.'/map')}}">Manage maps</a>
 @endsection     
 @section('content')
-    <style>
-        .form {border: solid 1px; padding:1rem;max-width:400px; margin:0 auto;}
-   
-    </style>
     <div class="container">
-        <form class="form" method="POST" action="{{url('campaign/'.$campaign->id)}}/map/{{$map->id}}" enctype="multipart/form-data">
-            <h2>{{empty($map) ? 'Create new map' : "Edit ".$map->name }}</h2>
+        <form class="form" method="POST" action="{{url('campaign/'.$campaign->id)}}/map{{!empty($map) ? "/".$map->id :''}}" enctype="multipart/form-data">
+            <header>
+                <h2>{{empty($map) ? 'Create new map' : "Edit ".$map->name }}</h2>
+            </header>
             <div>
                 <label>Name:</label>
                 <input name="name" type="text" @if(!empty($map)) value="{{$map->name}}" @endif;>
             </div>
             <div>
-                <label>Campaign:</label>
-                <div>{{$campaign->name}}</div>
+               Campaign: <strong>{{$campaign->name}}</strong>
             </div>
             @if(!empty($map)) 
                     <img src="{{$map->preview}}" style="width:100%">
@@ -29,8 +26,15 @@
         
             </div>
             @csrf
-            {{ method_field('PUT') }}
-            <input type="submit"><a class="button right" href="{{url('campaign/'.$campaign->id.'/map')}}">Back</a>
+
+            @if(!empty($map)) 
+                {{ method_field('PUT') }}
+            @endif
+
+            <footer>
+                <input type="submit" class="right" value="{{empty($campaign) ? 'Upload map' : "Save changes" }}"">
+                <a class="button cancel" href="{{url('campaign/'.$campaign->id.'/map')}}">Back</a>
+            </footer>
         </form>
     </div>
 @endsection

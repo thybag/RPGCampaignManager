@@ -119,22 +119,43 @@ textarea {
   min-height: 120px;
 }
 
-.form div {
-  display: flex;
+/*
+padding:1rem;max-width:400px; margin:0 auto;
+ */
+.form {
+  border: 1px solid rgba(8, 9, 36, 0.5);
+  margin: 0 auto;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+  width: 66%;
+}
+.form header {
+  background-color: #080924;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 0.75rem;
   margin-bottom: 1rem;
 }
-.form div label {
-  flex: 1;
+.form header h2, .form header h1 {
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  color: #fff;
 }
-.form div input {
-  flex: 3;
+.form footer {
+  padding: 0 1rem 1rem 1rem;
 }
-.form div > div {
-  flex: 3;
-  margin-bottom: 0;
+.form > div {
+  padding: 0 1rem 1rem 1rem;
 }
-.form div textarea {
-  flex: 3;
+.form > div label {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.form > div input, .form > div textarea {
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 3px #ddd;
+  padding: 0.4rem;
+  width: calc(100% - 1rem);
 }
 
 .panel-block .controls {
@@ -155,10 +176,17 @@ button, .button, input[type=submit] {
   display: inline-block;
   line-height: 1rem;
   vertical-align: top;
+  border: solid 2px #080924;
+  border-radius: 3px;
 }
 
-.button.right {
+.button.right, button.right, input[type=submit].right {
   float: right;
+}
+
+.button.cancel {
+  border: solid 2px #515278;
+  background-color: #51527899;
 }
 
 button.add {
@@ -341,18 +369,48 @@ button.editEntity {
   color: #555;
 }
 
+.manage-maps {
+  border: 1px solid rgba(8, 9, 36, 0.5);
+  margin: 0 auto;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+.manage-maps header {
+  background-color: #080924;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+.manage-maps header h2, .manage-maps header h1 {
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  color: #fff;
+}
+.manage-maps footer {
+  padding: 0 1rem 1rem 1rem;
+}
+.manage-maps .row {
+  margin: 0 1rem;
+}
+
 .map-preview {
+  border: 1px solid rgba(8, 9, 36, 0.5);
   display: block;
-  border: solid 1px #000;
-  background-size: cover;
   text-decoration: none;
   color: #000;
   text-align: left;
   position: relative;
+  max-width: 33%;
+}
+.map-preview button {
+  border-radius: 0;
+  border: 0;
 }
 
 .map-preview img {
   width: 100%;
+  border-bottom: 1px solid rgba(8, 9, 36, 0.5);
 }
 
 .map-preview div {
