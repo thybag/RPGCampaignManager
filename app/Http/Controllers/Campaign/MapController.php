@@ -18,7 +18,7 @@ class MapController extends Controller
     public function index(Campaign $campaign)
     {
         // Manage maps
-         return view('map.index', ['maps' => $campaign->maps]);    }
+         return view('map.index', ['campaign' => $campaign]);    }
 
     /**
      * Show the form for creating a new resource.
