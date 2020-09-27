@@ -111,18 +111,22 @@ export default Component.define({
                 'category': this.el.querySelector("input[name=category]").value,
             }
         };
-        console.log(this.content.data.geo);
+
         // Add geo data
         if (this.content.data._geo) {
             payload.data.map_id = this.state.data.tab;
             payload.data.geo = JSON.stringify(this.content.data._geo.layer.toGeoJSON());
         }
 
+        let results;
+
         if(this.mode == 'edit') {
-            this.content = await this.state.request('PUT', this.content.links.update + '?include=blocks', payload);
+            results = await this.state.request('PUT', this.content.links.update + '?include=blocks', payload);
         } else {
-            this.content = await this.state.request('POST', this.content.links.create + '?include=blocks', payload);
+            results = await this.state.request('POST', this.content.links.create + '?include=blocks', payload);
         }
+        this.content = await results.json();
+
 
         this.mode = 'view';
         this.render();
@@ -185,7 +189,7 @@ export default Component.define({
         this.children.push(section);
     },
     showContent: async function(entity) {
-        let data = await fetch("2/entity/"+entity+"?include=blocks");
+        let data = await this.state.requestEntity(entity);
 
         if (data.status == 200 || data.status == 201) {
             let json = await data.json();

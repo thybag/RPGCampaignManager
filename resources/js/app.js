@@ -11,16 +11,24 @@ let Bus = new Model({
 	entity: {'action': 'view', 'entity': 1}
 });
 
-Bus.request = async function(method, url, payload) {
-    let data = await fetch(url, {
+Bus.request = async function(method, url, payload = '') {
+    const options = {
         method: method,
-        body: JSON.stringify(payload),
         headers: { 
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': this.data.csrf 
         }
-    });
-    return await data.json();
+    };
+    if (method != 'GET'){
+        options['body'] = JSON.stringify(payload)
+    }
+
+    return await fetch(url, options);
+}
+
+Bus.requestEntity = async function(id) {
+    const url = `${Bus.get('url')}/campaign/${Bus.get('campaign_id')}/entity/${id}?include=blocks`;
+    return Bus.request("GET", url);
 }
 
 // Setup "views"
@@ -41,8 +49,14 @@ Bus.on('change', function(a, b, n, o){
     //console.log(Bus.data);
 });
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function()
+{
+    console.log("ready");
+    Bus.data.url = window._campaign.url; 
+    Bus.data.campaign_id = window._campaign.id;    
 	Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    console.log("trigger show");
+    Bus.trigger('entity:show', {entity: window._campaign.default_entity});
 });
 
 

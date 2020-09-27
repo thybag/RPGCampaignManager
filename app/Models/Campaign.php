@@ -9,7 +9,8 @@ use App\Models\Campaign\Entity;
 class Campaign extends Model
 {
     protected $fillable = [
-        'name'
+        'name',
+        'description'
     ];
 
     public function maps()

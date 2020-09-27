@@ -15746,7 +15746,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
   },
   saveEntity: function () {
     var _saveEntity = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var payload;
+      var payload, results;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -15756,8 +15756,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
                   'name': this.el.querySelector("input[name=title]").value,
                   'category': this.el.querySelector("input[name=category]").value
                 }
-              };
-              console.log(this.content.data.geo); // Add geo data
+              }; // Add geo data
 
               if (this.content.data._geo) {
                 payload.data.map_id = this.state.data.tab;
@@ -15765,30 +15764,35 @@ var panelEditTpl = function panelEditTpl(data, action) {
               }
 
               if (!(this.mode == 'edit')) {
-                _context.next = 9;
+                _context.next = 8;
                 break;
               }
 
-              _context.next = 6;
+              _context.next = 5;
               return this.state.request('PUT', this.content.links.update + '?include=blocks', payload);
 
-            case 6:
-              this.content = _context.sent;
-              _context.next = 12;
+            case 5:
+              results = _context.sent;
+              _context.next = 11;
               break;
 
-            case 9:
-              _context.next = 11;
+            case 8:
+              _context.next = 10;
               return this.state.request('POST', this.content.links.create + '?include=blocks', payload);
 
-            case 11:
-              this.content = _context.sent;
+            case 10:
+              results = _context.sent;
 
-            case 12:
+            case 11:
+              _context.next = 13;
+              return results.json();
+
+            case 13:
+              this.content = _context.sent;
               this.mode = 'view';
               this.render();
 
-            case 14:
+            case 16:
             case "end":
               return _context.stop();
           }
@@ -15875,7 +15879,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return fetch("2/entity/" + entity + "?include=blocks");
+              return this.state.requestEntity(entity);
 
             case 2:
               data = _context2.sent;
@@ -16146,26 +16150,29 @@ var Bus = new lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"]({
 });
 
 Bus.request = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(method, url, payload) {
-    var data;
+  var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(method, url) {
+    var payload,
+        options,
+        _args = arguments;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return fetch(url, {
+            payload = _args.length > 2 && _args[2] !== undefined ? _args[2] : '';
+            options = {
               method: method,
-              body: JSON.stringify(payload),
               headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': this.data.csrf
               }
-            });
+            };
 
-          case 2:
-            data = _context.sent;
+            if (method != 'GET') {
+              options['body'] = JSON.stringify(payload);
+            }
+
             _context.next = 5;
-            return data.json();
+            return fetch(url, options);
 
           case 5:
             return _context.abrupt("return", _context.sent);
@@ -16178,8 +16185,31 @@ Bus.request = /*#__PURE__*/function () {
     }, _callee, this);
   }));
 
-  return function (_x, _x2, _x3) {
+  return function (_x, _x2) {
     return _ref.apply(this, arguments);
+  };
+}();
+
+Bus.requestEntity = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(id) {
+    var url;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            url = "".concat(Bus.get('url'), "/campaign/").concat(Bus.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
+            return _context2.abrupt("return", Bus.request("GET", url));
+
+          case 2:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function (_x3) {
+    return _ref2.apply(this, arguments);
   };
 }(); // Setup "views"
 
@@ -16206,7 +16236,14 @@ Bus.on('change', function (a, b, n, o) {
   //console.log(Bus.data);
 });
 document.addEventListener('DOMContentLoaded', function () {
+  console.log("ready");
+  Bus.data.url = window._campaign.url;
+  Bus.data.campaign_id = window._campaign.id;
   Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  console.log("trigger show");
+  Bus.trigger('entity:show', {
+    entity: window._campaign.default_entity
+  });
 });
 
 /***/ }),

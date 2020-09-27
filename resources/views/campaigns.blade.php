@@ -15,7 +15,7 @@
                         
                                 <p class>{{$campaign->description}}</p>  
 
-                                <span class="badge badge-primary badge-pill">3 Maps</span> <span class="badge badge-primary badge-pill">14 locations</span> <span class="badge badge-primary badge-pill">4 monsters</span>
+                                <span class="badge badge-primary badge-pill">{{$campaign->maps()->count()}} Maps</span> <span class="badge badge-primary badge-pill">{{$campaign->entities()->count()}} locations</span>
                             </a>
                           </li>
                       @endforeach
