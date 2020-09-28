@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
-use App\Models\Campaign\Entity;
-use App\Models\Campaign\Entity\Block;
 
 class CampaignController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Campaign::class, 'campaign');;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -29,10 +32,7 @@ class CampaignController extends Controller
      */
     public function show(Campaign $campaign)
     {
-
-    
-       // dd($campaign->entities->groupBy('type'));
-         return view('campaign.index', ['campaign' => $campaign]);
+        return view('campaign.index', ['campaign' => $campaign]);
     }
 
     /**
@@ -56,16 +56,8 @@ class CampaignController extends Controller
         $user = Auth::user();
         $campaign = Campaign::make($request->only(['name', 'description']));
         $user->campaigns()->save($campaign);
-
-        // Welcome campaign
-        $entity = Entity::make(['name'=> 'Welcome to '.$campaign->name, 'category'=>'Introduction']);
-        $campaign->entities()->save($entity );
-        $block = Block::make(['type'=>'text', 'content'=> 'Welcome to your new campaign! Hit edit to update this content with whatever you like.']);
-        $entity->blocks()->save($block);
-
         return redirect(url('campaign/'.$campaign->id));
     }
-
 
     /**
      * Show the form for editing the specified resource.

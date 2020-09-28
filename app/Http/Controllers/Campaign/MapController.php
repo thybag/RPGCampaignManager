@@ -12,6 +12,11 @@ use App\Http\Resources\Campaign\MapResource;
 
 class MapController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Map::class, 'map');;
+    }
+
     /**
      * Display a listing of the resource.
      *

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Campaign\Entity;
 
-
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Entity;
@@ -10,9 +9,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Campaign\Entity\Block;
 use App\Http\Resources\Campaign\Entity\BlockResource;
 
-
 class BlockController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Block::class, 'block');;
+    }
     /**
      * Display a listing of the resource.
      *

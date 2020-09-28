@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Campaign;
+use App\Observers\CampaignObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -24,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Campaign::observe(CampaignObserver::class);
+        // workaround
         Schema::defaultStringLength(191);
-        //
     }
 }
