@@ -81,26 +81,6 @@
         padding-right: .3rem;
         cursor: pointer;
     }
-    /*
-    .panel .poi {
-        background-color: #9495bf;
-        border: solid 2px #515278;
-        vertical-align: bottom;
-        background-image: url(../images/map/marker-icon-2x-blue.png);
-        background-repeat: no-repeat;
-        background-size: 25px;
-        background-position: 10px 5px;
-        margin-bottom: 1rem;
-        cursor: pointer;
-        width: 45px;
-        float: right;
-        padding-top: 50px;
-        text-align: center;
-        padding-bottom: 5px;
-    }
-    #080924
-    solid 1px #706f7e
-*/
 
     .panel h2 {
         margin-top:0;
@@ -142,31 +122,35 @@ padding:1rem;max-width:400px; margin:0 auto;
     }
 }
 
-    .form {
-        @include box;
-        width:66%;
-        
+.container .form {
+    @include box;
+    width:66%;
+}
 
-        
+.form {
+    & > div {
+        padding:0 1rem 1rem 1rem;
 
-      
+        label {
+            display:block;
+            margin-bottom:.4rem;
+        }
 
-        & > div {
-            padding:0 1rem 1rem 1rem;
-
-            label {
-                display:block;
-                margin-bottom:.4rem;
-            }
-
-            input, textarea {
-                border: 1px solid #ccc;
-                box-shadow: inset 0 1px 3px #ddd;
-                padding:.4rem;
-                width: calc(100% - 1rem);
-            }
+        input, textarea {
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 3px #ddd;
+            padding:.4rem;
+            width: calc(100% - 1rem);
         }
     }
+}
+
+.panel .form div {
+    padding-left:0;
+    padding-right:0;
+}
+
+
 
     .panel-block .controls {
         border-bottom: solid 1px #000;
@@ -193,7 +177,7 @@ padding:1rem;max-width:400px; margin:0 auto;
         float:right;
     }
 
-    .button.cancel {
+    .button.cancel, button.cancel {
         border: solid 2px $secondary;
         background-color: $secondary-alt;
     }

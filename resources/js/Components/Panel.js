@@ -44,7 +44,7 @@ const panelEditTpl = function(data, action) {
                 <label>Category</label>
                 <input name="category" type="text" value="${data.category || ''}">
             </div>
-            <button class='saveEntity'>save</button><button class='cancelEntity'>cancel</button>
+            <button class='saveEntity right'>save</button><button class='cancel cancelEntity'>cancel</button>
         </div>
     `;
     const template = document.createElement('div');

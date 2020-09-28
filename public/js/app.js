@@ -15680,7 +15680,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
       break;
   }
 
-  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <button class='saveEntity'>save</button><button class='cancelEntity'>cancel</button>\n        </div>\n    ");
+  var tpl = "\n        <div class=\"form\">\n            <h2>".concat(actionName, "</h2>\n            <div>\n                <label>Title</label>\n                <input name=\"title\" type=\"text\" value=\"").concat(data.name || '', "\">\n            </div>\n            <div>\n                <label>Category</label>\n                <input name=\"category\" type=\"text\" value=\"").concat(data.category || '', "\">\n            </div>\n            <button class='saveEntity right'>save</button><button class='cancel cancelEntity'>cancel</button>\n        </div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
