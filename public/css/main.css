@@ -67,17 +67,25 @@ body {
   margin-bottom: 0.6rem;
 }
 
-.poi {
-  background-image: url(../images/map/marker-icon-2x-blue.png);
-  background-repeat: no-repeat;
-  background-size: 11px;
-  background-position: 5px;
+.badge {
   border: solid 1px #9495bf;
   display: inline-block;
   border-radius: 5px;
   padding: 0.2rem;
-  padding-left: 22px;
   line-height: 1rem;
+}
+
+.poi {
+  border: solid 1px #9495bf;
+  display: inline-block;
+  border-radius: 5px;
+  padding: 0.2rem;
+  line-height: 1rem;
+  background-image: url(../images/map/marker-icon-2x-blue.png);
+  background-repeat: no-repeat;
+  background-size: 11px;
+  background-position: 5px;
+  padding-left: 22px;
   padding-right: 0.3rem;
   cursor: pointer;
 }
@@ -142,6 +150,16 @@ padding:1rem;max-width:400px; margin:0 auto;
 .panel .form div {
   padding-left: 0;
   padding-right: 0;
+}
+
+.campaign-item {
+  display: block;
+  text-decoration: none;
+  color: #000;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  padding-top: 0;
 }
 
 .panel-block .controls {

@@ -28,7 +28,7 @@
     <nav>
         @yield('nav')
     </nav>
-    <a href="{{url('/')}}" class='mainMenu'>Bob Smith</a>
+    <a href="{{url('/')}}" class='mainMenu'>{{ Auth::user()->name }}</a>
     <!--
         Campaign Settings
         Main menu

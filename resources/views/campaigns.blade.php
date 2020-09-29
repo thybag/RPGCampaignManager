@@ -1,30 +1,34 @@
-@extends('layouts.app')
-
+@extends('layouts.wrapper')
+@section('nav')
+        
+@endsection     
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Campaigns') }}</div>
-                    <ul class="list-group list-group-flush">
+    <style>
 
-                    @foreach ($campaigns as $campaign)
-                          <li class="list-group-item ">
-                            <a href="campaign/{{$campaign->id}}">
-                                <h4>{{$campaign->name}}</h4>
-                        
-                                <p class>{{$campaign->description}}</p>  
+    </style>
+    <div class="container">
+       
+        <div class="manage-maps">
+            <header> <h1>Campaigns</h1></header>
+            
+                 @foreach ($campaigns as $campaign)
+                      
+                        <a href="campaign/{{$campaign->id}}" class="campaign-item">
+                            <h2>{{$campaign->name}}</h2>
+                    
+                            <p class>{{$campaign->description}}</p>  
 
-                                <span class="badge badge-primary badge-pill">{{$campaign->maps()->count()}} Maps</span> <span class="badge badge-primary badge-pill">{{$campaign->entities()->count()}} locations</span>
-                            </a>
-                          </li>
-                      @endforeach
-                    </ul>
-                    <div class="card-body">
-                        <a class='btn btn-primary' href='campaign/create'>Create new Campaign</a>
-                    </div>
-            </div>
+                            <span class="poi">{{$campaign->maps()->count()}} Maps</span> <span class="badge">{{$campaign->entities()->count()}} Pages</span>
+                        </a>
+                     
+                  @endforeach
+
+            <footer class="controls">
+                <a class="button" href="{{url("campaign/create")}}">
+                    Start building your new Campaign
+                </a>
+            </footer>
         </div>
     </div>
-</div>
 @endsection
+
