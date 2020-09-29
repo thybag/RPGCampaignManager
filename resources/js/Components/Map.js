@@ -123,11 +123,15 @@ export default Component.define({
 	    });
     },
     addEntityToMap: function(entity) {
+        // Skip if no geo
+        if (!entity.data.geo) return;
+
         // Remove existing marker if we have one
         if (this.hasMarker(entity.id)) {
             this.removeMarker(entity.id);
         }
 
+        // Draw new point
         L.geoJson(JSON.parse(entity.data.geo), {
             onEachFeature: (feature, layer) => {
                 layer.on({

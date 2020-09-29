@@ -15558,10 +15558,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   addEntityToMap: function addEntityToMap(entity) {
     var _this3 = this;
 
-    // Remove existing marker if we have one
+    // Skip if no geo
+    if (!entity.data.geo) return; // Remove existing marker if we have one
+
     if (this.hasMarker(entity.id)) {
       this.removeMarker(entity.id);
-    }
+    } // Draw new point
+
 
     leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.geoJson(JSON.parse(entity.data.geo), {
       onEachFeature: function onEachFeature(feature, layer) {
