@@ -14,29 +14,27 @@ export default Component.define({
         		return this.clearMap();
         	}
 
-        	let data = await fetch("2/map/"+tab+"?include=entities");
+        	let data = await this.state.loadMap(tab);
         	let json = await data.json();
 
             this.createMap(json);
         });
-        /*
-        this.state.on('entity:show', (e) => {
-            if(this.hasMarker(e.entity)) {
-                this.highLightMarker(e.entity);
-            }
-        });*/
 
         this.state.on('map:focus', (e) => {
             console.log("map:focus", e.entity);
             if (!e.map != 1){
-
+                // Change map
             }
 
             if (this.hasMarker(e.entity)) {
-                console.log("found marker");
                 this.highLightMarker(e.entity);
             }
         });
+
+        this.state.on('entity:updated', (entity) => {
+            this.addEntityToMap(entity);
+        });
+
     },
     clearMap: function()
     {
@@ -49,6 +47,14 @@ export default Component.define({
     },
     hasMarker: function(e_id){
         return (this.mapLookup[e_id]);
+    },
+    getMarker: function(e_id){
+        return this.mapLookup[e_id];
+    },
+    removeMarker: function(e_id) 
+    {
+        this.mapLookup[e_id].remove();
+        delete this.mapLookup[e_id];
     },
     _offsetPoi: function(latlng){
         let offset = this.map.getSize().divideBy(4).x;
@@ -108,19 +114,7 @@ export default Component.define({
 	    });
 
         map.data.entities.map((m) => {
-            L.geoJson(JSON.parse(m.data.geo), {
-                onEachFeature: (f, l) => {
-                    l.on({
-                        'click': (x) => { 
-                            console.log(m.id);
-                            this.state.trigger('entity:show', {'entity': m.id});
-                        }
-                    });
-                    // Let us lookup "linked" marker easily
-                    this.mapLookup[m.id] = l;
-                }
-            }).addTo(this.map);
-
+            this.addEntityToMap(m);    
         });
 
 	    this.map.on('pm:create', (item) => {
@@ -128,28 +122,22 @@ export default Component.define({
             this.map.pm.Draw.disable();
 	    });
     },
-    render: async function ()
-    {
+    addEntityToMap: function(entity) {
+        // Remove existing marker if we have one
+        if (this.hasMarker(entity.id)) {
+            this.removeMarker(entity.id);
+        }
 
-
-
-
-    	// Has map changed?
-    	// 
-    	// 
-
-
-
-        // Set selected state
-    },
-    addNewMap: function()
-    {
-
-    },
-    viewMap: function(e)
-    {
-
-    },
-    hi: function(){
+        L.geoJson(JSON.parse(entity.data.geo), {
+            onEachFeature: (feature, layer) => {
+                layer.on({
+                    'click': (point) => { 
+                        this.state.trigger('entity:show', {'entity': entity.id});
+                    }
+                });
+                // Let us lookup "linked" marker easily
+                this.mapLookup[entity.id] = layer;
+            }
+        }).addTo(this.map);
     }
 });

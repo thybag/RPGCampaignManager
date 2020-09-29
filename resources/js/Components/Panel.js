@@ -134,6 +134,8 @@ export default Component.define({
         }
         this.content = await results.json();
 
+        this.state.trigger('entity:updated', this.content)
+
         this.mode = 'view';
         this.render();
     },
@@ -195,7 +197,7 @@ export default Component.define({
         this.children.push(section);
     },
     showContent: async function(entity) {
-        let data = await this.state.requestEntity(entity);
+        let data = await this.state.loadEntity(entity);
 
         if (data.status == 200 || data.status == 201) {
             let json = await data.json();

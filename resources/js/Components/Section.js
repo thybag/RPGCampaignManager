@@ -55,26 +55,15 @@ export default Component.define({
         container.innerHTML = viewTpl(parsed);
         this.el.appendChild(container);
     },
-    request: async function(method, url, payload) {
-        let data = await fetch(url, {
-            method: method,
-            body: JSON.stringify(payload),
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': this.state.data.csrf 
-            }
-        });
-        return await data.json();
-    },
     saveContent: async function() {
         let newContent = this.el.querySelector('textarea').value;
         let payload = {data:{content: newContent}};
         let json;
         // Save?
         if(this.mode == 'edit') {
-            json = await this.request('PUT', this.data.links.update, payload);
+            json = await (await this.state.request('PUT', this.data.links.update, payload)).json();
         } else {
-            json = await this.request('POST', this.data.links.create, payload);
+            json = await (await this.state.request('POST', this.data.links.create, payload)).json();
         }
         console.log(json);
         
@@ -89,7 +78,6 @@ export default Component.define({
     },
     showLinkedContent: function(e) {
         let link = e.dataset.link.replace(/ /g,'-');
-        console.log(typeof link);
         this.state.trigger('entity:show', {'entity': link});
     },
     setHeight: function(e)

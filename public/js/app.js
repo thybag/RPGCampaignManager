@@ -15404,7 +15404,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 _context.next = 4;
-                return fetch("2/map/" + tab + "?include=entities");
+                return _this.state.loadMap(tab);
 
               case 4:
                 data = _context.sent;
@@ -15428,23 +15428,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _ref.apply(this, arguments);
       };
     }());
-    /*
-    this.state.on('entity:show', (e) => {
-        if(this.hasMarker(e.entity)) {
-            this.highLightMarker(e.entity);
-        }
-    });*/
-
     this.state.on('map:focus', function (e) {
       console.log("map:focus", e.entity);
 
-      if (!e.map != 1) {}
+      if (!e.map != 1) {// Change map
+      }
 
       if (_this.hasMarker(e.entity)) {
-        console.log("found marker");
-
         _this.highLightMarker(e.entity);
       }
+    });
+    this.state.on('entity:updated', function (entity) {
+      _this.addEntityToMap(entity);
     });
   },
   clearMap: function clearMap() {
@@ -15457,6 +15452,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   hasMarker: function hasMarker(e_id) {
     return this.mapLookup[e_id];
+  },
+  getMarker: function getMarker(e_id) {
+    return this.mapLookup[e_id];
+  },
+  removeMarker: function removeMarker(e_id) {
+    this.mapLookup[e_id].remove();
+    delete this.mapLookup[e_id];
   },
   _offsetPoi: function _offsetPoi(latlng) {
     var offset = this.map.getSize().divideBy(4).x;
@@ -15528,21 +15530,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 drawCircleMarker: false
               });
               map.data.entities.map(function (m) {
-                leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.geoJson(JSON.parse(m.data.geo), {
-                  onEachFeature: function onEachFeature(f, l) {
-                    l.on({
-                      'click': function click(x) {
-                        console.log(m.id);
-
-                        _this2.state.trigger('entity:show', {
-                          'entity': m.id
-                        });
-                      }
-                    }); // Let us lookup "linked" marker easily
-
-                    _this2.mapLookup[m.id] = l;
-                  }
-                }).addTo(_this2.map);
+                _this2.addEntityToMap(m);
               });
               this.map.on('pm:create', function (item) {
                 _this2.state.trigger('entity:create', {
@@ -15567,28 +15555,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
     return createMap;
   }(),
-  render: function () {
-    var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3);
-    }));
+  addEntityToMap: function addEntityToMap(entity) {
+    var _this3 = this;
 
-    function render() {
-      return _render.apply(this, arguments);
+    // Remove existing marker if we have one
+    if (this.hasMarker(entity.id)) {
+      this.removeMarker(entity.id);
     }
 
-    return render;
-  }(),
-  addNewMap: function addNewMap() {},
-  viewMap: function viewMap(e) {},
-  hi: function hi() {}
+    leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.geoJson(JSON.parse(entity.data.geo), {
+      onEachFeature: function onEachFeature(feature, layer) {
+        layer.on({
+          'click': function click(point) {
+            _this3.state.trigger('entity:show', {
+              'entity': entity.id
+            });
+          }
+        }); // Let us lookup "linked" marker easily
+
+        _this3.mapLookup[entity.id] = layer;
+      }
+    }).addTo(this.map);
+  }
 }));
 
 /***/ }),
@@ -15803,10 +15791,11 @@ var panelEditTpl = function panelEditTpl(data, action) {
 
             case 13:
               this.content = _context.sent;
+              this.state.trigger('entity:updated', this.content);
               this.mode = 'view';
               this.render();
 
-            case 16:
+            case 17:
             case "end":
               return _context.stop();
           }
@@ -15893,7 +15882,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return this.state.requestEntity(entity);
+              return this.state.loadEntity(entity);
 
             case 2:
               data = _context2.sent;
@@ -15956,8 +15945,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2__);
 
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -16015,51 +16002,12 @@ var editTpl = function editTpl(content) {
     container.innerHTML = viewTpl(parsed);
     this.el.appendChild(container);
   },
-  request: function () {
-    var _request = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(method, url, payload) {
-      var data;
+  saveContent: function () {
+    var _saveContent = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var newContent, payload, json;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return fetch(url, {
-                method: method,
-                body: JSON.stringify(payload),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRF-TOKEN': this.state.data.csrf
-                }
-              });
-
-            case 2:
-              data = _context.sent;
-              _context.next = 5;
-              return data.json();
-
-            case 5:
-              return _context.abrupt("return", _context.sent);
-
-            case 6:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    function request(_x, _x2, _x3) {
-      return _request.apply(this, arguments);
-    }
-
-    return request;
-  }(),
-  saveContent: function () {
-    var _saveContent = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-      var newContent, payload, json;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
             case 0:
               newContent = this.el.querySelector('textarea').value;
               payload = {
@@ -16069,37 +16017,45 @@ var editTpl = function editTpl(content) {
               };
 
               if (!(this.mode == 'edit')) {
-                _context2.next = 8;
+                _context.next = 10;
                 break;
               }
 
-              _context2.next = 5;
-              return this.request('PUT', this.data.links.update, payload);
+              _context.next = 5;
+              return this.state.request('PUT', this.data.links.update, payload);
 
             case 5:
-              json = _context2.sent;
-              _context2.next = 11;
+              _context.next = 7;
+              return _context.sent.json();
+
+            case 7:
+              json = _context.sent;
+              _context.next = 15;
               break;
 
-            case 8:
-              _context2.next = 10;
-              return this.request('POST', this.data.links.create, payload);
-
             case 10:
-              json = _context2.sent;
+              _context.next = 12;
+              return this.state.request('POST', this.data.links.create, payload);
 
-            case 11:
+            case 12:
+              _context.next = 14;
+              return _context.sent.json();
+
+            case 14:
+              json = _context.sent;
+
+            case 15:
               console.log(json);
               this.data = json;
               this.mode = 'view';
               this.render();
 
-            case 15:
+            case 19:
             case "end":
-              return _context2.stop();
+              return _context.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee, this);
     }));
 
     function saveContent() {
@@ -16114,7 +16070,6 @@ var editTpl = function editTpl(content) {
   },
   showLinkedContent: function showLinkedContent(e) {
     var link = e.dataset.link.replace(/ /g, '-');
-    console.log(_typeof(link));
     this.state.trigger('entity:show', {
       'entity': link
     });
@@ -16127,11 +16082,11 @@ var editTpl = function editTpl(content) {
 
 /***/ }),
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
-/*! no exports provided */
+/***/ "./resources/js/Models/App.js":
+/*!************************************!*\
+  !*** ./resources/js/Models/App.js ***!
+  \************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16139,10 +16094,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/model.js */ "./node_modules/lumpjs/src/model.js");
-/* harmony import */ var _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/NavBar.js */ "./resources/js/Components/NavBar.js");
-/* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
-/* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
-/* harmony import */ var _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Components/ContentNav.js */ "./resources/js/Components/ContentNav.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -16150,20 +16101,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
-
-
- // Boot global state
-
-var Bus = new lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"]({
-  tab: 'default',
-  entity: {
-    'action': 'view',
-    'entity': 1
-  }
-});
-
-Bus.request = /*#__PURE__*/function () {
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.request = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(method, url) {
     var payload,
         options,
@@ -16204,57 +16144,100 @@ Bus.request = /*#__PURE__*/function () {
   };
 }();
 
-Bus.requestEntity = /*#__PURE__*/function () {
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(id) {
     var url;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            url = "".concat(Bus.get('url'), "/campaign/").concat(Bus.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
-            return _context2.abrupt("return", Bus.request("GET", url));
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
+            return _context2.abrupt("return", this.request("GET", url));
 
           case 2:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2);
+    }, _callee2, this);
   }));
 
   return function (_x3) {
     return _ref2.apply(this, arguments);
   };
-}(); // Setup "views"
+}();
+
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(id) {
+    var url;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities");
+            return _context3.abrupt("return", this.request("GET", url));
+
+          case 2:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, this);
+  }));
+
+  return function (_x4) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+/***/ }),
+
+/***/ "./resources/js/app.js":
+/*!*****************************!*\
+  !*** ./resources/js/app.js ***!
+  \*****************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Models_App_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Models/App.js */ "./resources/js/Models/App.js");
+/* harmony import */ var _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Components/NavBar.js */ "./resources/js/Components/NavBar.js");
+/* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
+/* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
+/* harmony import */ var _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/ContentNav.js */ "./resources/js/Components/ContentNav.js");
 
 
-var nav = _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
-  state: Bus
-});
-var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
-  state: Bus
-});
-var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
-  state: Bus
-});
-var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_5__["default"].make({
-  state: Bus
-});
-var History = window.history; // Global events
 
-Bus.on('update:tab', function (tab) {
-  console.log("tab set to " + tab);
+
+ // Boot global state
+
+var Bus = new _Models_App_js__WEBPACK_IMPORTED_MODULE_0__["default"]({
+  tab: 'default',
+  entity: {
+    'action': 'view',
+    'entity': 1
+  }
+}); // Setup "views"
+
+var nav = _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
+  state: Bus
 });
-Bus.on('change', function (a, b, n, o) {
-  console.log(a, b, n, o); //console.log(a,b);
-  //console.log(Bus.data);
+var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
+  state: Bus
 });
+var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
+  state: Bus
+});
+var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
+  state: Bus
+}); // Global events
+
 document.addEventListener('DOMContentLoaded', function () {
-  console.log("ready");
   Bus.data.url = window._campaign.url;
   Bus.data.campaign_id = window._campaign.id;
-  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  console.log("trigger show");
+  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Show default
+
   Bus.trigger('entity:show', {
     entity: window._campaign.default_entity
   });
