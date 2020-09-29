@@ -6,6 +6,7 @@ export default Component.define({
     el: document.querySelector('#map'),
     map: null,
     mapLookup: {},
+    _editingPoi: null,
     initialize: function () {
         // Listen to state
         this.state.on('update:tab', async (tab) => {
@@ -21,14 +22,20 @@ export default Component.define({
         });
 
         this.state.on('map:focus', (e) => {
-            console.log("map:focus", e.entity);
-            if (!e.map != 1){
-                // Change map
+            // Change map            
+            if (e.map != this.state.tab){
+                this.state.data.tab = e.map;
             }
 
             if (this.hasMarker(e.entity)) {
                 this.highLightMarker(e.entity);
             }
+        });
+
+        this.state.on('map:poi', (entity) => {
+            console.log("place marker mode");
+            this._editingPoi = entity;
+            this.map.pm.enableDraw('Marker');
         });
 
         this.state.on('entity:updated', (entity) => {
@@ -118,7 +125,13 @@ export default Component.define({
         });
 
 	    this.map.on('pm:create', (item) => {
-            this.state.trigger('entity:create', {geo: item, category: 'Location'});
+            if(this._editingPoi != null) {
+                this.state.trigger('entity:update', {geo: item, entity: this._editingPoi});
+            } else {
+                this.state.trigger('entity:create', {geo: item, category: 'Location'});
+            }
+
+            this._editingPoi = null;
             this.map.pm.Draw.disable();
 	    });
     },

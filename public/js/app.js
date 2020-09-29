@@ -15384,6 +15384,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   el: document.querySelector('#map'),
   map: null,
   mapLookup: {},
+  _editingPoi: null,
   initialize: function initialize() {
     var _this = this;
 
@@ -15429,14 +15430,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
     }());
     this.state.on('map:focus', function (e) {
-      console.log("map:focus", e.entity);
-
-      if (!e.map != 1) {// Change map
+      // Change map            
+      if (e.map != _this.state.tab) {
+        _this.state.data.tab = e.map;
       }
 
       if (_this.hasMarker(e.entity)) {
         _this.highLightMarker(e.entity);
       }
+    });
+    this.state.on('map:poi', function (entity) {
+      console.log("place marker mode");
+      _this._editingPoi = entity;
+
+      _this.map.pm.enableDraw('Marker');
     });
     this.state.on('entity:updated', function (entity) {
       _this.addEntityToMap(entity);
@@ -15533,10 +15540,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this2.addEntityToMap(m);
               });
               this.map.on('pm:create', function (item) {
-                _this2.state.trigger('entity:create', {
-                  geo: item,
-                  category: 'Location'
-                });
+                if (_this2._editingPoi != null) {
+                  _this2.state.trigger('entity:update', {
+                    geo: item,
+                    entity: _this2._editingPoi
+                  });
+                } else {
+                  _this2.state.trigger('entity:create', {
+                    geo: item,
+                    category: 'Location'
+                  });
+                }
+
+                _this2._editingPoi = null;
 
                 _this2.map.pm.Draw.disable();
               });
@@ -15652,7 +15668,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <header>\n            <span class='hidePanel'>X</span>\n\n            <span class='editEntity menu'>&#x22ef;</span>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'>Locate</span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            <span class='hidePanel'>X</span>\n\n            <span class='editEntity menu'>&#x22ef;</span>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15694,19 +15710,32 @@ var panelEditTpl = function panelEditTpl(data, action) {
     "click .editEntity": "editEntity",
     "click .hidePanel": "hidePanel",
     "click .cancelEntity": "cancelEntity",
-    "click .poi": "showOnMap",
+    "click .poi": "managePoi",
     // Model events
     "update:tab": "updatePanelDisplay",
     "entity:create": "createEntity",
-    "entity:show": "showEntity"
+    "entity:show": "showEntity",
+    "entity:update": "updateEntity"
   },
-  showOnMap: function showOnMap() {
-    console.log('showOnMap');
-    console.log(this.content.data);
-    this.state.trigger('map:focus', {
-      map: this.content.data.map_id,
-      entity: this.content.id
-    });
+  hasPoi: function hasPoi() {
+    return this.content.data.geo != null;
+  },
+  managePoi: function managePoi() {
+    if (this.hasPoi()) {
+      this.state.trigger('map:focus', {
+        map: this.content.data.map_id,
+        entity: this.content.id
+      });
+      return;
+    }
+
+    this.state.trigger('map:poi', this.content);
+  },
+  updateEntity: function updateEntity(entity) {
+    this.content = entity.entity;
+    this.content.data._geo = entity.geo;
+    this.mode = 'edit';
+    this.render();
   },
   createEntity: function createEntity(entity) {
     // Else make new!
@@ -15840,6 +15869,13 @@ var panelEditTpl = function panelEditTpl(data, action) {
 
     var template = panelTpl(this.content.data.name);
     var container = template.querySelector('.panel-content');
+
+    if (this.hasPoi()) {
+      template.querySelector('.poi').innerText = "Locate";
+    } else {
+      template.querySelector('.poi').innerText = "Create";
+    }
+
     var blocks = this.content.data.blocks;
     blocks.forEach(function (block) {
       var section = _Section_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({

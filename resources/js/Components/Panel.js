@@ -9,7 +9,7 @@ const panelTpl = function(title) {
             <span class='editEntity menu'>&#x22ef;</span>
         
             <h2>${title}</h2>
-            <span class='poi'>Locate</span>
+            <span class='poi'></span>
         </header>
         
         <div class='panel-content'>
@@ -69,18 +69,32 @@ export default Component.define({
         "click .editEntity": "editEntity",
         "click .hidePanel": "hidePanel",
         "click .cancelEntity": "cancelEntity",
-        "click .poi": "showOnMap",
+        "click .poi": "managePoi",
 
         // Model events
         "update:tab": "updatePanelDisplay",
         "entity:create": "createEntity",
         "entity:show": "showEntity",
+        "entity:update": "updateEntity",
+        
     },
-    showOnMap: function()
+    hasPoi: function(){
+        return (this.content.data.geo != null);
+    },
+    managePoi: function()
     { 
-        console.log('showOnMap');
-        console.log(this.content.data);
-        this.state.trigger('map:focus', {map: this.content.data.map_id, entity: this.content.id});
+        if (this.hasPoi()) {
+            this.state.trigger('map:focus', {map: this.content.data.map_id, entity: this.content.id});   
+            return;  
+        }
+
+        this.state.trigger('map:poi', this.content);
+    },
+    updateEntity: function(entity) {
+        this.content = entity.entity;
+        this.content.data._geo = entity.geo;
+        this.mode = 'edit';
+        this.render();
     },
     createEntity: function(entity)
     {
@@ -163,6 +177,12 @@ export default Component.define({
     renderView: function () {
         let template = panelTpl(this.content.data.name);
         let container = template.querySelector('.panel-content');
+
+        if (this.hasPoi()) {
+            template.querySelector('.poi').innerText = "Locate";
+        } else {
+            template.querySelector('.poi').innerText = "Create";
+        }
 
         let blocks = this.content.data.blocks;
         blocks.forEach((block) => {
