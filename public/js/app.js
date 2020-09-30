@@ -15705,7 +15705,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <header>\n            \n\n            <span class='editEntity menu'>&#x22ef;</span>\n            <div class=\"entity-menu\">\n                <span class='edit-entity'>Edit</span>\n                <span class='hide-panel'>Close</span>\n                <span class='remove-entity'>Remove</span>\n            </div>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            \n            <span class='editEntity menu'>&#x22ef;</span>\n            <div class=\"entity-menu\">\n                <span class='edit-entity'>Edit</span>\n                <span class='hide-panel'>Close</span>\n                <span class='remove-entity'>Remove</span>\n            </div>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -16064,24 +16064,72 @@ var editTpl = function editTpl(content) {
     "dragleave textarea": "test",
     "drop textarea": "test"
   },
-  say: function say(e, target) {
-    // set state on enter/leave so user knows its droppable.
-    console.log(e.type);
+  test: function () {
+    var _test = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
+      var files, f, file, path, _ref, start, end;
 
-    if (e.type == 'drop') {
-      var files = e.dataTransfer.files; // what did we get?
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              e.preventDefault(); // set state on enter/leave so user knows its droppable.
 
-      for (var f = 0; f < files.length; f++) {
-        var file = files[f]; // Only process image files.
+              if (!(e.type == 'drop')) {
+                _context.next = 18;
+                break;
+              }
 
-        if (!file.type.match('image.*')) continue;
-        console.log("Send to image endpoint. TODO: create image/file manager endpoint. Then insert at cursor position.");
-        console.log(file);
-      }
+              files = e.dataTransfer.files; // what did we get?
+
+              f = 0;
+
+            case 4:
+              if (!(f < files.length)) {
+                _context.next = 18;
+                break;
+              }
+
+              file = files[f], path = void 0; // Only process image files.
+
+              if (file.type.match('image.*')) {
+                _context.next = 8;
+                break;
+              }
+
+              return _context.abrupt("continue", 15);
+
+            case 8:
+              _context.next = 10;
+              return this.state.uploadImage(file);
+
+            case 10:
+              _context.next = 12;
+              return _context.sent.json();
+
+            case 12:
+              path = _context.sent;
+              _ref = [target.selectionStart, target.selectionEnd], start = _ref[0], end = _ref[1];
+              target.setRangeText("![".concat(path.data.name, "](").concat(path.data.url, ")"), start, end);
+
+            case 15:
+              f++;
+              _context.next = 4;
+              break;
+
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function test(_x, _x2) {
+      return _test.apply(this, arguments);
     }
 
-    e.preventDefault();
-  },
+    return test;
+  }(),
   render: function render() {
     // redraw
     var div = document.createElement('div');
@@ -16114,11 +16162,11 @@ var editTpl = function editTpl(content) {
     this.el.appendChild(container);
   },
   saveContent: function () {
-    var _saveContent = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+    var _saveContent = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
       var newContent, payload, json;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context2.prev = _context2.next) {
             case 0:
               newContent = this.el.querySelector('textarea').value;
               payload = {
@@ -16128,32 +16176,32 @@ var editTpl = function editTpl(content) {
               };
 
               if (!(this.mode == 'edit')) {
-                _context.next = 10;
+                _context2.next = 10;
                 break;
               }
 
-              _context.next = 5;
+              _context2.next = 5;
               return this.state.request('PUT', this.data.links.update, payload);
 
             case 5:
-              _context.next = 7;
-              return _context.sent.json();
+              _context2.next = 7;
+              return _context2.sent.json();
 
             case 7:
-              json = _context.sent;
-              _context.next = 15;
+              json = _context2.sent;
+              _context2.next = 15;
               break;
 
             case 10:
-              _context.next = 12;
+              _context2.next = 12;
               return this.state.request('POST', this.data.links.create, payload);
 
             case 12:
-              _context.next = 14;
-              return _context.sent.json();
+              _context2.next = 14;
+              return _context2.sent.json();
 
             case 14:
-              json = _context.sent;
+              json = _context2.sent;
 
             case 15:
               console.log(json);
@@ -16163,10 +16211,10 @@ var editTpl = function editTpl(content) {
 
             case 19:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee, this);
+      }, _callee2, this);
     }));
 
     function saveContent() {
@@ -16255,17 +16303,29 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.request = 
   };
 }();
 
-lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(id) {
-    var url;
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.upload = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(url, formData) {
+    var options;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
-            return _context2.abrupt("return", this.request("GET", url));
+            options = {
+              method: 'POST',
+              headers: {
+                //  'Content-Type': 'multipart/form-data',
+                'X-CSRF-TOKEN': this.data.csrf,
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: formData
+            };
+            _context2.next = 3;
+            return fetch(url, options);
 
-          case 2:
+          case 3:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 4:
           case "end":
             return _context2.stop();
         }
@@ -16273,19 +16333,19 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity
     }, _callee2, this);
   }));
 
-  return function (_x3) {
+  return function (_x3, _x4) {
     return _ref2.apply(this, arguments);
   };
 }();
 
-lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = /*#__PURE__*/function () {
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(id) {
     var url;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities,image");
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
             return _context3.abrupt("return", this.request("GET", url));
 
           case 2:
@@ -16296,8 +16356,56 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = 
     }, _callee3, this);
   }));
 
-  return function (_x4) {
+  return function (_x5) {
     return _ref3.apply(this, arguments);
+  };
+}();
+
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(id) {
+    var url;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities,image");
+            return _context4.abrupt("return", this.request("GET", url));
+
+          case 2:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, this);
+  }));
+
+  return function (_x6) {
+    return _ref4.apply(this, arguments);
+  };
+}();
+
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.uploadImage = /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(image) {
+    var url, formData;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/image");
+            formData = new FormData();
+            formData.append('image', image);
+            return _context5.abrupt("return", this.upload(url, formData));
+
+          case 4:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, this);
+  }));
+
+  return function (_x7) {
+    return _ref5.apply(this, arguments);
   };
 }();
 

@@ -33,21 +33,24 @@ export default Component.define({
         "drop textarea": "test",
 
     },
-    say: function(e, target) {
+    test: async function(e, target) {
+        e.preventDefault();
         // set state on enter/leave so user knows its droppable.
-        console.log(e.type);
+
         if (e.type =='drop') {
             const files = e.dataTransfer.files;
             // what did we get?
             for (var f=0; f<files.length; f++) {
-                let file = files[f];
+                let file = files[f], path;
                 // Only process image files.
                 if (!file.type.match('image.*')) continue;
-                console.log("Send to image endpoint. TODO: create image/file manager endpoint. Then insert at cursor position.")
-                console.log(file);
+
+                path = await (await this.state.uploadImage(file)).json();
+                const [start, end] = [target.selectionStart, target.selectionEnd];
+                target.setRangeText(`![${path.data.name}](${path.data.url})`, start, end);
             }
         }
-        e.preventDefault();
+        
     },
     render: function () {
          // redraw

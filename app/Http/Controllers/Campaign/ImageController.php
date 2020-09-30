@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Image;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Campaign\ImageResource;
 
 class ImageController extends Controller
 {
@@ -26,7 +27,7 @@ class ImageController extends Controller
      */
     public function create(Campaign $campaign)
     {
-        //
+       return view('image.edit', ['campaign' => $campaign]);
     }
 
     /**
@@ -37,7 +38,12 @@ class ImageController extends Controller
      */
     public function store(Request $request, Campaign $campaign)
     {
-        //
+        $image = Image::upload($campaign, $request->file('image'), $request->name);
+
+        if ($request->ajax()) {
+            return new ImageResource($image);
+        }
+        return redirect(url("campaign/{$campaign->id}/image/". $image->id ."/edit"));
     }
 
     /**
@@ -59,7 +65,7 @@ class ImageController extends Controller
      */
     public function edit(Campaign $campaign, Image $image)
     {
-        //
+        return view('image.edit', ['campaign' => $campaign, 'image' => $image]);
     }
 
     /**
@@ -71,7 +77,11 @@ class ImageController extends Controller
      */
     public function update(Request $request, Campaign $campaign, Image $image)
     {
-        //
+        $image->name = $request->name;
+        $image->swap($request->file('image'));
+        $image->save();
+
+        return redirect(url("campaign/{$campaign->id}/image/".$image->id ."/edit"));
     }
 
     /**

@@ -21,8 +21,9 @@ class ImageResource extends BaseResource
     {
         return [
             'id' => $this->id,
-            'type' => 'map',
-            'url' => $this->mapURL,
+            'type' => 'image',
+            'name' => $this->name,
+            'url' =>   $this->mapURL,
             'preview' => $this->preview,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
