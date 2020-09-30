@@ -9,7 +9,7 @@
     <div class="container">
        
         <div class="manage-maps">
-            <header> <h1>{{$campaign->name}}</h1></header>
+            <header> <h1>{{$campaign->name}}: Maps</h1></header>
             <div class="row">
                 @foreach ($campaign->maps as $map)
                     <div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Campaign;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Image;
+use App\Http\Controllers\Controller;
 
 class ImageController extends Controller
 {
@@ -15,7 +16,7 @@ class ImageController extends Controller
      */
     public function index(Campaign $campaign)
     {
-        return view('images.index', ['campaign' => $campaign]);
+        return view('image.index', ['campaign' => $campaign]);
     }
 
     /**

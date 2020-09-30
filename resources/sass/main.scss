@@ -368,7 +368,14 @@ padding:1rem;max-width:400px; margin:0 auto;
         }
         .row {
             display:flex;
+
+            &.wrap {
+                flex-wrap: wrap;
+
+                & > div { min-width: 250px; }
+            }
         }
+
         .row + .row {
             margin-top:1rem;
         }

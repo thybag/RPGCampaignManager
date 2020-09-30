@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'],
     	Route::resource('campaign.entity', Campaign\EntityController::class);
     	Route::resource('campaign.entity.block', Campaign\Entity\BlockController::class);
     	Route::resource('campaign.map', Campaign\MapController::class);
+    	Route::resource('campaign.image', Campaign\ImageController::class);
 	}
 );
 

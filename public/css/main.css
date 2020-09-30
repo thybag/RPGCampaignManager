@@ -339,6 +339,12 @@ button.editEntity {
   .row {
     display: flex;
   }
+  .row.wrap {
+    flex-wrap: wrap;
+  }
+  .row.wrap > div {
+    min-width: 250px;
+  }
 
   .row + .row {
     margin-top: 1rem;
