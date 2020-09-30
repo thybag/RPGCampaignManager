@@ -16059,13 +16059,27 @@ var editTpl = function editTpl(content) {
     "click button.edit": "editContent",
     "click a[data-link]": "showLinkedContent",
     "keyup textarea": "setHeight",
-    "dragenter textarea": "say",
-    "dragover textarea": "say",
-    "dragleave textarea": "say",
-    "drop textarea": "say"
+    "dragenter textarea": "test",
+    "dragleave textarea": "test",
+    "drop textarea": "test"
   },
-  say: function say(target, e) {
+  say: function say(e, target) {
+    // set state on enter/leave so user knows its droppable.
     console.log(e.type);
+
+    if (e.type == 'drop') {
+      var files = e.dataTransfer.files; // what did we get?
+
+      for (var f = 0; f < files.length; f++) {
+        var file = files[f]; // Only process image files.
+
+        if (!file.type.match('image.*')) continue;
+        console.log("Send to image endpoint. TODO: create image/file manager endpoint. Then insert at cursor position.");
+        console.log(file);
+      }
+    }
+
+    e.preventDefault();
   },
   render: function render() {
     // redraw
