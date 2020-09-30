@@ -91,7 +91,7 @@ class MapController extends Controller
     {
         $updates = ['name' => $request->name];
         if ($request->file('image')) {
-
+            $updates['image_id'] = Image::upload($campaign, $request->file('image'))->id;
         }
 
         $map->update($updates);
