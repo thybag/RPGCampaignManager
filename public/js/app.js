@@ -15668,7 +15668,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <header>\n            <span class='hidePanel'>X</span>\n\n            <span class='editEntity menu'>&#x22ef;</span>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            \n\n            <span class='editEntity menu'>&#x22ef;</span>\n            <div class=\"entity-menu\">\n                <span class='edit-entity'>Edit</span>\n                <span class='hide-panel'>Close</span>\n                <span class='remove-entity'>Remove</span>\n            </div>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -15705,17 +15705,26 @@ var panelEditTpl = function panelEditTpl(data, action) {
   events: {
     // Sections
     "click .add": "addContentSection",
-    // Entity
+    // Entity Menu
+    "click .menu": "showMenu",
+    "click .hide-panel": "hidePanel",
+    "click .edit-entity": "editEntity",
+    "click .remove-entity": "removeEntity",
+    // Entity General
     "click .saveEntity": "saveEntity",
-    "click .editEntity": "editEntity",
-    "click .hidePanel": "hidePanel",
     "click .cancelEntity": "cancelEntity",
     "click .poi": "managePoi",
+    "blur header": function blurHeader() {
+      console.log("blur");
+    },
     // Model events
     "update:tab": "updatePanelDisplay",
     "entity:create": "createEntity",
     "entity:show": "showEntity",
     "entity:update": "updateEntity"
+  },
+  showMenu: function showMenu() {
+    this.el.querySelector('.entity-menu').classList.toggle('show');
   },
   hasPoi: function hasPoi() {
     return this.content.data.geo != null;
@@ -15751,6 +15760,14 @@ var panelEditTpl = function panelEditTpl(data, action) {
       }
     };
     return this.render();
+  },
+  removeEntity: function removeEntity() {
+    if (confirm("are you sure you want to perminently delete this Entity?")) {
+      // DO remove
+      this.hidePanel();
+    }
+
+    this.showMenu();
   },
   showEntity: function showEntity(entity) {
     // Clean up, if unsaved entity

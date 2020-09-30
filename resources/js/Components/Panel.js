@@ -4,9 +4,14 @@ import Section from './Section.js';
 const panelTpl = function(title) {
     const tpl = `
         <header>
-            <span class='hidePanel'>X</span>
+            
 
             <span class='editEntity menu'>&#x22ef;</span>
+            <div class="entity-menu">
+                <span class='edit-entity'>Edit</span>
+                <span class='hide-panel'>Close</span>
+                <span class='remove-entity'>Remove</span>
+            </div>
         
             <h2>${title}</h2>
             <span class='poi'></span>
@@ -64,19 +69,26 @@ export default Component.define({
     events: {
         // Sections
         "click .add": "addContentSection",
-        // Entity
+        // Entity Menu
+        "click .menu": "showMenu",
+        "click .hide-panel": "hidePanel",
+        "click .edit-entity": "editEntity",
+        "click .remove-entity": "removeEntity",
+        // Entity General
         "click .saveEntity": "saveEntity",
-        "click .editEntity": "editEntity",
-        "click .hidePanel": "hidePanel",
         "click .cancelEntity": "cancelEntity",
         "click .poi": "managePoi",
+        "blur header": function(){console.log("blur")},
 
         // Model events
         "update:tab": "updatePanelDisplay",
         "entity:create": "createEntity",
         "entity:show": "showEntity",
         "entity:update": "updateEntity",
-        
+    },
+    showMenu: function()
+    {
+        this.el.querySelector('.entity-menu').classList.toggle('show');
     },
     hasPoi: function(){
         return (this.content.data.geo != null);
@@ -102,6 +114,13 @@ export default Component.define({
         this.mode = 'new';
         this.content = {data: {category: entity.category, name: entity.name, _geo: entity.geo}, links: {'create': this.content.links.create}};
         return this.render();
+    },
+    removeEntity: function(){
+        if(confirm("are you sure you want to perminently delete this Entity?")){
+            // DO remove
+            this.hidePanel();
+        }
+        this.showMenu();
     },
     showEntity: function(entity) {
         // Clean up, if unsaved entity

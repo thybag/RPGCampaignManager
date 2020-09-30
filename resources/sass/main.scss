@@ -24,14 +24,47 @@
         box-sizing: border-box;
         overflow-x:auto;
         box-shadow: none;
-    }
 
-    .panel .menu {
-        float: right;
-        font-size: 2.4rem;
-        line-height: .5rem;
-        height: 16px;
-        cursor:pointer;
+        header {
+        margin-bottom:1rem;
+        }
+        header h2 {
+            margin-bottom:.6rem;
+        }
+
+        .menu {
+            float: right;
+            font-size: 2.4rem;
+            line-height: .5rem;
+            height: 16px;
+            cursor:pointer;
+        }
+
+        .entity-menu {
+            position: absolute;
+            top:40px;
+            right:20px;
+            width:120px;
+            box-sizing: border-box;
+            box-shadow: 1px 1px 5px 2px #444;
+            display: block;
+            background: #fff;
+            display:none;
+
+            &.show {
+                display:block;
+            }
+
+            span { 
+                display:block; 
+                padding:.5rem;
+                cursor:pointer;
+            }
+            span:hover {
+                background: #eee;
+            }
+        }
+
     }
 
     .panel.min {
@@ -47,25 +80,6 @@
 
     .panel.min.hide {
         display: none;
-    }
-
-    .panel .hidePanel {
-        display:none;
-        float:right;
-        cursor:pointer;
-        width: 20px;
-        height: 20px;
-        text-align: center;
-    }
-    .panel.min .hidePanel {
-       /* display:block;*/
-
-    }
-    .panel header {
-        margin-bottom:1rem;
-    }
-    .panel header h2 {
-        margin-bottom:.6rem;
     }
 
     @mixin label {
