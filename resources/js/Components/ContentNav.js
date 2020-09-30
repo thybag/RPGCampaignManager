@@ -13,11 +13,11 @@ export default Component.define({
     {
 
     },
-    addEntity: function(e){
-        this.state.trigger('entity:create', {'category': e.dataset.category});
+    addEntity: function(e, target){
+        this.state.trigger('entity:create', {'category': target.dataset.category});
     },
-    viewEntity: function(e)
+    viewEntity: function(e, target)
     {
-        this.state.trigger('entity:show', {'entity': e.dataset.entity});
+        this.state.trigger('entity:show', {'entity': target.dataset.entity});
     }
 });

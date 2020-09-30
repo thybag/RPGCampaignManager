@@ -14190,6 +14190,32 @@ module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+// Use whitelist to determine if events exist.
+// In many cases only the "target" will have these & we will be catching the bubbled version.
+const nativeEvents = [
+    'click',
+    'dblclick',
+    'keyup',
+    'keydown',
+    'dragenter',
+    'dragover',
+    'dragleave',
+    'drop',
+    'copy',
+    'cut',
+    'focus',
+    'paste',
+    'contextmenu',
+    'focusin', // focus
+    'focusout' // blur?
+];
+// Blur/focus cannot be defered, so use 
+// override events instead on listeners
+const eventOverride = {
+    'focus': 'focusin',
+    'blur': 'focusout'
+};
+
 const Component = function() {
     // Component
     let ComponentImplementation = function(config) {
@@ -14212,11 +14238,7 @@ const Component = function() {
     ComponentImplementation.prototype.trigger = function(event, ...args) {
         for (let i of this._events[event] || []) {
             // Trigger event (either func or method to call)
-            if (typeof i[1] === "function") {
-                i[1](...args);
-            }else {
-                this[i[1]](...args);
-            }
+            i[1](...args);
         }
     }
     ComponentImplementation.prototype.on = function(key, method) {
@@ -14225,16 +14247,30 @@ const Component = function() {
         let event = (split===-1) ? key : key.substr(0,split);
         let target = (split===-1) ? '' : key.substr(split+1);
 
+        // Override event type if needed.
+        if (eventOverride[event]) {
+            event = eventOverride[event];
+        }
+
+        // Wrap runner in to method
+        let run = (...args) => {
+            if (typeof method === "function") {
+                method(...args);
+            }else {
+                this[method](...args);
+            }
+        };
+
         // Handle custom event
-        if (!(['click','keyup','keydown', 'focus', 'blur'].includes(event)) && !(event in this.el)) {
-            (this._events[key] = this._events[key] || []).push([event, method]);
+        if (!(nativeEvents.includes(event)) && !(event in this.el)) {
+            (this._events[key] = this._events[key] || []).push([event, run]);
             return this;
         }
 
         // If no target, bind to root el
         if (!target) {
-            this.el.addEventListener(event, method);
-            (this._events[key] = this._events[key] || []).push([event, method]);
+            this.el.addEventListener(event, run);
+            (this._events[key] = this._events[key] || []).push([event, run]);
             return this;
         }
 
@@ -14243,7 +14279,7 @@ const Component = function() {
             // e.target was the clicked element
             if (e.target && e.target.matches(target)) {
                 // If function? run it
-                this[method](e.target);
+                run(e, e.target);
             }
         }
 
@@ -15341,14 +15377,14 @@ __webpack_require__.r(__webpack_exports__);
     "click a[data-category]": "addEntity"
   },
   render: function render() {},
-  addEntity: function addEntity(e) {
+  addEntity: function addEntity(e, target) {
     this.state.trigger('entity:create', {
-      'category': e.dataset.category
+      'category': target.dataset.category
     });
   },
-  viewEntity: function viewEntity(e) {
+  viewEntity: function viewEntity(e, target) {
     this.state.trigger('entity:show', {
-      'entity': e.dataset.entity
+      'entity': target.dataset.entity
     });
   }
 }));
@@ -15714,9 +15750,6 @@ var panelEditTpl = function panelEditTpl(data, action) {
     "click .saveEntity": "saveEntity",
     "click .cancelEntity": "cancelEntity",
     "click .poi": "managePoi",
-    "blur header": function blurHeader() {
-      console.log("blur");
-    },
     // Model events
     "update:tab": "updatePanelDisplay",
     "entity:create": "createEntity",
@@ -16025,7 +16058,14 @@ var editTpl = function editTpl(content) {
     "click button.save": "saveContent",
     "click button.edit": "editContent",
     "click a[data-link]": "showLinkedContent",
-    "keyup textarea": "setHeight"
+    "keyup textarea": "setHeight",
+    "dragenter textarea": "say",
+    "dragover textarea": "say",
+    "dragleave textarea": "say",
+    "drop textarea": "say"
+  },
+  say: function say(target, e) {
+    console.log(e.type);
   },
   render: function render() {
     // redraw
@@ -16050,7 +16090,7 @@ var editTpl = function editTpl(content) {
   renderEdit: function renderEdit(container, block) {
     container.innerHTML = editTpl(block.content);
     this.el.appendChild(container);
-    this.setHeight(container.querySelector('textarea'));
+    this.setHeight(null, container.querySelector('textarea'));
   },
   renderView: function renderView(container, block) {
     var parsed = marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2___default()(block.content);
@@ -16124,15 +16164,15 @@ var editTpl = function editTpl(content) {
     this.mode = 'edit';
     this.render();
   },
-  showLinkedContent: function showLinkedContent(e) {
-    var link = e.dataset.link.replace(/ /g, '-');
+  showLinkedContent: function showLinkedContent(e, target) {
+    var link = target.dataset.link.replace(/ /g, '-');
     this.state.trigger('entity:show', {
       'entity': link
     });
   },
-  setHeight: function setHeight(e) {
-    e.style.height = 0;
-    e.style.height = e.scrollHeight + 'px';
+  setHeight: function setHeight(e, target) {
+    target.style.height = 0;
+    target.style.height = target.scrollHeight + 'px';
   }
 }));
 

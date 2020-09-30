@@ -26,7 +26,16 @@ export default Component.define({
         "click button.save": "saveContent",
         "click button.edit": "editContent",
         "click a[data-link]": "showLinkedContent",
-        "keyup textarea": "setHeight"
+        "keyup textarea": "setHeight",
+
+        "dragenter textarea": "say",
+        "dragover textarea": "say",
+        "dragleave textarea": "say",
+        "drop textarea": "say",
+
+    },
+    say: function(target, e) {
+        console.log(e.type);
     },
     render: function () {
          // redraw
@@ -47,7 +56,7 @@ export default Component.define({
     renderEdit: function(container, block){
         container.innerHTML = editTpl(block.content);
         this.el.appendChild(container);    
-        this.setHeight(container.querySelector('textarea'));
+        this.setHeight(null,container.querySelector('textarea'));
     },
     renderView: function(container, block) {
         let parsed = Marked(block.content);
@@ -76,13 +85,13 @@ export default Component.define({
         this.mode = 'edit';
         this.render();
     },
-    showLinkedContent: function(e) {
-        let link = e.dataset.link.replace(/ /g,'-');
+    showLinkedContent: function(e, target) {
+        let link = target.dataset.link.replace(/ /g,'-');
         this.state.trigger('entity:show', {'entity': link});
     },
-    setHeight: function(e)
+    setHeight: function(e, target)
     {
-        e.style.height = 0;
-        e.style.height = e.scrollHeight+'px';
+        target.style.height = 0;
+        target.style.height = target.scrollHeight+'px';
     }
 });
