@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Models\Model;
 use App\Models\Campaign\Map;
+use App\Models\Campaign\Image;
 use App\Models\Campaign\Entity;
-use App\Models\Campaign\Images;
 
 class Campaign extends Model
 {
@@ -21,7 +21,7 @@ class Campaign extends Model
 
     public function images()
     {
-        return $this->hasMany(Images::class);
+        return $this->hasMany(Image::class);
     }
 
     public function entities()

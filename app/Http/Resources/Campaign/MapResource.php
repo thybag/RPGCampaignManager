@@ -21,12 +21,10 @@ class MapResource extends BaseResource
     public function attributes($request)
     {
         return [
-            'id' => $this->id,
-            'type' => 'map',
-            'name' => $this->name,
-            'path' => $this->path,
-            'mapUrl' => $this->mapURL,
-            'preview' => $this->preview,
+            'id'    => $this->id,
+            'type'  => 'map',
+            'name'  => $this->name,
+            'image_id' => $this->image_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

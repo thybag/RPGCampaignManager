@@ -10,7 +10,7 @@ class Map extends Model
 {
     protected $fillable = [
         'name',
-        'path'
+        'image_id'
     ];
 
     public function entities()
@@ -20,7 +20,7 @@ class Map extends Model
 
     public function image()
     {
-        return $this->hasOne(Image::class, 'id', 'map_id');
+        return $this->belongsTo(Image::class);
     }
 
     public function getPreviewAttribute()

@@ -14,7 +14,7 @@
                 @foreach ($campaign->maps as $map)
                     <div>
                         <a class="map-preview" href="{{url("campaign/{$campaign->id}/map/{$map->id}/edit")}}" data-tab='{{$map->id}}' style="background-image:url()">
-                            <img src="{{ $map->preview }}">
+                            <img src="{{ optional($map->image)->preview }}">
                             <button>Edit</button>
                             <div>{{$map->name}}</div>
                             <div><span class="poi">12 poi's</span></div> 

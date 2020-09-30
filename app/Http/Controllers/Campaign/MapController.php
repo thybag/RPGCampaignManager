@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Campaign;
 
-use Image;
 use Storage;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Map;
+use App\Models\Campaign\Image;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Campaign\MapResource;
 
@@ -47,21 +47,12 @@ class MapController extends Controller
     public function store(Campaign $campaign, Request $request)
     {
         $img = $request->file('image');
-        $ext = $img->getClientOriginalExtension();
-        $hash = md5_file($img->getRealPath());
-        $img->storeAs("{$campaign->user_id}/{$campaign->id}", "{$hash}.{$ext}", 'public');
 
-        $preview = Image::make($img)->resize(400, 400, 
-        function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        })->encode();
-
-        Storage::disk('public')->put("{$campaign->user_id}/{$campaign->id}/{$hash}_preview.{$ext}", $preview);
-
+        $image = Image::upload($campaign, $request->file('image'));
+       
         $campaign->maps()->save(Map::make([
             'name'  => $request->name,
-            'path' => "{$campaign->user_id}/{$campaign->id}/{$hash}.{$ext}"
+            'image_id' => $image->id
         ]));
 
         return redirect(url("campaign/{$campaign->id}/map"));
