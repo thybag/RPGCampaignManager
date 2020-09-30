@@ -12,9 +12,9 @@ export default Component.define({
     {
       "click .bar nav a[data-tab]": "viewTab",
     },
-    viewTab: function(e)
+    viewTab: function(e, target)
     {
-        this.state.data.tab = e.dataset.tab;
+        this.state.data.tab = target.dataset.tab;
         [...e.parentNode.children].map(function(x){x.classList.remove('selected');});
         e.classList.add('selected');
     }

@@ -15668,8 +15668,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   events: {
     "click .bar nav a[data-tab]": "viewTab"
   },
-  viewTab: function viewTab(e) {
-    this.state.data.tab = e.dataset.tab;
+  viewTab: function viewTab(e, target) {
+    this.state.data.tab = target.dataset.tab;
 
     _toConsumableArray(e.parentNode.children).map(function (x) {
       x.classList.remove('selected');
