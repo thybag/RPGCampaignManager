@@ -25,11 +25,19 @@
         overflow-x:auto;
         box-shadow: none;
 
-        header {
-        margin-bottom:1rem;
-        }
-        header h2 {
-            margin-bottom:.6rem;
+        &.min {
+            position: absolute;
+            width: 31vw;
+            min-width: 400px;
+            height: calc(100vh - 110px);
+            right:20px;
+            left:auto;
+            top:50px;
+            box-shadow: 1px 1px 5px 2px #444;
+
+            &.hide {
+                display: none;
+            }
         }
 
         .menu {
@@ -65,24 +73,54 @@
             }
         }
 
+        header {
+            margin-bottom:1rem;
+        }
+
+        header h2 {
+            margin-top:0;
+            margin-bottom:.6rem;
+        }
+
+
+        .panel-block {
+
+            .controls {
+                border-bottom: solid 1px #000;
+                text-align: right;
+                padding: .4rem 0;
+                margin-bottom: 1rem;
+            }
+
+            a {
+                font-weight:bold;
+                color:blue;
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            img { width: 100%;}
+
+            blockquote {
+                background: #fdeec3;
+                margin: 0;
+                padding: .2rem;
+                border-top: solid 3px #e09f61;
+                border-bottom: solid 3px #e09f61;
+                box-shadow: 1px 1px 2px 1px #ccc;
+            }
+            p, blockquote {
+                margin-top:0;
+                margin-bottom: 1rem;
+             }
+         }
     }
 
-    .panel.min {
-        position: absolute;
-        width: 31vw;
-        min-width: 400px;
-        height: calc(100vh - 110px);
-        right:20px;
-        left:auto;
-        top:50px;
-        box-shadow: 1px 1px 5px 2px #444;
-    }
 
-    .panel.min.hide {
-        display: none;
-    }
-
-    @mixin label {
+    @mixin badge {
         border: solid 1px #9495bf;
         display: inline-block;
         border-radius: 5px;
@@ -90,10 +128,10 @@
          line-height: 1rem;
     }
     .badge {
-        @include label;
+        @include badge;
     }
     .poi {
-        @include label;
+        @include badge;
         background-image: url(../images/map/marker-icon-2x-blue.png);
         background-repeat: no-repeat;
         background-size: 11px;
@@ -105,14 +143,7 @@
         cursor: pointer;
     }
 
-    .panel h2 {
-        margin-top:0;
-        margin-bottom:1rem;
-    }
-    .panel input {
-        padding: .5rem;
-        width: 400px;
-    }
+    
 
     textarea {
         width: 100%;
@@ -162,7 +193,7 @@ padding:1rem;max-width:400px; margin:0 auto;
         input, textarea {
             border: 1px solid #ccc;
             box-shadow: inset 0 1px 3px #ddd;
-            padding:.4rem;
+            padding:.5rem;
             width: calc(100% - 1rem);
         }
     }
@@ -184,12 +215,7 @@ padding:1rem;max-width:400px; margin:0 auto;
     padding-top:0;
 }
 
-    .panel-block .controls {
-        border-bottom: solid 1px #000;
-        text-align: right;
-        padding: .4rem 0;
-        margin-bottom: 1rem;
-    }
+
 
     button, .button, input[type='submit'] {
         background: #515278;
@@ -227,26 +253,8 @@ padding:1rem;max-width:400px; margin:0 auto;
         float:right;
     }
 
-    .panel-block a {
-        font-weight:bold;
-        color:blue;
-        cursor: pointer;
-    }
-    .panel-block a:hover {
-        text-decoration: underline;
-    }
-    .panel-block blockquote {
-        background: #fdeec3;
-        margin: 0;
-        padding: .2rem;
-        border-top: solid 3px #e09f61;
-        border-bottom: solid 3px #e09f61;
-        box-shadow: 1px 1px 2px 1px #ccc;
-    }
-    .panel-block p,.panel-block blockquote {
-        margin-top:0;
-        margin-bottom: 1rem;
-     }
+
+
 
     .wrapper {
         display:flex;

@@ -22,11 +22,18 @@ body {
   overflow-x: auto;
   box-shadow: none;
 }
-.panel header {
-  margin-bottom: 1rem;
+.panel.min {
+  position: absolute;
+  width: 31vw;
+  min-width: 400px;
+  height: calc(100vh - 110px);
+  right: 20px;
+  left: auto;
+  top: 50px;
+  box-shadow: 1px 1px 5px 2px #444;
 }
-.panel header h2 {
-  margin-bottom: 0.6rem;
+.panel.min.hide {
+  display: none;
 }
 .panel .menu {
   float: right;
@@ -57,20 +64,41 @@ body {
 .panel .entity-menu span:hover {
   background: #eee;
 }
-
-.panel.min {
-  position: absolute;
-  width: 31vw;
-  min-width: 400px;
-  height: calc(100vh - 110px);
-  right: 20px;
-  left: auto;
-  top: 50px;
-  box-shadow: 1px 1px 5px 2px #444;
+.panel header {
+  margin-bottom: 1rem;
 }
-
-.panel.min.hide {
-  display: none;
+.panel header h2 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+.panel .panel-block .controls {
+  border-bottom: solid 1px #000;
+  text-align: right;
+  padding: 0.4rem 0;
+  margin-bottom: 1rem;
+}
+.panel .panel-block a {
+  font-weight: bold;
+  color: blue;
+  cursor: pointer;
+}
+.panel .panel-block a:hover {
+  text-decoration: underline;
+}
+.panel .panel-block img {
+  width: 100%;
+}
+.panel .panel-block blockquote {
+  background: #fdeec3;
+  margin: 0;
+  padding: 0.2rem;
+  border-top: solid 3px #e09f61;
+  border-bottom: solid 3px #e09f61;
+  box-shadow: 1px 1px 2px 1px #ccc;
+}
+.panel .panel-block p, .panel .panel-block blockquote {
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 .badge {
@@ -94,16 +122,6 @@ body {
   padding-left: 22px;
   padding-right: 0.3rem;
   cursor: pointer;
-}
-
-.panel h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.panel input {
-  padding: 0.5rem;
-  width: 400px;
 }
 
 textarea {
@@ -149,7 +167,7 @@ padding:1rem;max-width:400px; margin:0 auto;
 .form > div input, .form > div textarea {
   border: 1px solid #ccc;
   box-shadow: inset 0 1px 3px #ddd;
-  padding: 0.4rem;
+  padding: 0.5rem;
   width: calc(100% - 1rem);
 }
 
@@ -166,13 +184,6 @@ padding:1rem;max-width:400px; margin:0 auto;
   margin-bottom: 1rem;
   padding: 1rem;
   padding-top: 0;
-}
-
-.panel-block .controls {
-  border-bottom: solid 1px #000;
-  text-align: right;
-  padding: 0.4rem 0;
-  margin-bottom: 1rem;
 }
 
 button, .button, input[type=submit] {
@@ -207,30 +218,6 @@ button.add {
 
 button.editEntity {
   float: right;
-}
-
-.panel-block a {
-  font-weight: bold;
-  color: blue;
-  cursor: pointer;
-}
-
-.panel-block a:hover {
-  text-decoration: underline;
-}
-
-.panel-block blockquote {
-  background: #fdeec3;
-  margin: 0;
-  padding: 0.2rem;
-  border-top: solid 3px #e09f61;
-  border-bottom: solid 3px #e09f61;
-  box-shadow: 1px 1px 2px 1px #ccc;
-}
-
-.panel-block p, .panel-block blockquote {
-  margin-top: 0;
-  margin-bottom: 1rem;
 }
 
 .wrapper {
