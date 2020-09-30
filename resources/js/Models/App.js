@@ -22,6 +22,6 @@ Model.prototype.loadEntity = async function(id) {
     return this.request("GET", url);
 }
 Model.prototype.loadMap = async function(id) {
-    const url = `${this.get('url')}/campaign/${this.get('campaign_id')}/map/${id}?include=entities`;
+    const url = `${this.get('url')}/campaign/${this.get('campaign_id')}/map/${id}?include=entities,image`;
     return this.request("GET", url);
 }

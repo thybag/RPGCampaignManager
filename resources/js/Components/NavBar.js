@@ -15,7 +15,7 @@ export default Component.define({
     viewTab: function(e, target)
     {
         this.state.data.tab = target.dataset.tab;
-        [...e.parentNode.children].map(function(x){x.classList.remove('selected');});
-        e.classList.add('selected');
+        [...target.parentNode.children].map(function(x){x.classList.remove('selected');});
+        target.classList.add('selected');
     }
 });

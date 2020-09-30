@@ -4,12 +4,11 @@ namespace App\Http\Resources\Campaign;
 
 use App\Http\Resources\BaseResource;
 
-class MapResource extends BaseResource
+class ImageResource extends BaseResource
 {
     protected $includes = [
         'campaign',
-        'entities',
-        'image'
+        'map'
     ];
 
     /**
@@ -23,9 +22,7 @@ class MapResource extends BaseResource
         return [
             'id' => $this->id,
             'type' => 'map',
-            'name' => $this->name,
-            'path' => $this->path,
-            'mapUrl' => $this->mapURL,
+            'url' => $this->mapURL,
             'preview' => $this->preview,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -35,8 +32,8 @@ class MapResource extends BaseResource
     public function links($request)
     {
         return [
-            'get' => "/campaign/{$this->campaign_id}/map/{$this->id}",
-            'update' => "/campaign/{$this->campaign_id}/map/{$this->id}"
+            'get' => "/campaign/{$this->campaign_id}/image/{$this->id}",
+            'update' => "/campaign/{$this->campaign_id}/image/{$this->id}"
         ];
     }
 

@@ -16,16 +16,19 @@ class BaseResource extends JsonResource
         $results = [];
         foreach($supported as $inc) {
             $data = $this->$inc;
-
             if (empty($data)) {
             	$results[$inc] = null;
-           	} elseif(sizeof($data) == 0){
-           		$results[$inc] = [];
-            } else {
+           	} else {
             	if (is_a($data, 'Illuminate\Support\Collection')) {
-                    $resource = $data->first()->getResource();
-                    $results[$inc] = $resource::collection($data);
+
+                    if ($data->count() == 0) {
+                        $results[$inc] = [];
+                    } else {
+                        $resource = $data->first()->getResource();
+                        $results[$inc] = $resource::collection($data);
+                    }  
                 } else {
+
                     $resource = $data->getResource();
                     $results[$inc] = new $resource($data);
                 }

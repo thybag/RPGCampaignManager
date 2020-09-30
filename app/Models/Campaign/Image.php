@@ -2,7 +2,7 @@
 
 namespace App\Models\Campaign;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 
 class Image extends Model
 {
@@ -15,6 +15,7 @@ class Image extends Model
     {
     	return asset('storage/'.str_replace('.', '_preview.', $this->path));
     }
+
     public function getMapURLAttribute()
     {
     	return asset('storage/'.$this->path);

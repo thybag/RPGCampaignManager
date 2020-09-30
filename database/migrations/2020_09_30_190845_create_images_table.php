@@ -19,7 +19,7 @@ class CreateImagesTable extends Migration
             $table->string('name', 100);
             $table->string('path', 100);
             $table->timestamps();
-            $table->foreign('campaign_id')->references('id')->on('campaign');
+            $table->foreign('campaign_id')->references('id')->on('campaigns');
         });
 
         Schema::table('map', function (Blueprint $table) {

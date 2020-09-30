@@ -15529,20 +15529,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(map) {
       var _this2 = this;
 
-      var img, width, height, bounds, image;
+      var mapPath, img, width, height, bounds, image;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               if (this.map) {
                 this.clearMap();
-              } // Load image
+              }
 
+              mapPath = map.data.image.data.url; // Load image
 
-              _context2.next = 3;
+              _context2.next = 4;
               return new Promise(function (resolve, reject) {
                 var img = document.createElement('img');
-                img.src = map.data.mapUrl;
+                img.src = mapPath;
 
                 img.onload = function () {
                   return resolve(img);
@@ -15551,7 +15552,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 img.onerror = reject;
               });
 
-            case 3:
+            case 4:
               img = _context2.sent;
               width = Math.round(img.width / 10);
               height = Math.round(img.height / 10);
@@ -15563,7 +15564,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }); // Config
 
               bounds = [[0, 0], [height, width]];
-              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(map.data.mapUrl, bounds).addTo(this.map);
+              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(mapPath, bounds).addTo(this.map);
               this.map.fitBounds(bounds);
               this.map.setZoom(1.4);
               this.map.pm.addControls({
@@ -15593,7 +15594,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this2.map.pm.Draw.disable();
               });
 
-            case 14:
+            case 15:
             case "end":
               return _context2.stop();
           }
@@ -15671,11 +15672,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   viewTab: function viewTab(e, target) {
     this.state.data.tab = target.dataset.tab;
 
-    _toConsumableArray(e.parentNode.children).map(function (x) {
+    _toConsumableArray(target.parentNode.children).map(function (x) {
       x.classList.remove('selected');
     });
 
-    e.classList.add('selected');
+    target.classList.add('selected');
   }
 }));
 
@@ -16284,7 +16285,7 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = 
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities");
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities,image");
             return _context3.abrupt("return", this.request("GET", url));
 
           case 2:
