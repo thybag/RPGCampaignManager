@@ -10,19 +10,21 @@
        
         <div class="manage-maps">
             <header> <h1>{{$campaign->name}}: Maps</h1></header>
-            <div class="row">
-                @foreach ($campaign->maps as $map)
-                    <div>
-                        <a class="map-preview" href="{{url("campaign/{$campaign->id}/map/{$map->id}/edit")}}" data-tab='{{$map->id}}' style="background-image:url()">
-                            <img src="{{ optional($map->image)->preview }}">
-                            <button>Edit</button>
-                            <div>{{$map->name}}</div>
-                            <div><span class="poi">12 poi's</span></div> 
-                        </a>
-                    </div>
-                @endforeach
-
-            </div>
+            
+                @foreach ($campaign->maps->chunk(4) as $maps)
+                    <div class="row">
+                    @foreach ($maps as $map)
+                        <div>
+                            <a class="preview" href="{{url("campaign/{$campaign->id}/map/{$map->id}/edit")}}" data-tab='{{$map->id}}' style="background-image:url()">
+                                <img src="{{ optional($map->image)->preview }}">
+                                <button>Edit</button>
+                                <div>{{$map->name}}</div>
+                                <div><span class="poi">12 poi's</span></div> 
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+             @endforeach
             <footer class="controls">
                 <a class="button" href="{{url("campaign/{$campaign->id}/map/create")}}">
                 Add map

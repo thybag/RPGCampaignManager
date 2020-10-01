@@ -383,6 +383,7 @@ button.editEntity {
   .row > div {
     flex: 1;
     margin: 10px;
+    min-width: 0;
   }
 
   .row > div:first-child {
@@ -427,32 +428,30 @@ button.editEntity {
   margin: 0 1rem;
 }
 
-.map-preview {
+.preview {
   border: 1px solid rgba(8, 9, 36, 0.5);
   display: block;
   text-decoration: none;
   color: #000;
   text-align: left;
   position: relative;
+  min-width: 0;
 }
-.map-preview button {
-  border-radius: 0;
-  border: 0;
-}
-
-.map-preview img {
+.preview img {
   width: 100%;
   border-bottom: 1px solid rgba(8, 9, 36, 0.5);
 }
-
-.map-preview div {
+.preview div {
   padding: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-.map-preview button {
+.preview button {
   top: 0;
   right: 0;
   position: absolute;
+  border-radius: 0;
+  border: 0;
 }
 
 .controls {

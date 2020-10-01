@@ -59,7 +59,7 @@ class ImageController extends Controller
      */
     public function show(Campaign $campaign, Image $image)
     {
-        //
+        return new ImageResource($image);
     }
 
     /**
@@ -95,8 +95,8 @@ class ImageController extends Controller
      * @param  \App\Image  $image
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Image $image, Campaign $campaign)
+    public function destroy(Campaign $campaign, Image $image)
     {
-        //
+        $image->delete();
     }
 }

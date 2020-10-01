@@ -16456,6 +16456,7 @@ var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default
 }); // Global events
 
 document.addEventListener('DOMContentLoaded', function () {
+  if (!window._campaign) return false;
   Bus.data.url = window._campaign.url;
   Bus.data.campaign_id = window._campaign.id;
   Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Show default

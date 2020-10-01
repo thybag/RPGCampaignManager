@@ -396,6 +396,7 @@ padding:1rem;max-width:400px; margin:0 auto;
         .row > div {
             flex: 1;
             margin: 10px;
+            min-width:0;
         }
         .row > div:first-child {
             margin-left: 0px;
@@ -422,32 +423,34 @@ padding:1rem;max-width:400px; margin:0 auto;
 
     }
 
-    .map-preview {
+    .preview {
         
         border: 1px solid rgba(8, 9, 36, 0.5);
         display:block;
-
-
-
         text-decoration: none;
         color:#000;
         text-align:left;    
         position: relative;
+        min-width: 0;
 
-        button {border-radius:0; border:0}
+        img {
+            width:100%;
+            border-bottom: 1px solid rgba(8, 9, 36, 0.5);
+        }
+        div {
+            padding:.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
+        button {
+            top:0;right:0;
+            position: absolute;
+            border-radius:0; 
+            border:0
+        }
     }
-     .map-preview img {
-        width:100%;
-        border-bottom: 1px solid rgba(8, 9, 36, 0.5);
-     }
-     .map-preview div {
-        padding:.5rem;
-     }
-    .map-preview button {
-        top:0;right:0;
-        position: absolute;
-    }
+
 
     .controls {
         text-align:center;
