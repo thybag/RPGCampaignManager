@@ -32,8 +32,8 @@
     <div class="main-menu">
         @yield('menu')
 
-        <a href=""{{url("/")}}">Main menu</a>
-        <a href=""{{url("/logout")}}">Logout</a>
+        <a href="{{url("/")}}">Main menu</a>
+        <a href="{{ route('logout') }}">Logout</a>
     </div>
 </div>
 	@yield('content')
