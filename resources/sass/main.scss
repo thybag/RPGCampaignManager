@@ -12,6 +12,38 @@
         margin:0;   
     }
 
+    @mixin menu {
+        width:120px;
+        box-sizing: border-box;
+        box-shadow: 1px 1px 5px 2px #444;
+        display: block;
+        background: #fff;
+        display:none;
+
+        &.show {
+            display:block;
+        }
+
+        span,a { 
+            display:block; 
+            padding:.5rem;
+            cursor:pointer;
+            color:#000;
+            text-decoration: none;
+        }
+        span:hover, a:hover {
+            background: #eee;
+        }
+    }
+    .bar .main-menu {
+        @include menu;
+        width:180px;
+        position: absolute;
+        right: 20px;
+        top: 30px;
+        z-index: 9999990;
+    }
+
     .panel {
         position: absolute;
         left:210px;
@@ -52,25 +84,7 @@
             position: absolute;
             top:40px;
             right:20px;
-            width:120px;
-            box-sizing: border-box;
-            box-shadow: 1px 1px 5px 2px #444;
-            display: block;
-            background: #fff;
-            display:none;
-
-            &.show {
-                display:block;
-            }
-
-            span { 
-                display:block; 
-                padding:.5rem;
-                cursor:pointer;
-            }
-            span:hover {
-                background: #eee;
-            }
+            @include menu;
         }
 
         header {
@@ -102,7 +116,7 @@
                 }
             }
 
-            img { width: 100%;}
+            img { width: 100%; cursor: pointer;}
 
             blockquote {
                 background: #fdeec3;

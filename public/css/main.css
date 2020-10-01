@@ -9,6 +9,33 @@ body {
   margin: 0;
 }
 
+.bar .main-menu {
+  width: 120px;
+  box-sizing: border-box;
+  box-shadow: 1px 1px 5px 2px #444;
+  display: block;
+  background: #fff;
+  display: none;
+  width: 180px;
+  position: absolute;
+  right: 20px;
+  top: 30px;
+  z-index: 9999990;
+}
+.bar .main-menu.show {
+  display: block;
+}
+.bar .main-menu span, .bar .main-menu a {
+  display: block;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #000;
+  text-decoration: none;
+}
+.bar .main-menu span:hover, .bar .main-menu a:hover {
+  background: #eee;
+}
+
 .panel {
   position: absolute;
   left: 210px;
@@ -56,12 +83,14 @@ body {
 .panel .entity-menu.show {
   display: block;
 }
-.panel .entity-menu span {
+.panel .entity-menu span, .panel .entity-menu a {
   display: block;
   padding: 0.5rem;
   cursor: pointer;
+  color: #000;
+  text-decoration: none;
 }
-.panel .entity-menu span:hover {
+.panel .entity-menu span:hover, .panel .entity-menu a:hover {
   background: #eee;
 }
 .panel header {
@@ -87,6 +116,7 @@ body {
 }
 .panel .panel-block img {
   width: 100%;
+  cursor: pointer;
 }
 .panel .panel-block blockquote {
   background: #fdeec3;

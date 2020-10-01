@@ -28,12 +28,13 @@
     <nav>
         @yield('nav')
     </nav>
-    <a href="{{url('/')}}" class='mainMenu'>{{ Auth::user()->name }}</a>
-    <!--
-        Campaign Settings
-        Main menu
-        Logout
-    -->
+    <a class='mainMenu'>{{ Auth::user()->name }}</a>
+    <div class="main-menu">
+        @yield('menu')
+
+        <a href=""{{url("/")}}">Main menu</a>
+        <a href=""{{url("/logout")}}">Logout</a>
+    </div>
 </div>
 	@yield('content')
 </body>

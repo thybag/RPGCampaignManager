@@ -15667,9 +15667,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.state.on('update:tab', function () {});
   },
   events: {
-    "click .bar nav a[data-tab]": "viewTab"
+    "click .bar nav a[data-tab]": "viewTab",
+    "click .mainMenu": "showMenu"
+  },
+  "showMenu": function showMenu(e, target) {
+    this.el.querySelector('.main-menu').classList.toggle('show');
   },
   viewTab: function viewTab(e, target) {
+    console.log("??");
     this.state.data.tab = target.dataset.tab;
 
     _toConsumableArray(target.parentNode.children).map(function (x) {
@@ -16060,63 +16065,61 @@ var editTpl = function editTpl(content) {
     "click button.edit": "editContent",
     "click a[data-link]": "showLinkedContent",
     "keyup textarea": "setHeight",
-    "dragenter textarea": "test",
-    "dragleave textarea": "test",
-    "drop textarea": "test"
+    "click img": "viewImage",
+    "drop textarea": "upload"
   },
-  test: function () {
-    var _test = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
+  viewImage: function viewImage(e, target) {
+    console.log(target);
+    var win = window.open(target.src, '_blank');
+    win.focus();
+  },
+  upload: function () {
+    var _upload = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
       var files, f, file, path, _ref, start, end;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              e.preventDefault(); // set state on enter/leave so user knows its droppable.
-
-              if (!(e.type == 'drop')) {
-                _context.next = 18;
-                break;
-              }
-
+              e.preventDefault();
               files = e.dataTransfer.files; // what did we get?
 
               f = 0;
 
-            case 4:
+            case 3:
               if (!(f < files.length)) {
-                _context.next = 18;
+                _context.next = 17;
                 break;
               }
 
               file = files[f], path = void 0; // Only process image files.
 
               if (file.type.match('image.*')) {
-                _context.next = 8;
+                _context.next = 7;
                 break;
               }
 
-              return _context.abrupt("continue", 15);
+              return _context.abrupt("continue", 14);
 
-            case 8:
-              _context.next = 10;
+            case 7:
+              _context.next = 9;
               return this.state.uploadImage(file);
 
-            case 10:
-              _context.next = 12;
+            case 9:
+              _context.next = 11;
               return _context.sent.json();
 
-            case 12:
+            case 11:
               path = _context.sent;
               _ref = [target.selectionStart, target.selectionEnd], start = _ref[0], end = _ref[1];
               target.setRangeText("![".concat(path.data.name, "](").concat(path.data.url, ")"), start, end);
 
-            case 15:
+            case 14:
               f++;
-              _context.next = 4;
+              _context.next = 3;
               break;
 
-            case 18:
+            case 17:
             case "end":
               return _context.stop();
           }
@@ -16124,11 +16127,11 @@ var editTpl = function editTpl(content) {
       }, _callee, this);
     }));
 
-    function test(_x, _x2) {
-      return _test.apply(this, arguments);
+    function upload(_x, _x2) {
+      return _upload.apply(this, arguments);
     }
 
-    return test;
+    return upload;
   }(),
   render: function render() {
     // redraw

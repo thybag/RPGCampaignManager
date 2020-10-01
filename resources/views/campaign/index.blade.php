@@ -8,6 +8,12 @@
         <a href="{{ url("campaign/{$campaign->id}/map") }}" class='new'>&#x22ef;</a>
 @endsection
 
+@section('menu')
+        <a href="#">Campaign Settings</a>
+        <a href="{{url("/campaign/{$campaign->id}/image")}}">Manage Images</a>
+        <a href="{{url("/campaign/{$campaign->id}/map")}}">Manage Maps</a>
+@endsection
+
 @section('content')
 <script>
     window._campaign = {

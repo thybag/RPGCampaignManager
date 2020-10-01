@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\Models\Campaign'               => 'App\Policies\CampaignPolicy',
         'App\Models\Campaign\Map'           => 'App\Policies\Campaign\MapPolicy',
+        'App\Models\Campaign\Image'         => 'App\Policies\Campaign\ImagePolicy',
         'App\Models\Campaign\Entity'        => 'App\Policies\Campaign\EntityPolicy',
         'App\Models\Campaign\Entity\Block'  => 'App\Policies\Campaign\Entity\BlockPolicy',
     ];

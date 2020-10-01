@@ -11,9 +11,14 @@ export default Component.define({
     events: 
     {
       "click .bar nav a[data-tab]": "viewTab",
+      "click .mainMenu": "showMenu"
+    },
+    "showMenu": function(e, target){
+        this.el.querySelector('.main-menu').classList.toggle('show');
     },
     viewTab: function(e, target)
     {
+        console.log("??");
         this.state.data.tab = target.dataset.tab;
         [...target.parentNode.children].map(function(x){x.classList.remove('selected');});
         target.classList.add('selected');

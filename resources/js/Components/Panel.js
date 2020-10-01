@@ -77,6 +77,7 @@ export default Component.define({
         "click .saveEntity": "saveEntity",
         "click .cancelEntity": "cancelEntity",
         "click .poi": "managePoi",
+        
         // Model events
         "update:tab": "updatePanelDisplay",
         "entity:create": "createEntity",

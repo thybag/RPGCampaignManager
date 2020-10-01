@@ -10,6 +10,11 @@ use App\Http\Resources\Campaign\ImageResource;
 
 class ImageController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Image::class, 'image');;
+    }
+
     /**
      * Display a listing of the resource.
      *
