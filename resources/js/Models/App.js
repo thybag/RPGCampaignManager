@@ -45,3 +45,7 @@ Model.prototype.uploadImage = async function(image) {
     formData.append('image', image);  
     return this.upload(url, formData);
 }
+Model.prototype.deleteItem = async function(type, id) {
+    const url = `${this.get('url')}/campaign/${this.get('campaign_id')}/${type}/${id}`;
+    return this.request("DELETE", url);
+}

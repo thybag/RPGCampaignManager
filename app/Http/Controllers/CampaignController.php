@@ -32,7 +32,7 @@ class CampaignController extends Controller
      */
     public function show(Campaign $campaign)
     {
-        return view('campaign.index', ['campaign' => $campaign]);
+        return view('campaign.index', ['campaign' => $campaign, 'mode' => 'campaign']);
     }
 
     /**

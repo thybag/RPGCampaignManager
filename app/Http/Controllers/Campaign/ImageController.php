@@ -98,5 +98,6 @@ class ImageController extends Controller
     public function destroy(Campaign $campaign, Image $image)
     {
         $image->delete();
+        return new ImageResource($image);
     }
 }

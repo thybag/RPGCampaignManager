@@ -104,8 +104,9 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Map $map)
+    public function destroy(Campaign $campaign, Map $map)
     {
-        //
+        $map->delete();
+        return new MapResource($map);
     }
 }

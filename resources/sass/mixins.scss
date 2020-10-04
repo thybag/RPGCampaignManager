@@ -1,0 +1,66 @@
+@mixin menu {
+    width:120px;
+    box-sizing: border-box;
+    box-shadow: 1px 1px 5px 2px #444;
+    display: block;
+    background: #fff;
+    display:none;
+
+    &.show {
+        display:block;
+    }
+
+    span,a { 
+        display:block; 
+        padding:.5rem;
+        cursor:pointer;
+        color:#000;
+        text-decoration: none;
+    }
+    span:hover, a:hover {
+        background: #eee;
+    }
+}
+
+
+@mixin threedotmenu {
+    font-size: 2.4rem;
+    line-height: .5rem;
+    height: 16px;
+    cursor:pointer;
+    border-radius: .4rem;
+    padding: 0 2px;
+    transition: background .6s;
+
+    &:hover {
+        background: rgba(0,0,0,.4);
+    }
+}
+
+@mixin badge {
+    border: solid 1px #9495bf;
+    display: inline-block;
+    border-radius: 5px;
+    padding: .2rem;
+    line-height: 1rem;
+}
+
+@mixin box {
+    border: 1px solid rgba(8, 9, 36, 0.5);
+    margin: 0 auto;
+    border-radius: 2px;
+    margin-bottom:1rem;
+
+    header {
+        background-color: $header-primary; //rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        padding:.75rem;
+        margin-bottom:1rem;
+
+        h2, h1 {padding:0; margin:0; font-size:1rem; color: #fff;}
+    }
+
+    footer {
+        padding: 0 1rem 1rem 1rem;
+    }
+}

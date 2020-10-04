@@ -1,0 +1,55 @@
+.container .form {
+    @include box;
+    width:66%;
+}
+
+.form {
+    & > div {
+        padding:0 1rem 1rem 1rem;
+
+        label {
+            display:block;
+            margin-bottom:.4rem;
+        }
+
+        input, textarea {
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 3px #ddd;
+            padding:.5rem;
+            width: calc(100% - 1rem);
+        }
+    }
+}
+
+.panel .form div {
+    padding-left:0;
+    padding-right:0;
+}
+
+
+button, .button, input[type='submit'] {
+    background: #515278;
+    border: none;
+    padding: .5rem 1rem;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    font-size:0.9rem;
+    display: inline-block;
+    line-height: 1rem;
+    vertical-align: top;
+    border: solid 2px $header-primary;
+    border-radius: 3px;
+}
+.button.right, button.right,input[type='submit'].right {
+    float:right;
+}
+
+.button.cancel, button.cancel {
+    border: solid 2px $secondary;
+    background-color: $secondary-alt;
+}
+   
+textarea.uploadable {
+    border: solid 2px blue;
+}

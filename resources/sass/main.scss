@@ -1,48 +1,38 @@
-    $header-primary: #080924;
-    $secondary: #515278;
-    $secondary-alt: #51527899;
+$header-primary: #080924;
+$secondary: #515278;
+$secondary-alt: #51527899;
 
-     body {
-        margin:0;
-        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
-    }
-    #map {
-        width: calc(100vw - 200px);
-        height: calc(100vh - 37px);
-        margin:0;   
-    }
+body {
+    margin:0;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
 
-    @mixin menu {
-        width:120px;
-        box-sizing: border-box;
-        box-shadow: 1px 1px 5px 2px #444;
-        display: block;
-        background: #fff;
-        display:none;
+// General
+@import 'mixins.scss';
+@import 'grid.scss';
+@import 'form.scss';
 
-        &.show {
-            display:block;
-        }
+// Specific
+@import 'nav.scss';
+@import 'preview-block.scss';
 
-        span,a { 
-            display:block; 
-            padding:.5rem;
-            cursor:pointer;
-            color:#000;
-            text-decoration: none;
-        }
-        span:hover, a:hover {
-            background: #eee;
-        }
-    }
-    .bar .main-menu {
-        @include menu;
-        width:180px;
-        position: absolute;
-        right: 20px;
-        top: 30px;
-        z-index: 9999990;
-    }
+.content-list {
+    @include box;
+    .row { margin: 0 1rem; }
+}
+
+#map {
+    width: calc(100vw - 200px);
+    height: calc(100vh - 37px);
+    margin:0;   
+}
+
+.menu-content {
+    @include menu;
+}
+
+
+
 
     .panel {
         position: absolute;
@@ -74,10 +64,8 @@
 
         .menu {
             float: right;
-            font-size: 2.4rem;
-            line-height: .5rem;
-            height: 16px;
-            cursor:pointer;
+            @include threedotmenu;
+            
         }
 
         .entity-menu {
@@ -134,13 +122,7 @@
     }
 
 
-    @mixin badge {
-        border: solid 1px #9495bf;
-        display: inline-block;
-        border-radius: 5px;
-        padding: .2rem;
-         line-height: 1rem;
-    }
+
     .badge {
         @include badge;
     }
@@ -170,53 +152,6 @@
 padding:1rem;max-width:400px; margin:0 auto;
  */
 
-@mixin box {
-    border: 1px solid rgba(8, 9, 36, 0.5);
-    margin: 0 auto;
-    border-radius: 2px;
-    margin-bottom:1rem;
-
-    header {
-        background-color: $header-primary; //rgba(0, 0, 0, 0.03);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-        padding:.75rem;
-        margin-bottom:1rem;
-
-        h2, h1 {padding:0; margin:0; font-size:1rem; color: #fff;}
-    }
-
-    footer {
-        padding: 0 1rem 1rem 1rem;
-    }
-}
-
-.container .form {
-    @include box;
-    width:66%;
-}
-
-.form {
-    & > div {
-        padding:0 1rem 1rem 1rem;
-
-        label {
-            display:block;
-            margin-bottom:.4rem;
-        }
-
-        input, textarea {
-            border: 1px solid #ccc;
-            box-shadow: inset 0 1px 3px #ddd;
-            padding:.5rem;
-            width: calc(100% - 1rem);
-        }
-    }
-}
-
-.panel .form div {
-    padding-left:0;
-    padding-right:0;
-}
 
 
 .campaign-item {
@@ -228,33 +163,6 @@ padding:1rem;max-width:400px; margin:0 auto;
     padding:1rem;
     padding-top:0;
 }
-
-
-
-    button, .button, input[type='submit'] {
-        background: #515278;
-        border: none;
-        padding: .5rem 1rem;
-        color: #fff;
-        cursor: pointer;
-        text-decoration: none;
-        font-size:0.9rem;
-        display: inline-block;
-        line-height: 1rem;
-        vertical-align: top;
-        border: solid 2px $header-primary;
-        border-radius: 3px;
-    }
-    .button.right, button.right,input[type='submit'].right {
-        float:right;
-    }
-
-    .button.cancel, button.cancel {
-        border: solid 2px $secondary;
-        background-color: $secondary-alt;
-    }
-   
-
 
 
 
@@ -307,46 +215,7 @@ padding:1rem;max-width:400px; margin:0 auto;
         border-top:none;
     }
 
-    .bar {
-        background: $header-primary;
-        color: #fff;
 
-        a {color:#fff;}
-        h1 {
-            font-size:1rem;
-            display:inline-block;
-            font-weight: normal;
-            width:205px;
-            box-sizing: border-box;
-            padding:8px 1rem;
-            margin:0;
-            padding-right:0;
-        }
-        nav {
-            display:inline-block;
-            font-size: 0;
-
-            a {
-                color:#fff;
-                display:inline-block;
-                border-right: solid 1px #444;
-                border-left: solid 1px #444;
-                padding:8px;
-                text-decoration: none;
-                font-size: 1rem;
-                margin-left:-1px;
-            }
-
-            a.selected {
-                background:#515278;
-                background: #515278;
-                border-radius: 1rem;
-                padding: 1px 4px;
-                margin:4px;
-            }
-        }
-    }
- 
 
     .mainMenu {
         float:right;
@@ -366,90 +235,8 @@ padding:1rem;max-width:400px; margin:0 auto;
         border-left: 0.3em solid transparent;
     }
 
-   .container {
-        max-width: 960px;
-        position: relative;
-        margin: 0 2rem;
-        padding:2rem 0;
-    }
-    .row > div {
-        margin-bottom:2rem;
-    }
-    @media (min-width: 990px) {
-        .container {
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .row {
-            display:flex;
-
-            &.wrap {
-                flex-wrap: wrap;
-
-                & > div { min-width: 250px; }
-            }
-        }
-
-        .row + .row {
-            margin-top:1rem;
-        }
-        .row > div {
-            flex: 1;
-            margin: 10px;
-            min-width:0;
-        }
-        .row > div:first-child {
-            margin-left: 0px;
-        }
-        .row > div:last-child {
-            margin-right: 0px;
-        }
-    }
-    .container h1, h2, h3 {
-        margin-top:0;
-        margin-bottom:1rem;
-    }
-    .container  h2{        
-        color:#555;
-    }
-
-    .manage-maps {
-        @include box;
-
-        .row {
-            margin: 0 1rem;
-        }
 
 
-    }
-
-    .preview {
-        
-        border: 1px solid rgba(8, 9, 36, 0.5);
-        display:block;
-        text-decoration: none;
-        color:#000;
-        text-align:left;    
-        position: relative;
-        min-width: 0;
-
-        img {
-            width:100%;
-            border-bottom: 1px solid rgba(8, 9, 36, 0.5);
-        }
-        div {
-            padding:.5rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        button {
-            top:0;right:0;
-            position: absolute;
-            border-radius:0; 
-            border:0
-        }
-    }
 
 
     .controls {

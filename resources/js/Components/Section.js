@@ -29,7 +29,14 @@ export default Component.define({
         "keyup textarea": "setHeight",
         "click img": "viewImage",
         "drop textarea": "upload",
-
+        "dragenter textarea": "uploadFocus",
+        "dragleave textarea": "uploadBlur",
+    },
+    uploadFocus:function(e,target){
+        target.classList.add('uploadable');
+    },
+    uploadBlur: function(e, target) {
+        target.classList.remove('uploadable');
     },
     viewImage: function(e, target)
     {
@@ -50,6 +57,7 @@ export default Component.define({
             const [start, end] = [target.selectionStart, target.selectionEnd];
             target.setRangeText(`![${path.data.name}](${path.data.url})`, start, end);
         }
+        this.uploadBlur(e, target);
     },
     render: function () {
          // redraw

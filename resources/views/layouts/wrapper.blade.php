@@ -13,13 +13,19 @@
 
     <!-- Scripts -->
 
-    <script src="{{ asset('js/app.js') }}" defer></script>
+<script src="{{ asset('js/app.js') }}" defer></script>
+ 
+@if (!empty($campaign))
+    <script>
+        window._campaign = {
+            'id': '{{$campaign->id}}',
+            'mode': '{{empty($mode) ? 'default' : 'campaign'}}',
+            'url': '{{url('/')}}',
+            'default_entity': '{{$campaign->entities->first()->id}}'
+        };
+    </script>
+@endif
 </head>
-
-<style type="text/css">
-
-
-</style>
 
 <body>
 <div class="bar">
@@ -30,8 +36,12 @@
     </nav>
     <a class='mainMenu'>{{ Auth::user()->name }}</a>
     <div class="main-menu">
-        @yield('menu')
 
+        @if(!empty($campaign))
+            <a href="#">Campaign Settings</a>
+            <a href="{{url("/campaign/{$campaign->id}/image")}}">Manage Images</a>
+            <a href="{{url("/campaign/{$campaign->id}/map")}}">Manage Maps</a>
+        @endif
         <a href="{{url("/")}}">Main menu</a>
         <a href="{{ route('logout') }}">Logout</a>
     </div>

@@ -15391,6 +15391,117 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/Element/Preview.js":
+/*!****************************************************!*\
+  !*** ./resources/js/Components/Element/Preview.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+var button = function button() {
+  var btn = document.createElement('span');
+  btn.className = 'menu';
+  btn.innerHTML = "&#x22ef;";
+  return btn;
+};
+
+var menu = function menu(title) {
+  var tpl = "\n        <span data-action=\"edit\">Edit</span>\n        <span data-action=\"remove\">Remove</span>\n    ";
+  var template = document.createElement('div');
+  template.className = 'menu-content';
+  template.innerHTML = tpl;
+  return template;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
+  menu: null,
+  initialize: function initialize() {
+    // Add menu button
+    this.el.appendChild(button());
+  },
+  events: {
+    "click .menu": "show",
+    "blur": "hide",
+    "click .menu-content span": "action"
+  },
+  render: function render() {
+    // Create menu markup if not done before
+    if (!this.menu) {
+      this.el.tabindex = 0;
+      this.menu = menu();
+      this.el.appendChild(this.menu);
+    } // Toggle menu visibility
+
+
+    this.menu.classList.toggle('show');
+  },
+  "show": function show(e, target) {
+    e.preventDefault();
+    this.render();
+  },
+  "hide": function hide(e) {
+    this.menu.classList.remove('show');
+  },
+  "action": function () {
+    var _action = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
+      var action, type;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              e.preventDefault();
+              action = target.dataset.action;
+              type = this.el.dataset.type;
+              _context.t0 = action;
+              _context.next = _context.t0 === 'edit' ? 6 : _context.t0 === 'remove' ? 7 : 11;
+              break;
+
+            case 6:
+              return _context.abrupt("return", this.el.click());
+
+            case 7:
+              if (!confirm("Are you sure you want to permanently delete this ".concat(type, "?"))) {
+                _context.next = 11;
+                break;
+              }
+
+              _context.next = 10;
+              return this.state.deleteItem(this.el.dataset.type, this.el.dataset.id);
+
+            case 10:
+              window.location.reload();
+
+            case 11:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function action(_x, _x2) {
+      return _action.apply(this, arguments);
+    }
+
+    return action;
+  }()
+}));
+
+/***/ }),
+
 /***/ "./resources/js/Components/Map.js":
 /*!****************************************!*\
   !*** ./resources/js/Components/Map.js ***!
@@ -16066,7 +16177,15 @@ var editTpl = function editTpl(content) {
     "click a[data-link]": "showLinkedContent",
     "keyup textarea": "setHeight",
     "click img": "viewImage",
-    "drop textarea": "upload"
+    "drop textarea": "upload",
+    "dragenter textarea": "uploadFocus",
+    "dragleave textarea": "uploadBlur"
+  },
+  uploadFocus: function uploadFocus(e, target) {
+    target.classList.add('uploadable');
+  },
+  uploadBlur: function uploadBlur(e, target) {
+    target.classList.remove('uploadable');
   },
   viewImage: function viewImage(e, target) {
     console.log(target);
@@ -16120,6 +16239,9 @@ var editTpl = function editTpl(content) {
               break;
 
             case 17:
+              this.uploadBlur(e, target);
+
+            case 18:
             case "end":
               return _context.stop();
           }
@@ -16412,6 +16534,29 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.uploadImag
   };
 }();
 
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.deleteItem = /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(type, id) {
+    var url;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/").concat(type, "/").concat(id);
+            return _context6.abrupt("return", this.request("DELETE", url));
+
+          case 2:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6, this);
+  }));
+
+  return function (_x8, _x9) {
+    return _ref6.apply(this, arguments);
+  };
+}();
+
 /***/ }),
 
 /***/ "./resources/js/app.js":
@@ -16428,6 +16573,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
 /* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
 /* harmony import */ var _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/ContentNav.js */ "./resources/js/Components/ContentNav.js");
+/* harmony import */ var _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Components/Element/Preview.js */ "./resources/js/Components/Element/Preview.js");
+
 
 
 
@@ -16440,30 +16587,49 @@ var Bus = new _Models_App_js__WEBPACK_IMPORTED_MODULE_0__["default"]({
     'action': 'view',
     'entity': 1
   }
-}); // Setup "views"
+}); // Setup Global "views"
 
 var nav = _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
   state: Bus
 });
-var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
-  state: Bus
-});
-var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
-  state: Bus
-});
-var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
-  state: Bus
-}); // Global events
 
-document.addEventListener('DOMContentLoaded', function () {
-  if (!window._campaign) return false;
-  Bus.data.url = window._campaign.url;
-  Bus.data.campaign_id = window._campaign.id;
-  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Show default
+function bootCampaign() {
+  var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
+    state: Bus
+  });
+  var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
+    state: Bus
+  });
+  var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
+    state: Bus
+  }); // Show default
 
   Bus.trigger('entity:show', {
     entity: window._campaign.default_entity
   });
+}
+
+function bootPreviews() {
+  document.querySelectorAll(".preview").forEach(function (el) {
+    _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_5__["default"].make({
+      state: Bus,
+      el: el
+    });
+  });
+} // Global events
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  Bus.data.mode = window._campaign.mode;
+  Bus.data.url = window._campaign.url;
+  Bus.data.campaign_id = window._campaign.id;
+  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  if (Bus.data.mode == 'campaign') {
+    return bootCampaign();
+  } else {
+    return bootPreviews();
+  }
 });
 
 /***/ }),

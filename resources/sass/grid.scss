@@ -1,0 +1,46 @@
+.container {
+    max-width: 960px;
+    position: relative;
+    margin: 0 2rem;
+    padding:2rem 0;
+}
+.row > div {
+    margin-bottom:2rem;
+}
+@media (min-width: 990px) {
+    .container {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .row {
+        display:flex;
+
+        &.wrap {
+            flex-wrap: wrap;
+
+            & > div { min-width: 250px; }
+        }
+    }
+
+    .row + .row {
+        margin-top:1rem;
+    }
+    .row > div {
+        flex: 1;
+        margin: 10px;
+        min-width:0;
+    }
+    .row > div:first-child {
+        margin-left: 0px;
+    }
+    .row > div:last-child {
+        margin-right: 0px;
+    }
+}
+.container h1, h2, h3 {
+    margin-top:0;
+    margin-bottom:1rem;
+}
+.container  h2{        
+    color:#555;
+}

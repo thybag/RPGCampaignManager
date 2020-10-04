@@ -8,20 +8,8 @@
         <a href="{{ url("campaign/{$campaign->id}/map") }}" class='new'>&#x22ef;</a>
 @endsection
 
-@section('menu')
-        <a href="#">Campaign Settings</a>
-        <a href="{{url("/campaign/{$campaign->id}/image")}}">Manage Images</a>
-        <a href="{{url("/campaign/{$campaign->id}/map")}}">Manage Maps</a>
-@endsection
-
 @section('content')
-<script>
-    window._campaign = {
-        'id': '{{$campaign->id}}',
-        'url': '{{url('')}}',
-        'default_entity': '{{$campaign->entities->first()->id}}'
-    };
-</script>
+
 <div class="wrapper">
     <nav class="content-nav">
             <input type="text" placeholder="Filter..."/>
