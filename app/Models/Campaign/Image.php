@@ -81,4 +81,15 @@ class Image extends Model
 
         return "{$campaign->user_id}/{$campaign->id}/{$hash}.{$ext}";
     }
+
+    public function delete()
+    {
+        // Get preview path
+        $preview = str_replace('.', '_preview.', $this->path);
+        // Purge file also
+        Storage::disk('public')->delete($this->path);
+        Storage::disk('public')->delete($preview);
+
+        parent::delete();
+    }
 }
