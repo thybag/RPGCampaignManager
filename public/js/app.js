@@ -15423,6 +15423,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return initialize;
   }(),
   events: {
+    "keyup input": "search",
     "click a[data-category]": "addEntity"
   },
   render: function render() {
@@ -15441,6 +15442,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.children[key] = section;
       this.container.appendChild(section.el);
     }
+  },
+  search: function search(e, target) {
+    Object.values(this.children).forEach(function (ch) {
+      ch.filter(target.value);
+    });
   },
   load: function () {
     var _load = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
@@ -15467,6 +15473,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   // Ensure we have category
                   this.data[item.data.category] = this.data[item.data.category] || {};
                   this.data[item.data.category][item.id] = item.data;
+                  this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
                 }
               } catch (err) {
                 _iterator.e(err);
@@ -15550,6 +15557,7 @@ var categoryTpl = function categoryTpl(title, links) {
 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   data: {},
+  filtered: {},
   initialize: function () {
     var _initialize = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
@@ -15557,9 +15565,10 @@ var categoryTpl = function categoryTpl(title, links) {
           switch (_context.prev = _context.next) {
             case 0:
               this.el = document.createElement('div');
+              this.filtered = this.data;
               this.render();
 
-            case 2:
+            case 3:
             case "end":
               return _context.stop();
           }
@@ -15579,14 +15588,22 @@ var categoryTpl = function categoryTpl(title, links) {
     "click h3": "toggleSection",
     "click a[data-entity]": "showEntity"
   },
+  filter: function filter(_filter) {
+    console.log("apply filter", this.data);
+    this.filtered = Object.values(this.data).filter(function (ent) {
+      return ent._search.indexOf(_filter.toLowerCase()) != -1;
+    });
+    console.log("render filter", this.filtered);
+    this.render();
+  },
   render: function render() {
     //console.log(this.data);
-    this.el.innerHTML = categoryTpl(this.category, this.data);
+    this.el.innerHTML = categoryTpl(this.category, this.filtered);
     this.refreshHeight();
   },
   refreshHeight: function refreshHeight() {
     var section = this.el.querySelector(".panel-content");
-    section.style.height = Object.keys(this.data).length * 27.4 + 'px';
+    section.style.height = Object.keys(this.filtered).length * 27.4 + 'px';
   },
   showEntity: function showEntity(e, target) {
     e.preventDefault();

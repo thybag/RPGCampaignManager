@@ -13,7 +13,7 @@ export default Component.define({
     },
     events: 
     {
-     
+      "keyup input": "search",
       "click a[data-category]": "addEntity",
     },
     render: function ()
@@ -25,6 +25,11 @@ export default Component.define({
             this.container.appendChild(section.el);
         }
     },
+    search: function(e, target) {
+        Object.values(this.children).forEach((ch) => {
+            ch.filter(target.value);
+        });
+    },
     load: async function() {
         // Load and map data.
         const data = await (await this.state.loadEntities()).json();
@@ -32,6 +37,7 @@ export default Component.define({
             // Ensure we have category
             this.data[item.data.category] = (this.data[item.data.category] || {});
             this.data[item.data.category][item.id] = item.data;
+            this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
         }
 
         this.render();

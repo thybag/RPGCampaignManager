@@ -15,9 +15,11 @@ const categoryTpl = function(title, links) {
 
 export default Component.define({
     data: {},
+    filtered: {},
     initialize: async function () {
-       this.el = document.createElement('div');
-       this.render();
+        this.el = document.createElement('div');
+        this.filtered = this.data;
+        this.render();
     },
     open: true,
     openHeight: 0,
@@ -26,15 +28,23 @@ export default Component.define({
         "click h3": "toggleSection",
         "click a[data-entity]": "showEntity",
     },
+    filter: function(filter) {
+        console.log("apply filter", this.data);
+       this.filtered = Object.values(this.data).filter((ent) => {
+            return ent._search.indexOf(filter.toLowerCase()) != -1;
+       });
+       console.log("render filter", this.filtered);
+       this.render();
+    },
     render: function ()
     {
         //console.log(this.data);
-        this.el.innerHTML = categoryTpl(this.category, this.data);
+        this.el.innerHTML = categoryTpl(this.category, this.filtered);
         this.refreshHeight();
     },
     refreshHeight: function(){
         let section = this.el.querySelector(".panel-content");
-        section.style.height = Object.keys(this.data).length*27.4 + 'px';
+        section.style.height = Object.keys(this.filtered).length*27.4 + 'px';
     },
     showEntity: function(e, target)
     {
