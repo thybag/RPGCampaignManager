@@ -15391,6 +15391,117 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/Element/Preview.js":
+/*!****************************************************!*\
+  !*** ./resources/js/Components/Element/Preview.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+var button = function button() {
+  var btn = document.createElement('span');
+  btn.className = 'menu';
+  btn.innerHTML = "&#x22ef;";
+  return btn;
+};
+
+var menu = function menu(title) {
+  var tpl = "\n        <span data-action=\"edit\">Edit</span>\n        <span data-action=\"remove\">Remove</span>\n    ";
+  var template = document.createElement('div');
+  template.className = 'menu-content';
+  template.innerHTML = tpl;
+  return template;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
+  menu: null,
+  initialize: function initialize() {
+    // Add menu button
+    this.el.appendChild(button());
+  },
+  events: {
+    "click .menu": "show",
+    "blur": "hide",
+    "click .menu-content span": "action"
+  },
+  render: function render() {
+    // Create menu markup if not done before
+    if (!this.menu) {
+      this.el.tabindex = 0;
+      this.menu = menu();
+      this.el.appendChild(this.menu);
+    } // Toggle menu visibility
+
+
+    this.menu.classList.toggle('show');
+  },
+  "show": function show(e, target) {
+    e.preventDefault();
+    this.render();
+  },
+  "hide": function hide(e) {
+    this.menu.classList.remove('show');
+  },
+  "action": function () {
+    var _action = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
+      var action, type;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              e.preventDefault();
+              action = target.dataset.action;
+              type = this.el.dataset.type;
+              _context.t0 = action;
+              _context.next = _context.t0 === 'edit' ? 6 : _context.t0 === 'remove' ? 7 : 11;
+              break;
+
+            case 6:
+              return _context.abrupt("return", this.el.click());
+
+            case 7:
+              if (!confirm("Are you sure you want to permanently delete this ".concat(type, "?"))) {
+                _context.next = 11;
+                break;
+              }
+
+              _context.next = 10;
+              return this.state.deleteItem(this.el.dataset.type, this.el.dataset.id);
+
+            case 10:
+              window.location.reload();
+
+            case 11:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function action(_x, _x2) {
+      return _action.apply(this, arguments);
+    }
+
+    return action;
+  }()
+}));
+
+/***/ }),
+
 /***/ "./resources/js/Components/Map.js":
 /*!****************************************!*\
   !*** ./resources/js/Components/Map.js ***!
@@ -15529,20 +15640,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(map) {
       var _this2 = this;
 
-      var img, width, height, bounds, image;
+      var mapPath, img, width, height, bounds, image;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               if (this.map) {
                 this.clearMap();
-              } // Load image
+              }
 
+              mapPath = map.data.image.data.url; // Load image
 
-              _context2.next = 3;
+              _context2.next = 4;
               return new Promise(function (resolve, reject) {
                 var img = document.createElement('img');
-                img.src = map.data.mapUrl;
+                img.src = mapPath;
 
                 img.onload = function () {
                   return resolve(img);
@@ -15551,7 +15663,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 img.onerror = reject;
               });
 
-            case 3:
+            case 4:
               img = _context2.sent;
               width = Math.round(img.width / 10);
               height = Math.round(img.height / 10);
@@ -15563,7 +15675,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }); // Config
 
               bounds = [[0, 0], [height, width]];
-              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(map.data.mapUrl, bounds).addTo(this.map);
+              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(mapPath, bounds).addTo(this.map);
               this.map.fitBounds(bounds);
               this.map.setZoom(1.4);
               this.map.pm.addControls({
@@ -15593,7 +15705,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this2.map.pm.Draw.disable();
               });
 
-            case 14:
+            case 15:
             case "end":
               return _context2.stop();
           }
@@ -15666,16 +15778,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.state.on('update:tab', function () {});
   },
   events: {
-    "click .bar nav a[data-tab]": "viewTab"
+    "click .bar nav a[data-tab]": "viewTab",
+    "click .mainMenu": "showMenu"
+  },
+  "showMenu": function showMenu(e, target) {
+    this.el.querySelector('.main-menu').classList.toggle('show');
   },
   viewTab: function viewTab(e, target) {
+    console.log("??");
     this.state.data.tab = target.dataset.tab;
 
-    _toConsumableArray(e.parentNode.children).map(function (x) {
+    _toConsumableArray(target.parentNode.children).map(function (x) {
       x.classList.remove('selected');
     });
 
-    e.classList.add('selected');
+    target.classList.add('selected');
   }
 }));
 
@@ -15704,7 +15821,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <header>\n            \n\n            <span class='editEntity menu'>&#x22ef;</span>\n            <div class=\"entity-menu\">\n                <span class='edit-entity'>Edit</span>\n                <span class='hide-panel'>Close</span>\n                <span class='remove-entity'>Remove</span>\n            </div>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            \n            <span class='editEntity menu'>&#x22ef;</span>\n            <div class=\"entity-menu\">\n                <span class='edit-entity'>Edit</span>\n                <span class='hide-panel'>Close</span>\n                <span class='remove-entity'>Remove</span>\n            </div>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -16059,28 +16176,85 @@ var editTpl = function editTpl(content) {
     "click button.edit": "editContent",
     "click a[data-link]": "showLinkedContent",
     "keyup textarea": "setHeight",
-    "dragenter textarea": "test",
-    "dragleave textarea": "test",
-    "drop textarea": "test"
+    "click img": "viewImage",
+    "drop textarea": "upload",
+    "dragenter textarea": "uploadFocus",
+    "dragleave textarea": "uploadBlur"
   },
-  say: function say(e, target) {
-    // set state on enter/leave so user knows its droppable.
-    console.log(e.type);
+  uploadFocus: function uploadFocus(e, target) {
+    target.classList.add('uploadable');
+  },
+  uploadBlur: function uploadBlur(e, target) {
+    target.classList.remove('uploadable');
+  },
+  viewImage: function viewImage(e, target) {
+    console.log(target);
+    var win = window.open(target.src, '_blank');
+    win.focus();
+  },
+  upload: function () {
+    var _upload = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
+      var files, f, file, path, _ref, start, end;
 
-    if (e.type == 'drop') {
-      var files = e.dataTransfer.files; // what did we get?
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              e.preventDefault();
+              files = e.dataTransfer.files; // what did we get?
 
-      for (var f = 0; f < files.length; f++) {
-        var file = files[f]; // Only process image files.
+              f = 0;
 
-        if (!file.type.match('image.*')) continue;
-        console.log("Send to image endpoint. TODO: create image/file manager endpoint. Then insert at cursor position.");
-        console.log(file);
-      }
+            case 3:
+              if (!(f < files.length)) {
+                _context.next = 17;
+                break;
+              }
+
+              file = files[f], path = void 0; // Only process image files.
+
+              if (file.type.match('image.*')) {
+                _context.next = 7;
+                break;
+              }
+
+              return _context.abrupt("continue", 14);
+
+            case 7:
+              _context.next = 9;
+              return this.state.uploadImage(file);
+
+            case 9:
+              _context.next = 11;
+              return _context.sent.json();
+
+            case 11:
+              path = _context.sent;
+              _ref = [target.selectionStart, target.selectionEnd], start = _ref[0], end = _ref[1];
+              target.setRangeText("![".concat(path.data.name, "](").concat(path.data.url, ")"), start, end);
+
+            case 14:
+              f++;
+              _context.next = 3;
+              break;
+
+            case 17:
+              this.uploadBlur(e, target);
+
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function upload(_x, _x2) {
+      return _upload.apply(this, arguments);
     }
 
-    e.preventDefault();
-  },
+    return upload;
+  }(),
   render: function render() {
     // redraw
     var div = document.createElement('div');
@@ -16113,11 +16287,11 @@ var editTpl = function editTpl(content) {
     this.el.appendChild(container);
   },
   saveContent: function () {
-    var _saveContent = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+    var _saveContent = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
       var newContent, payload, json;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context2.prev = _context2.next) {
             case 0:
               newContent = this.el.querySelector('textarea').value;
               payload = {
@@ -16127,32 +16301,32 @@ var editTpl = function editTpl(content) {
               };
 
               if (!(this.mode == 'edit')) {
-                _context.next = 10;
+                _context2.next = 10;
                 break;
               }
 
-              _context.next = 5;
+              _context2.next = 5;
               return this.state.request('PUT', this.data.links.update, payload);
 
             case 5:
-              _context.next = 7;
-              return _context.sent.json();
+              _context2.next = 7;
+              return _context2.sent.json();
 
             case 7:
-              json = _context.sent;
-              _context.next = 15;
+              json = _context2.sent;
+              _context2.next = 15;
               break;
 
             case 10:
-              _context.next = 12;
+              _context2.next = 12;
               return this.state.request('POST', this.data.links.create, payload);
 
             case 12:
-              _context.next = 14;
-              return _context.sent.json();
+              _context2.next = 14;
+              return _context2.sent.json();
 
             case 14:
-              json = _context.sent;
+              json = _context2.sent;
 
             case 15:
               console.log(json);
@@ -16162,10 +16336,10 @@ var editTpl = function editTpl(content) {
 
             case 19:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee, this);
+      }, _callee2, this);
     }));
 
     function saveContent() {
@@ -16254,17 +16428,29 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.request = 
   };
 }();
 
-lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(id) {
-    var url;
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.upload = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(url, formData) {
+    var options;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
-            return _context2.abrupt("return", this.request("GET", url));
+            options = {
+              method: 'POST',
+              headers: {
+                //  'Content-Type': 'multipart/form-data',
+                'X-CSRF-TOKEN': this.data.csrf,
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: formData
+            };
+            _context2.next = 3;
+            return fetch(url, options);
 
-          case 2:
+          case 3:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 4:
           case "end":
             return _context2.stop();
         }
@@ -16272,19 +16458,19 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity
     }, _callee2, this);
   }));
 
-  return function (_x3) {
+  return function (_x3, _x4) {
     return _ref2.apply(this, arguments);
   };
 }();
 
-lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = /*#__PURE__*/function () {
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntity = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(id) {
     var url;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities");
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/entity/").concat(id, "?include=blocks");
             return _context3.abrupt("return", this.request("GET", url));
 
           case 2:
@@ -16295,8 +16481,79 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = 
     }, _callee3, this);
   }));
 
-  return function (_x4) {
+  return function (_x5) {
     return _ref3.apply(this, arguments);
+  };
+}();
+
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadMap = /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(id) {
+    var url;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/map/").concat(id, "?include=entities,image");
+            return _context4.abrupt("return", this.request("GET", url));
+
+          case 2:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, this);
+  }));
+
+  return function (_x6) {
+    return _ref4.apply(this, arguments);
+  };
+}();
+
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.uploadImage = /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(image) {
+    var url, formData;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/image");
+            formData = new FormData();
+            formData.append('image', image);
+            return _context5.abrupt("return", this.upload(url, formData));
+
+          case 4:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, this);
+  }));
+
+  return function (_x7) {
+    return _ref5.apply(this, arguments);
+  };
+}();
+
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.deleteItem = /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(type, id) {
+    var url;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            url = "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/").concat(type, "/").concat(id);
+            return _context6.abrupt("return", this.request("DELETE", url));
+
+          case 2:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6, this);
+  }));
+
+  return function (_x8, _x9) {
+    return _ref6.apply(this, arguments);
   };
 }();
 
@@ -16316,6 +16573,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
 /* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
 /* harmony import */ var _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/ContentNav.js */ "./resources/js/Components/ContentNav.js");
+/* harmony import */ var _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Components/Element/Preview.js */ "./resources/js/Components/Element/Preview.js");
+
 
 
 
@@ -16328,29 +16587,49 @@ var Bus = new _Models_App_js__WEBPACK_IMPORTED_MODULE_0__["default"]({
     'action': 'view',
     'entity': 1
   }
-}); // Setup "views"
+}); // Setup Global "views"
 
 var nav = _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
   state: Bus
 });
-var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
-  state: Bus
-});
-var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
-  state: Bus
-});
-var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
-  state: Bus
-}); // Global events
 
-document.addEventListener('DOMContentLoaded', function () {
-  Bus.data.url = window._campaign.url;
-  Bus.data.campaign_id = window._campaign.id;
-  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Show default
+function bootCampaign() {
+  var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
+    state: Bus
+  });
+  var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
+    state: Bus
+  });
+  var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
+    state: Bus
+  }); // Show default
 
   Bus.trigger('entity:show', {
     entity: window._campaign.default_entity
   });
+}
+
+function bootPreviews() {
+  document.querySelectorAll(".preview").forEach(function (el) {
+    _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_5__["default"].make({
+      state: Bus,
+      el: el
+    });
+  });
+} // Global events
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  Bus.data.mode = window._campaign.mode;
+  Bus.data.url = window._campaign.url;
+  Bus.data.campaign_id = window._campaign.id;
+  Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  if (Bus.data.mode == 'campaign') {
+    return bootCampaign();
+  } else {
+    return bootPreviews();
+  }
 });
 
 /***/ }),

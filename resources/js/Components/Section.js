@@ -27,27 +27,37 @@ export default Component.define({
         "click button.edit": "editContent",
         "click a[data-link]": "showLinkedContent",
         "keyup textarea": "setHeight",
-
-        "dragenter textarea": "test",
-        "dragleave textarea": "test",
-        "drop textarea": "test",
-
+        "click img": "viewImage",
+        "drop textarea": "upload",
+        "dragenter textarea": "uploadFocus",
+        "dragleave textarea": "uploadBlur",
     },
-    say: function(e, target) {
-        // set state on enter/leave so user knows its droppable.
-        console.log(e.type);
-        if (e.type =='drop') {
-            const files = e.dataTransfer.files;
-            // what did we get?
-            for (var f=0; f<files.length; f++) {
-                let file = files[f];
-                // Only process image files.
-                if (!file.type.match('image.*')) continue;
-                console.log("Send to image endpoint. TODO: create image/file manager endpoint. Then insert at cursor position.")
-                console.log(file);
-            }
-        }
+    uploadFocus:function(e,target){
+        target.classList.add('uploadable');
+    },
+    uploadBlur: function(e, target) {
+        target.classList.remove('uploadable');
+    },
+    viewImage: function(e, target)
+    {
+        console.log(target);
+        var win = window.open(target.src, '_blank');
+        win.focus();
+    },
+    upload: async function(e, target) {
         e.preventDefault();
+        const files = e.dataTransfer.files;
+        // what did we get?
+        for (var f=0; f<files.length; f++) {
+            let file = files[f], path;
+            // Only process image files.
+            if (!file.type.match('image.*')) continue;
+
+            path = await (await this.state.uploadImage(file)).json();
+            const [start, end] = [target.selectionStart, target.selectionEnd];
+            target.setRangeText(`![${path.data.name}](${path.data.url})`, start, end);
+        }
+        this.uploadBlur(e, target);
     },
     render: function () {
          // redraw

@@ -5,7 +5,6 @@ const panelTpl = function(title) {
     const tpl = `
         <header>
             
-
             <span class='editEntity menu'>&#x22ef;</span>
             <div class="entity-menu">
                 <span class='edit-entity'>Edit</span>
@@ -78,6 +77,7 @@ export default Component.define({
         "click .saveEntity": "saveEntity",
         "click .cancelEntity": "cancelEntity",
         "click .poi": "managePoi",
+        
         // Model events
         "update:tab": "updatePanelDisplay",
         "entity:create": "createEntity",

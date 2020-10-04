@@ -17,7 +17,7 @@
                Campaign: <strong>{{$campaign->name}}</strong>
             </div>
             @if(!empty($map)) 
-                    <img src="{{$map->preview}}" style="width:100%">
+                    <img src="{{optional($map->image)->preview}}" style="width:100%">
             @endif
             <div>
                 <label>{{empty($map) ? 'Upload Map Image' : "New Image?"}}</label>
