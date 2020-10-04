@@ -1,13 +1,13 @@
 import Component from 'lumpjs/src/component.js';
 
 const categoryTpl = function(title, links) {
-    console.log(links);
     const tpl = `
         <h3>${title}</h3>
         <div class='panel-content'>
             ${Object.entries(links).map(([id, entity]) => 
                 `<a href="#${entity.slug}" data-entity="${id}">${entity.name}</a>`
             ).join('')}
+            <a href="#${title}" data-category="${title}">New...</a>
         </div>
     `;
     return tpl;
@@ -16,42 +16,54 @@ const categoryTpl = function(title, links) {
 export default Component.define({
     data: {},
     filtered: {},
+    open: true,
     initialize: async function () {
         this.el = document.createElement('div');
         this.filtered = this.data;
         this.render();
     },
-    open: true,
-    openHeight: 0,
     events: 
     {
         "click h3": "toggleSection",
         "click a[data-entity]": "showEntity",
+        "click a[data-category]": "addEntity"
     },
     filter: function(filter) {
-        console.log("apply filter", this.data);
-       this.filtered = Object.values(this.data).filter((ent) => {
-            return ent._search.indexOf(filter.toLowerCase()) != -1;
+       this.filtered = {};
+       Object.entries(this.data).map(([key, entity]) => {
+            if (entity._search.indexOf(filter.toLowerCase()) != -1){
+                this.filtered[key] = entity;
+            }
        });
-       console.log("render filter", this.filtered);
        this.render();
+    },
+    update: function(entity)
+    {
+       // this.data[entity.id] = entity.data;
+       // this.data[entity.id]._search = entity.data.name.toLowerCase();
+        this.filtered = this.data;
+        this.render();
     },
     render: function ()
     {
-        //console.log(this.data);
+        if (Object.keys(this.filtered).length == 0) {
+            this.el.style.display = 'none';
+            return;
+        }
+        this.el.style.display = 'block';
         this.el.innerHTML = categoryTpl(this.category, this.filtered);
         this.refreshHeight();
     },
     refreshHeight: function(){
         let section = this.el.querySelector(".panel-content");
-        section.style.height = Object.keys(this.filtered).length*27.4 + 'px';
+        section.style.height = (Object.keys(this.filtered).length+1)*27.4 + 'px';
     },
     showEntity: function(e, target)
     {
         e.preventDefault();
         this.state.trigger('entity:show', {'entity': target.dataset.entity});
     },
-    toggleSection: function(){
+    toggleSection: function() {
         if (this.open) {
             // Refresh
             let section = this.el.querySelector(".panel-content").style.height = `0px`;
@@ -60,5 +72,9 @@ export default Component.define({
             this.refreshHeight();
             this.open = true;
         }
-    }
+    },
+    addEntity: function(e, target)
+    {
+        this.state.trigger('entity:create', {'category': target.dataset.category});
+    },
 });

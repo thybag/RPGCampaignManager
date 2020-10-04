@@ -15398,8 +15398,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: {},
   content: null,
   children: {},
+  events: {
+    "keyup input": "search"
+  },
   initialize: function () {
     var _initialize = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var _this = this;
+
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -15407,8 +15412,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               this.load();
               this.container = document.createElement('div');
               this.el.appendChild(this.container);
+              this.state.on('entity:updated', function (entity) {
+                _this.el.querySelector('input').value = '';
 
-            case 3:
+                _this.createEntity(entity);
+
+                _this.render();
+              });
+
+            case 4:
             case "end":
               return _context.stop();
           }
@@ -15422,25 +15434,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
     return initialize;
   }(),
-  events: {
-    "keyup input": "search",
-    "click a[data-category]": "addEntity"
-  },
   render: function render() {
-    this.container.innerHTML = '';
-
     for (var _i = 0, _Object$entries = Object.entries(this.data); _i < _Object$entries.length; _i++) {
       var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
           key = _Object$entries$_i[0],
           value = _Object$entries$_i[1];
 
-      var section = _ContentNav_NavCategory_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
-        category: key,
-        data: value,
-        state: this.state
-      });
-      this.children[key] = section;
-      this.container.appendChild(section.el);
+      if (this.children[key]) {
+        this.children[key].update();
+      } else {
+        var section = _ContentNav_NavCategory_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
+          category: key,
+          data: value,
+          state: this.state
+        });
+        this.children[key] = section;
+        this.container.appendChild(section.el);
+      }
     }
   },
   search: function search(e, target) {
@@ -15471,9 +15481,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 for (_iterator.s(); !(_step = _iterator.n()).done;) {
                   item = _step.value;
                   // Ensure we have category
-                  this.data[item.data.category] = this.data[item.data.category] || {};
-                  this.data[item.data.category][item.id] = item.data;
-                  this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
+                  this.createEntity(item);
                 }
               } catch (err) {
                 _iterator.e(err);
@@ -15497,15 +15505,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
     return load;
   }(),
-  addEntity: function addEntity(e, target) {
-    this.state.trigger('entity:create', {
-      'category': target.dataset.category
-    });
-  },
-  viewEntity: function viewEntity(e, target) {
-    this.state.trigger('entity:show', {
-      'entity': target.dataset.entity
-    });
+  createEntity: function createEntity(item) {
+    this.data[item.data.category] = this.data[item.data.category] || {};
+    this.data[item.data.category][item.id] = item.data;
+    this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
   }
 }));
 
@@ -15544,20 +15547,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 var categoryTpl = function categoryTpl(title, links) {
-  console.log(links);
   var tpl = "\n        <h3>".concat(title, "</h3>\n        <div class='panel-content'>\n            ").concat(Object.entries(links).map(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         id = _ref2[0],
         entity = _ref2[1];
 
     return "<a href=\"#".concat(entity.slug, "\" data-entity=\"").concat(id, "\">").concat(entity.name, "</a>");
-  }).join(''), "\n        </div>\n    ");
+  }).join(''), "\n            <a href=\"#").concat(title, "\" data-category=\"").concat(title, "\">New...</a>\n        </div>\n    ");
   return tpl;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   data: {},
   filtered: {},
+  open: true,
   initialize: function () {
     var _initialize = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
@@ -15582,28 +15585,45 @@ var categoryTpl = function categoryTpl(title, links) {
 
     return initialize;
   }(),
-  open: true,
-  openHeight: 0,
   events: {
     "click h3": "toggleSection",
-    "click a[data-entity]": "showEntity"
+    "click a[data-entity]": "showEntity",
+    "click a[data-category]": "addEntity"
   },
   filter: function filter(_filter) {
-    console.log("apply filter", this.data);
-    this.filtered = Object.values(this.data).filter(function (ent) {
-      return ent._search.indexOf(_filter.toLowerCase()) != -1;
+    var _this = this;
+
+    this.filtered = {};
+    Object.entries(this.data).map(function (_ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2),
+          key = _ref4[0],
+          entity = _ref4[1];
+
+      if (entity._search.indexOf(_filter.toLowerCase()) != -1) {
+        _this.filtered[key] = entity;
+      }
     });
-    console.log("render filter", this.filtered);
+    this.render();
+  },
+  update: function update(entity) {
+    // this.data[entity.id] = entity.data;
+    // this.data[entity.id]._search = entity.data.name.toLowerCase();
+    this.filtered = this.data;
     this.render();
   },
   render: function render() {
-    //console.log(this.data);
+    if (Object.keys(this.filtered).length == 0) {
+      this.el.style.display = 'none';
+      return;
+    }
+
+    this.el.style.display = 'block';
     this.el.innerHTML = categoryTpl(this.category, this.filtered);
     this.refreshHeight();
   },
   refreshHeight: function refreshHeight() {
     var section = this.el.querySelector(".panel-content");
-    section.style.height = Object.keys(this.filtered).length * 27.4 + 'px';
+    section.style.height = (Object.keys(this.filtered).length + 1) * 27.4 + 'px';
   },
   showEntity: function showEntity(e, target) {
     e.preventDefault();
@@ -15620,6 +15640,11 @@ var categoryTpl = function categoryTpl(title, links) {
       this.refreshHeight();
       this.open = true;
     }
+  },
+  addEntity: function addEntity(e, target) {
+    this.state.trigger('entity:create', {
+      'category': target.dataset.category
+    });
   }
 }));
 

@@ -18,10 +18,9 @@
     <div id="map"></div>
 </div>
 <div class="panel">
-    <h2>content</h2>
+    <h2>Loading...</h2>
     <div class="main">
-        Looks like something went wrong loading :(
+        Loading...
     </div>
-    <button id="json">Save</button> 
 </div>
 @endsection

@@ -191,6 +191,24 @@ textarea.uploadable {
 .bar .main-menu span:hover, .bar .main-menu a:hover {
   background: #eee;
 }
+.bar .mainMenu {
+  float: right;
+  color: #fff;
+  text-decoration: none;
+  line-height: 36px;
+  margin-right: 2rem;
+  cursor: pointer;
+}
+.bar .mainMenu::after {
+  display: inline-block;
+  margin-left: 0.255em;
+  vertical-align: 0.255em;
+  content: "";
+  border-top: 0.3em solid;
+  border-right: 0.3em solid transparent;
+  border-bottom: 0;
+  border-left: 0.3em solid transparent;
+}
 
 .preview {
   border: 1px solid rgba(8, 9, 36, 0.5);
@@ -256,7 +274,10 @@ textarea.uploadable {
   height: calc(100vh - 37px);
   box-sizing: border-box;
   background-color: #515278;
+}
+.content-nav > div {
   overflow-x: auto;
+  height: calc(100% - 35px);
 }
 .content-nav .panel-content {
   transition: height 0.5s;
@@ -266,6 +287,9 @@ textarea.uploadable {
   box-sizing: border-box;
   width: 100%;
   padding: 0.5rem;
+}
+.content-nav input:focus {
+  outline: none;
 }
 .content-nav h3 {
   display: block;
@@ -498,25 +522,6 @@ button.editEntity {
 
 .wrapper {
   display: flex;
-}
-
-.mainMenu {
-  float: right;
-  color: #fff;
-  text-decoration: none;
-  line-height: 36px;
-  margin-right: 2rem;
-}
-
-.mainMenu::after {
-  display: inline-block;
-  margin-left: 0.255em;
-  vertical-align: 0.255em;
-  content: "";
-  border-top: 0.3em solid;
-  border-right: 0.3em solid transparent;
-  border-bottom: 0;
-  border-left: 0.3em solid transparent;
 }
 
 .controls {

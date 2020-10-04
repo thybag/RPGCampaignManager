@@ -1,13 +1,15 @@
-
 .content-nav {
     width:210px;
     height: calc(100vh - 37px);
     box-sizing: border-box;
     background-color:#515278;
-    overflow-x: auto;
 
-
+    & > div {
+        overflow-x: auto;
+        height: calc(100% - 35px);
+    }
     .panel-content {
+
         transition: height .5s;
         overflow: hidden;
     }
@@ -16,6 +18,10 @@
         box-sizing: border-box;
         width:100%;
         padding:.5rem;
+
+        &:focus {
+            outline: none;
+        }
     }
     h3 {
          display:block;

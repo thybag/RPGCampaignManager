@@ -6,23 +6,31 @@ export default Component.define({
     data: {},
     content: null,
     children: {},
+    events: 
+    {
+      "keyup input": "search",
+    },
     initialize: async function () {
        this.load();
        this.container = document.createElement('div');
        this.el.appendChild(this.container);
-    },
-    events: 
-    {
-      "keyup input": "search",
-      "click a[data-category]": "addEntity",
+
+       this.state.on('entity:updated', (entity) => {
+            this.el.querySelector('input').value = '';
+            this.createEntity(entity);
+            this.render();
+       });
     },
     render: function ()
     {
-        this.container.innerHTML = '';
         for (let [key, value] of Object.entries(this.data)) {
-            const section = NavCategory.make({category: key, data: value, state: this.state});
-            this.children[key] = section;
-            this.container.appendChild(section.el);
+            if (this.children[key]) {
+                this.children[key].update();
+            } else {
+                 const section = NavCategory.make({category: key, data: value, state: this.state});
+                this.children[key] = section;
+                this.container.appendChild(section.el);
+            }
         }
     },
     search: function(e, target) {
@@ -35,18 +43,13 @@ export default Component.define({
         const data = await (await this.state.loadEntities()).json();
         for (let item of data.data) {
             // Ensure we have category
-            this.data[item.data.category] = (this.data[item.data.category] || {});
-            this.data[item.data.category][item.id] = item.data;
-            this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
+            this.createEntity(item);
         }
-
         this.render();
     },
-    addEntity: function(e, target){
-        this.state.trigger('entity:create', {'category': target.dataset.category});
+    createEntity: function(item) {
+        this.data[item.data.category] = (this.data[item.data.category] || {});
+        this.data[item.data.category][item.id] = item.data;
+        this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
     },
-    viewEntity: function(e, target)
-    {
-        this.state.trigger('entity:show', {'entity': target.dataset.entity});
-    }
 });
