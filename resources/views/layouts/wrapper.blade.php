@@ -24,6 +24,13 @@
             'default_entity': '{{$campaign->entities->first()->id}}'
         };
     </script>
+@else
+    <script>
+        window._campaign = {
+            'mode': 'home',
+            'url': '{{url('/')}}',
+        };
+    </script>
 @endif
 </head>
 

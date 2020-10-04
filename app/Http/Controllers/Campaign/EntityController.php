@@ -20,9 +20,10 @@ class EntityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Campaign $campaign)
     {
 
+        return EntityResource::collection($campaign->entities);
     }
 
     /**

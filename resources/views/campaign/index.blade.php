@@ -12,37 +12,15 @@
 
 <div class="wrapper">
     <nav class="content-nav">
-            <input type="text" placeholder="Filter..."/>
-            @foreach ($campaign->entities->groupBy('category') as $groupName => $group)
-            <div>
-                <h3>{{ucfirst($groupName)}}</h3>
-                @foreach ($group as $entity)
-                    <a href="#" data-entity="{{$entity->id}}">{{$entity->name}}</a>
-                @endforeach
-            
-                <a href="#" data-category="{{$groupName}}">Create...</a>
-            </div>   
-            @endforeach
+        <input type="text" placeholder="Filter..."/>
     </nav>
 
     <div id="map"></div>
 </div>
 <div class="panel">
-    <h2>content</h2>
+    <h2>Loading...</h2>
     <div class="main">
-        
-        Group: marker colour
-        Type: landmark
-        Geo:Data
-
-        --
-        Blocks
-        - Markdown
-        - Stats
-        - Notes [tickbox]
-
-        blarp
+        Loading...
     </div>
-    <button id="json">Save</button> 
 </div>
 @endsection

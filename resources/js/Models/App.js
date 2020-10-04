@@ -30,7 +30,10 @@ Model.prototype.upload = async function(url, formData){
     };
     return await fetch(url, options);
 }
-
+Model.prototype.loadEntities = async function(id) {
+    const url = `${this.get('url')}/campaign/${this.get('campaign_id')}/entity`;
+    return this.request("GET", url);
+}
 Model.prototype.loadEntity = async function(id) {
     const url = `${this.get('url')}/campaign/${this.get('campaign_id')}/entity/${id}?include=blocks`;
     return this.request("GET", url);
