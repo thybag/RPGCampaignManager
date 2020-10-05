@@ -58,6 +58,6 @@ npm install && npm run watch
 
 ## Help out?
 
-If your interested in contributing to OSS, this project is super early days and based on a pretty standard PHP stack (Laravel, Leaflet etc.) so any help would be much appreciated. Please drop me a line on Github and I'm happy to point you in the right direction. I'm also open to direct PR's (Although theres a large risk of breaking changes / duplication of work given how early on everything is).
+If you are interested in contributing to OSS, this project is in its super early days and is based on a pretty standard PHP stack (Laravel, Leaflet etc.) so any help would be much appreciated. Please message me on Github and I'd be happy to point you in the right direction. I'm also open to direct PR's (Although there's a large risk of breaking changes / duplication of work given how early on everything is).
 
 In addition to dev work, if anyone has a nice map image they'd be happy to be used in screen shot of the tool in use, please get in touch.
