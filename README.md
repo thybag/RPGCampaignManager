@@ -2,9 +2,9 @@
 
 A fully Open-Source RPG Campaign Manager and World Building tool.
 
-This tool is currently in early development and not ready for general use. Signification portions of functionality have yet to be implemented and what is there remains very buggy. 
+This tool is currently in early development and not ready for general use. Although the basic functionality now work, a lot of it is still fairly rough around the edges and potentially quite buggy. I **strongly** recommend against hosting this on a public server until it reaches a stable release.
 
-I **strongly** recommend not hosting this on a public server until the policy, auth and validation checks have been fully implemented, as currently people will be able to write data to each others accounts.
+![image](https://user-images.githubusercontent.com/887397/95174567-27e7ae00-07b2-11eb-9877-dbce0eab12c9.png)
 
 ## Key features
 
@@ -43,7 +43,6 @@ After that hit migrate.
 
 ```
  php artisan migrate
-
 ```
 
 At this point, you should be able to access the application from the public directory, You can now "register" your first user account and start your first campaign.
