@@ -55,6 +55,18 @@ In addition to the above steps, to start building/working on the front end you w
 npm install && npm run watch
 ```
 
+## Unit testing
+
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+
+```
+ ./vendor/bin/phpunit
+```
+or
+```
+ ./vendor/bin/phpunit --coverage-html=coverages
+```
+
 ## Help out?
 
 If your interested in contributing to OSS, this project is super early days and based on a pretty standard PHP stack (Laravel, Leaflet etc.) so any help would be much appreciated. Please drop me a line on Github and I'm happy to point you in the right direction. I'm also open to direct PR's (Although theres a large risk of breaking changes / duplication of work given how early on everything is).
