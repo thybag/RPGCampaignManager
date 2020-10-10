@@ -1,0 +1,36 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    index index.php;
+    root /var/www/public;
+    server_name campaign-manager.local www.campaign-manager.local;
+    error_log  /var/log/nginx/campaign-manager-error.log;
+    access_log /var/log/nginx/campaign-manager-access.log;
+    charset utf-8;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass campaign_manager_php:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+    
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+        gzip_static on;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
