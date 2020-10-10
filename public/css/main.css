@@ -1016,10 +1016,6 @@ textarea.uploadable {
 }
 .bar nav a.selected, .bar span.menu a.selected {
   background: #515278;
-  background: #515278;
-  border-radius: 1rem;
-  padding: 1px 4px;
-  margin: 4px;
 }
 .bar .main-menu {
   width: 120px;

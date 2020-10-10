@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('nav')
-        <a href="{{url('campaign/'.$campaign->id)}}">Campiagn Home</a>
+        <a href="{{url('campaign/'.$campaign->id)}}">Campiagn view</a>
         <a href="{{url('campaign/'.$campaign->id.'/map')}}">Maps</a>
-        <a href="{{url('campaign/'.$campaign->id.'/image')}}">Images</a>
+        <a href="{{url('campaign/'.$campaign->id.'/image')}}" class="selected">Images</a>
 @endsection     
 @section('content')
     <div class="container">

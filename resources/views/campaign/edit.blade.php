@@ -1,11 +1,12 @@
 @extends('layouts.app')
 @section('nav')
-        <a href="{{url('campaign/'.$campaign->id)}}">Campiagn Home</a>
+    @if (!empty($campaign))
+        <a href="{{url('campaign/'.$campaign->id)}}">Campiagn view</a>
         <a href="{{url('campaign/'.$campaign->id.'/map')}}">Maps</a>
         <a href="{{url('campaign/'.$campaign->id.'/image')}}">Images</a>
+    @endif
 @endsection     
 @section('content')
-
     <div class="container">
         <form class="form" method="POST" action="{{url('campaign/')}}" enctype="multipart/form-data">
             <header><h2>{{empty($campaign) ? 'New Campaign' : "Edit ".$campaign->name }}</h2></header>
