@@ -13,7 +13,7 @@
         margin:0;
         padding-right:0;
     }
-    nav {
+    nav, span.menu {
         display:inline-block;
         font-size: 0;
 
@@ -30,10 +30,6 @@
 
         a.selected {
             background:#515278;
-            background: #515278;
-            border-radius: 1rem;
-            padding: 1px 4px;
-            margin:4px;
         }
     }
 
@@ -48,8 +44,8 @@
        
     }
 
-
-    .mainMenu {
+    span.menu {float:right;}
+    a.menu {
         float:right;
         color: #fff;
         text-decoration: none;
@@ -57,7 +53,7 @@
         margin-right: 2rem;
          cursor:pointer;
     }
-    .mainMenu::after {
+    a.menu::after {
         display: inline-block;
         margin-left: 0.255em;
         vertical-align: 0.255em;

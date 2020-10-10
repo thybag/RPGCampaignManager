@@ -23,7 +23,7 @@ export default Component.define({
 
         this.state.on('map:focus', (e) => {
             // Change map            
-            if (e.map != this.state.tab){
+            if (e.map != this.state.data.tab){
                 this.state.data.tab = e.map;
             }
 
@@ -139,6 +139,8 @@ export default Component.define({
     addEntityToMap: function(entity) {
         // Skip if no geo
         if (!entity.data.geo) return;
+        // Skip if not on this map
+        if (entity.data.map_id != this.state.data.tab) return;
 
         // Remove existing marker if we have one
         if (this.hasMarker(entity.id)) {

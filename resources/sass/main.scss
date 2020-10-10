@@ -17,6 +17,9 @@ body {
 @import 'preview-block.scss';
 @import 'content-nav.scss';
 
+
+@import '~leaflet/dist/leaflet.css';
+@import '~@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 .content-list {
     @include box;
     .row { margin: 0 1rem; }
