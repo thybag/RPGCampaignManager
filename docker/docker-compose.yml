@@ -42,7 +42,7 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
-      - "${REDIS_DATA_DIR}:/bitnami/redis/data"
+      - "${REDIS_DATA_DIR}:/data"
     networks:
       campaign_manager:
 
