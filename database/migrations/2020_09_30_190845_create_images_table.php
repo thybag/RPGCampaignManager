@@ -22,7 +22,7 @@ class CreateImagesTable extends Migration
             $table->foreign('campaign_id')->references('id')->on('campaigns');
         });
 
-        Schema::table('map', function (Blueprint $table) {
+        Schema::table('maps', function (Blueprint $table) {
             $table->dropColumn('path');
             $table->unsignedBigInteger('image_id')->nullable()->after('campaign_id');
         });
