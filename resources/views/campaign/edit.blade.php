@@ -1,4 +1,4 @@
-@extends('layouts.wrapper')
+@extends('layouts.app')
 @section('nav')
         <a href="{{url('')}}">Home</a>
 @endsection     

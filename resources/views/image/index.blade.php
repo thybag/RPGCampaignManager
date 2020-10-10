@@ -1,4 +1,4 @@
-@extends('layouts.wrapper')
+@extends('layouts.app')
 @section('nav')
         <a href="{{url('campaign/'.$campaign->id)}}">Back to Campiagn view</a><a href="" class="selected">Manage Images</a>
 @endsection     

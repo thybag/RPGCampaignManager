@@ -57,6 +57,41 @@ body {
   color: #555;
 }
 
+.form > div {
+  padding: 0 1rem 0.8rem 1rem;
+}
+.form > div label {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.form > div input[type=text], .form > div input[type=email], .form > div input[type=password], .form > div textarea {
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 3px #ddd;
+  padding: 0.5rem;
+  width: calc(100% - 1rem);
+}
+.form > div input[type=text].invalid, .form > div input[type=email].invalid, .form > div input[type=password].invalid, .form > div textarea.invalid {
+  border-color: #dc3545;
+}
+.form > div span.errors {
+  color: #dc3545;
+  font-size: 0.9rem;
+}
+.form > div span.notice {
+  padding: 1rem;
+  display: block;
+  margin-bottom: 1rem;
+  border: 1px solid #bee5eb;
+  background-color: #d1ecf1;
+}
+.form > div span.warning {
+  padding: 1rem;
+  display: block;
+  margin-bottom: 1rem;
+  border: 1px solid #ffeeba;
+  background-color: #fff3cd;
+}
+
 .container .form {
   border: 1px solid rgba(8, 9, 36, 0.5);
   margin: 0 auto;
@@ -78,20 +113,7 @@ body {
 }
 .container .form footer {
   padding: 0 1rem 1rem 1rem;
-}
-
-.form > div {
-  padding: 0 1rem 1rem 1rem;
-}
-.form > div label {
-  display: block;
-  margin-bottom: 0.4rem;
-}
-.form > div input, .form > div textarea {
-  border: 1px solid #ccc;
-  box-shadow: inset 0 1px 3px #ddd;
-  padding: 0.5rem;
-  width: calc(100% - 1rem);
+  min-height: 2rem;
 }
 
 .panel .form div {
@@ -102,7 +124,7 @@ body {
 button, .button, input[type=submit] {
   background: #515278;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.4rem;
   color: #fff;
   cursor: pointer;
   text-decoration: none;
@@ -110,16 +132,18 @@ button, .button, input[type=submit] {
   display: inline-block;
   line-height: 1rem;
   vertical-align: top;
-  border: solid 2px #080924;
-  border-radius: 3px;
+  margin-bottom: 0.5rem;
 }
-
-.button.right, button.right, input[type=submit].right {
+button:hover, button:active, .button:hover, .button:active, input[type=submit]:hover, input[type=submit]:active {
+  background: #636490;
+}
+button.full, .button.full, input[type=submit].full {
+  width: 100%;
+}
+button.right, .button.right, input[type=submit].right {
   float: right;
 }
-
-.button.cancel, button.cancel {
-  border: solid 2px #515278;
+button.cancel, .button.cancel, input[type=submit].cancel {
   background-color: #51527899;
 }
 
@@ -144,11 +168,11 @@ textarea.uploadable {
   margin: 0;
   padding-right: 0;
 }
-.bar nav {
+.bar nav, .bar span.menu {
   display: inline-block;
   font-size: 0;
 }
-.bar nav a {
+.bar nav a, .bar span.menu a {
   color: #fff;
   display: inline-block;
   border-right: solid 1px #444;
@@ -158,7 +182,7 @@ textarea.uploadable {
   font-size: 1rem;
   margin-left: -1px;
 }
-.bar nav a.selected {
+.bar nav a.selected, .bar span.menu a.selected {
   background: #515278;
   background: #515278;
   border-radius: 1rem;
@@ -191,7 +215,10 @@ textarea.uploadable {
 .bar .main-menu span:hover, .bar .main-menu a:hover {
   background: #eee;
 }
-.bar .mainMenu {
+.bar span.menu {
+  float: right;
+}
+.bar a.menu {
   float: right;
   color: #fff;
   text-decoration: none;
@@ -199,7 +226,7 @@ textarea.uploadable {
   margin-right: 2rem;
   cursor: pointer;
 }
-.bar .mainMenu::after {
+.bar a.menu::after {
   display: inline-block;
   margin-left: 0.255em;
   vertical-align: 0.255em;
@@ -333,6 +360,7 @@ textarea.uploadable {
 }
 .content-list footer {
   padding: 0 1rem 1rem 1rem;
+  min-height: 2rem;
 }
 .content-list .row {
   margin: 0 1rem;

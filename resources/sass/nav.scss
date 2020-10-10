@@ -13,7 +13,7 @@
         margin:0;
         padding-right:0;
     }
-    nav {
+    nav, span.menu {
         display:inline-block;
         font-size: 0;
 
@@ -48,8 +48,8 @@
        
     }
 
-
-    .mainMenu {
+    span.menu {float:right;}
+    a.menu {
         float:right;
         color: #fff;
         text-decoration: none;
@@ -57,7 +57,7 @@
         margin-right: 2rem;
          cursor:pointer;
     }
-    .mainMenu::after {
+    a.menu::after {
         display: inline-block;
         margin-left: 0.255em;
         vertical-align: 0.255em;
