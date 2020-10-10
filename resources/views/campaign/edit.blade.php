@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('nav')
-        <a href="{{url('')}}">Home</a>
+        <a href="{{url('campaign/'.$campaign->id)}}">Campiagn Home</a>
+        <a href="{{url('campaign/'.$campaign->id.'/map')}}">Maps</a>
+        <a href="{{url('campaign/'.$campaign->id.'/image')}}">Images</a>
 @endsection     
 @section('content')
 
