@@ -15833,7 +15833,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }());
     this.state.on('map:focus', function (e) {
       // Change map            
-      if (e.map != _this.state.tab) {
+      if (e.map != _this.state.data.tab) {
         _this.state.data.tab = e.map;
       }
 
@@ -15978,7 +15978,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var _this3 = this;
 
     // Skip if no geo
-    if (!entity.data.geo) return; // Remove existing marker if we have one
+    if (!entity.data.geo) return; // Skip if not on this map
+
+    if (entity.data.map_id != this.state.data.tab) return; // Remove existing marker if we have one
 
     if (this.hasMarker(entity.id)) {
       this.removeMarker(entity.id);
