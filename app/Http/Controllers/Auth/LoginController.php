@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Login;
+use App\Models\User\Login;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -37,6 +37,7 @@ class LoginController extends Controller
     {
         Login::create([
             'user_id' => $user->id,
+            'ip' => $request->ip(),
             'user_agent' => $request->header('User-Agent')
         ])->save();
         return redirect()->route('home');

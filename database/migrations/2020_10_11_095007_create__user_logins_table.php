@@ -16,6 +16,7 @@ class CreateUserLoginsTable extends Migration
         Schema::create('user_logins', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->string('ip',45)->default('unknown');
             $table->string('user_agent');
             $table->timestamps();
 
