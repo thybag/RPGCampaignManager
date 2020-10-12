@@ -3,6 +3,7 @@
 namespace App\Models\Campaign;
 
 use DB;
+use File;
 use Storage;
 use App\Models\Model;
 use App\Models\Campaign;
@@ -40,9 +41,14 @@ class Image extends Model
         return DB::transaction(function() use ($campaign, $img, $name) {
             $path = static::uploadImage($campaign, $img);
             $title = ($name) ? $name : $img->getClientOriginalName();
-
+            $file_name = $img->getClientOriginalName();
+            $type = $img->getClientOriginalExtension();
+            $file_path =  $img -> move(public_path().'/upload/images', $file_name);
+            $size = File::size($file_path);
+            $size = $size/1000;
+            $size = $size.' '.'kb';
             // FIle is okay!
-            $model = static::make(['path' => $path, 'name'=> $title]);
+            $model = static::make(['path' => $path, 'name'=> $title, 'type'=>$type, 'size'=>$size]);
             $campaign->images()->save($model);
             return $model;
         });
