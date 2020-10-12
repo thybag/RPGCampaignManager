@@ -1,13 +1,9 @@
-@extends('layouts.wrapper')
+@extends('layouts.app')
 @section('nav')
         
 @endsection     
 @section('content')
-    <style>
-
-    </style>
     <div class="container">
-       
         <div class="content-list">
             <header> 
                 <h1>Campaigns</h1>
