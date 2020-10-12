@@ -12,28 +12,52 @@
             <header><h2>{{empty($campaign) ? 'New Campaign' : "Edit ".$campaign->name }}</h2></header>
             <div>
                 @include('partials.input', [
-                    'label'=> 'Name',
-                    'name' =>'name',
-                    'type'=>'text',
+                    'label' => 'Name',
+                    'name'  =>'name',
+                    'type'  =>'text',
                     'model' => $campaign ?? null,
-                    
                     'placeholder' => 'The saga of...' 
                 ])
             </div>
             <div>
                 @include('partials.input', [
-                    'label'=> 'Description',
-                    'name' =>'description',
-                    'type'=>'textarea',
+                    'label' => 'Description',
+                    'name'  => 'description',
+                    'type'  => 'textarea',
                     'model' => $campaign ?? null,
                 ])
             </div>
 
-            @csrf
+           
+            @if (!empty($campaign)) 
+            <div>
+                @include('partials.select', [
+                        'label' => 'Default map',
+                        'name'  => 'default_map_id',
+                        'options' => $campaign->maps,
+                        'model' => $campaign,
+                        'none' => 'No Map'
+                ])
+            </div>
+            <div>
+                @include('partials.select', [
+                        'label' => 'Default Entity',
+                        'name'  => 'default_entity_id',
+                        'options' => $campaign->entities,
+                        'model' => $campaign,
+                ])
+            </div>
 
-            @if(!empty($campaign)) 
+            
+
+
+
+
                 @method('PUT')
             @endif
+
+
+             @csrf
             <footer>
                 <input type="submit" class="right" value="{{empty($campaign) ? 'Create campaign' : "Save changes" }}">
                 <a class="button cancel" href="{{url('/')}}">Back</a>

@@ -21,10 +21,9 @@ function bootCampaign()
 	const map = Map.make({state: Bus});
 	const contentNav = ContentNav.make({state: Bus});
 
-     
-
     // Show default
     Bus.trigger('entity:show', {entity: window._campaign.default_entity});
+    Bus.data.tab = window._campaign.default_map == '' ?  'content' : window._campaign.default_map;
 }
 function bootPreviews()
 {
@@ -38,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function()
 	Bus.data.mode = window._campaign.mode;
 	Bus.data.url = window._campaign.url;
 	Bus.data.campaign_id = window._campaign.id;
+
 	Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 	if (Bus.data.mode == 'campaign') {

@@ -11,7 +11,9 @@ class Campaign extends Model
 {
     protected $fillable = [
         'name',
-        'description'
+        'description',
+        'default_map_id',
+        'default_entity_id',
     ];
 
     public function maps()

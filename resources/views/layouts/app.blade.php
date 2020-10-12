@@ -17,7 +17,8 @@
             'id': '{{$campaign->id}}',
             'mode': '{{empty($mode) ? 'default' : 'campaign'}}',
             'url': '{{url('/')}}',
-            'default_entity': '{{$campaign->entities->first()->id}}'
+            'default_entity': '{{$campaign->default_entity_id ?? $campaign->entities->first()->id}}',
+            'default_map': '{{$campaign->default_map_id}}'
         };
     </script>
 @else
