@@ -10,7 +10,7 @@ class Login extends Model
     protected $table = 'user_logins';
 
     protected $fillable = [
-        'user_id', 'user_agent',
+        'ip', 'user_id', 'user_agent',
     ];
 
     public function User()
