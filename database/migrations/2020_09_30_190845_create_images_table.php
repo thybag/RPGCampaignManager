@@ -18,6 +18,8 @@ class CreateImagesTable extends Migration
             $table->unsignedBigInteger('campaign_id');
             $table->string('name', 100);
             $table->string('path', 100);
+            $table->string('type', 100);
+            $table->string('size', 100);
             $table->timestamps();
             $table->foreign('campaign_id')->references('id')->on('campaigns');
         });
