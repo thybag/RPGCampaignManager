@@ -14,10 +14,13 @@ class SlugsAndGeo extends Migration
     public function up()
     {
         Schema::table('entities', function (Blueprint $table) {
-            $table->string('slug')->after('name');
+            $table->string('slug')->after('name')->default('welcome-to-');
             $table->text('geo')->nullable()->after('type');
+        });
+
+        Schema::table('entities', function (Blueprint $table) {
             $table->renameColumn('type', 'category');
-           
+
         });
     }
 
