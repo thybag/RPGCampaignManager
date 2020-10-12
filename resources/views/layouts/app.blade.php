@@ -52,7 +52,7 @@
     <div class="main-menu">
 
         @if(!empty($campaign))
-            <a href="#">Campaign Settings</a>
+            <a href="{{url("/campaign/{$campaign->id}/edit")}}">Campaign Settings</a>
             <a href="{{url("/campaign/{$campaign->id}/image")}}">Manage Images</a>
             <a href="{{url("/campaign/{$campaign->id}/map")}}">Manage Maps</a>
         @endif

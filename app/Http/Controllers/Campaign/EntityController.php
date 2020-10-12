@@ -22,7 +22,6 @@ class EntityController extends Controller
      */
     public function index(Campaign $campaign)
     {
-
         return EntityResource::collection($campaign->entities);
     }
 
