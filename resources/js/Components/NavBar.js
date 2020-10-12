@@ -4,8 +4,8 @@ export default Component.define({
     el: document.querySelector('.bar'),
     initialize: function () {
         // Listen to state
-        this.state.on('update:tab', () => {
-            
+        this.state.on('update:tab', (tab) => {
+            this.selectTab(this.el.querySelector(`a[data-tab="${tab}"]`));
         });
     },
     events: 
@@ -20,6 +20,8 @@ export default Component.define({
     viewTab: function(e, target)
     {
         this.state.data.tab = target.dataset.tab;
+    },
+    selectTab: function(target) {
         [...target.parentNode.children].map(function(x){x.classList.remove('selected');});
         target.classList.add('selected');
     },

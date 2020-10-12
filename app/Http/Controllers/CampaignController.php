@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
+use App\Http\Requests\CampaignRequest;
 
 class CampaignController extends Controller
 {
@@ -51,11 +52,13 @@ class CampaignController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CampaignRequest $request)
     {
+        $campaign = Campaign::make($request->validated());
+
         $user = Auth::user();
-        $campaign = Campaign::make($request->only(['name', 'description']));
         $user->campaigns()->save($campaign);
+
         return redirect(url('campaign/'.$campaign->id));
     }
 
@@ -67,7 +70,7 @@ class CampaignController extends Controller
      */
     public function edit(Campaign $campaign)
     {
-        //
+        return view('campaign.edit', ['campaign' => $campaign]);
     }
 
     /**
@@ -77,9 +80,10 @@ class CampaignController extends Controller
      * @param  \App\Campaign  $campaign
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Campaign $campaign)
+    public function update(CampaignRequest $request, Campaign $campaign)
     {
-        //
+       $campaign->update($request->validated());
+       return redirect(url('campaign/'.$campaign->id));
     }
 
     /**

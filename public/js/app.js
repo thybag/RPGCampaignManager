@@ -16031,8 +16031,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
   el: document.querySelector('.bar'),
   initialize: function initialize() {
+    var _this = this;
+
     // Listen to state
-    this.state.on('update:tab', function () {});
+    this.state.on('update:tab', function (tab) {
+      _this.selectTab(_this.el.querySelector("a[data-tab=\"".concat(tab, "\"]")));
+    });
   },
   events: {
     "click .bar nav a[data-tab]": "viewTab",
@@ -16044,7 +16048,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   viewTab: function viewTab(e, target) {
     this.state.data.tab = target.dataset.tab;
-
+  },
+  selectTab: function selectTab(target) {
     _toConsumableArray(target.parentNode.children).map(function (x) {
       x.classList.remove('selected');
     });
@@ -16891,6 +16896,7 @@ function bootCampaign() {
   Bus.trigger('entity:show', {
     entity: window._campaign.default_entity
   });
+  Bus.data.tab = window._campaign.default_map == '' ? 'content' : window._campaign.default_map;
 }
 
 function bootPreviews() {

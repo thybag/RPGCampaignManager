@@ -22,12 +22,13 @@ class CampaignObserver
             'category'=>'Introduction'
         ]);
         $campaign->entities()->save($entity);
+        $campaign->update(['default_entity_id' => $entity->id]);
 
         $entity->blocks()->save(
             Block::make(
                 [
                     'type'=>'text',
-                     'content'=> "Welcome to your new campaign! \n Hit edit to update this content with whatever you like. \n \n Maps can be added via the top navigation bar."
+                    'content'=> "Welcome to your new RPG Campaign! \n Hit edit to update this content with whatever you like. \n \n Maps can be added via the top navigation bar."
                  ]
              )
         );

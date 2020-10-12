@@ -7,7 +7,7 @@
             margin-bottom:.4rem;
         }
 
-        input[type=text],input[type=email],input[type=password], textarea {
+        input[type=text],input[type=email],input[type=password], textarea, select {
             border: 1px solid #ccc;
             box-shadow: inset 0 1px 3px #ddd;
             padding:.5rem;
@@ -16,6 +16,10 @@
             &.invalid {
                 border-color: #dc3545;
             }
+        }
+
+        select * {
+            padding:.5rem;  
         }
 
         span.errors {

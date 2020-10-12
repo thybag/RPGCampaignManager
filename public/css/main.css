@@ -896,14 +896,17 @@ body {
   display: block;
   margin-bottom: 0.4rem;
 }
-.form > div input[type=text], .form > div input[type=email], .form > div input[type=password], .form > div textarea {
+.form > div input[type=text], .form > div input[type=email], .form > div input[type=password], .form > div textarea, .form > div select {
   border: 1px solid #ccc;
   box-shadow: inset 0 1px 3px #ddd;
   padding: 0.5rem;
   width: calc(100% - 1rem);
 }
-.form > div input[type=text].invalid, .form > div input[type=email].invalid, .form > div input[type=password].invalid, .form > div textarea.invalid {
+.form > div input[type=text].invalid, .form > div input[type=email].invalid, .form > div input[type=password].invalid, .form > div textarea.invalid, .form > div select.invalid {
   border-color: #dc3545;
+}
+.form > div select * {
+  padding: 0.5rem;
 }
 .form > div span.errors {
   color: #dc3545;
