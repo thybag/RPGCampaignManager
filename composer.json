@@ -16,8 +16,7 @@
         "intervention/image": "^2.5",
         "laravel/framework": "^7.24",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.3",
-        "spatie/data-transfer-object": "^2.5"
+        "laravel/ui": "^2.3"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

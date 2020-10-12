@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Domains\Campaign\Dto\CreateCampaignDTO;
-use App\Domains\Campaign\Services\CreateCampaignService;
-use App\Http\Requests\Campaign\CreateRequest;
+use Auth;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CampaignController extends Controller
 {
@@ -48,12 +45,18 @@ class CampaignController extends Controller
         return view('campaign.edit');
     }
 
-    public function store(CreateRequest $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
     {
-        $dto = new CreateCampaignDTO($request->validated());
-        $campaign = CreateCampaignService::handle($request->user(), $dto);
-
-        return redirect(url("campaign/{$campaign->id}"));
+        $user = Auth::user();
+        $campaign = Campaign::make($request->only(['name', 'description']));
+        $user->campaigns()->save($campaign);
+        return redirect(url('campaign/'.$campaign->id));
     }
 
     /**
