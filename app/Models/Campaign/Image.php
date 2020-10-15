@@ -42,7 +42,6 @@ class Image extends Model
         return DB::transaction(function() use ($campaign, $img, $name) {
             $path = static::uploadImage($campaign, $img);
             $title = ($name) ? $name : $img->getClientOriginalName();
-            $file_name = $img->getClientOriginalName();
             $type = $img->getClientOriginalExtension();
             $size = $img->getsize();
             $size = $size/1000;
