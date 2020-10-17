@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Schema;
 use App\Models\User;
 use App\Models\Campaign;
 use Tests\TestCase;

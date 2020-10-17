@@ -21,9 +21,11 @@ class CreateImagesTable extends Migration
             $table->timestamps();
             $table->foreign('campaign_id')->references('id')->on('campaigns');
         });
-
+        // sqlite unhappy with combing these 2 actions
         Schema::table('maps', function (Blueprint $table) {
             $table->dropColumn('path');
+        });
+        Schema::table('maps', function (Blueprint $table) {
             $table->unsignedBigInteger('image_id')->nullable()->after('campaign_id');
         });
     }
