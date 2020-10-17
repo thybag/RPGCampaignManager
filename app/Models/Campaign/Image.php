@@ -8,13 +8,12 @@ use App\Models\Model;
 use App\Models\Campaign;
 use Image as Intervention;
 
-
 class Image extends Model
 {
     protected $fillable = [
         'name',
         'path',
-        'size',
+        'size_kb',
         'type',
     ];
 
@@ -42,11 +41,11 @@ class Image extends Model
         return DB::transaction(function() use ($campaign, $img, $name) {
             $path = static::uploadImage($campaign, $img);
             $title = ($name) ? $name : $img->getClientOriginalName();
-            $type = $img->getClientOriginalExtension();
-            $size = $img->getsize();
-            $size = $size/1000;
+
+            $type = $img->getMimeType();
+            $size = $img->getsize()/1000;
             // FIle is okay!
-            $model = static::make(['path' => $path, 'name'=> $title, 'type'=>$type, 'size'=>$size]);
+            $model = static::make(['path' => $path, 'name'=> $title, 'type' => $type, 'size_kb' => $size]);
             $campaign->images()->save($model);
             return $model;
         });
@@ -55,6 +54,8 @@ class Image extends Model
     public function swap($img, $name = null)
     {
         if ($img) {
+            $this->type = $img->getMimeType();
+            $this->size_kb = $img->getsize()/1000;
             $this->path = static::uploadImage($this->campaign, $img);
         }
 
