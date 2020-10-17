@@ -17,7 +17,8 @@
             'id': '{{$campaign->id}}',
             'mode': '{{empty($mode) ? 'default' : 'campaign'}}',
             'url': '{{url('/')}}',
-            'default_entity': '{{$campaign->entities->first()->id}}'
+            'default_entity': '{{$campaign->default_entity_id ?? $campaign->entities->first()->id}}',
+            'default_map': '{{$campaign->default_map_id}}'
         };
     </script>
 @else
@@ -52,7 +53,7 @@
     <div class="main-menu">
 
         @if(!empty($campaign))
-            <a href="#">Campaign Settings</a>
+            <a href="{{url("/campaign/{$campaign->id}/edit")}}">Campaign Settings</a>
             <a href="{{url("/campaign/{$campaign->id}/image")}}">Manage Images</a>
             <a href="{{url("/campaign/{$campaign->id}/map")}}">Manage Maps</a>
         @endif
