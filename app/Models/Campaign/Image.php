@@ -24,21 +24,21 @@ class Image extends Model
 
     public function getPreviewAttribute()
     {
-    	return asset('storage/'.str_replace('.', '_preview.', $this->path));
+        return asset('storage/' . str_replace('.', '_preview.', $this->path));
     }
 
     public function getMapURLAttribute()
     {
-    	return asset('storage/'.$this->path);
+        return asset('storage/' . $this->path);
     }
 
-    public static function upload($campaign, $img, $name = null) 
+    public static function upload($campaign, $img, $name = null)
     {
         if ($image = static::findImageByHash($campaign, $img)) {
             return $image;
         }
 
-        return DB::transaction(function() use ($campaign, $img, $name) {
+        return DB::transaction(function () use ($campaign, $img, $name) {
             $path = static::uploadImage($campaign, $img);
             $title = ($name) ? $name : $img->getClientOriginalName();
 
@@ -76,11 +76,14 @@ class Image extends Model
         $hash = md5_file($img->getRealPath());
 
         $img->storeAs("{$campaign->user_id}/{$campaign->id}", "{$hash}.{$ext}", 'public');
-        $preview = Intervention::make($img)->resize(400, 400, 
+        $preview = Intervention::make($img)->resize(
+            400,
+            400,
             function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
-            })
+            }
+        )
         ->encode();
         Storage::disk('public')->put("{$campaign->user_id}/{$campaign->id}/{$hash}_preview.{$ext}", $preview);
 

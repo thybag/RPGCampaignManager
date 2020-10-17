@@ -14,8 +14,8 @@ class UpdateImage extends Migration
     public function up()
     {
         Schema::table('images', function (Blueprint $table) {
-            $table->integer('size_kb');
-            $table->string('type', 60);
+            $table->integer('size_kb')->default(0);
+            $table->string('type', 60)->nullable();
         });
     }
 

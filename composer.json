@@ -16,7 +16,8 @@
         "intervention/image": "^2.5",
         "laravel/framework": "^7.24",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.3"
+        "laravel/ui": "^2.3",
+        "squizlabs/php_codesniffer": "^3.5"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

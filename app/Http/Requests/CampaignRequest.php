@@ -16,8 +16,8 @@ class CampaignRequest extends FormRequest
         // Only settable when editing
         $campaign = static::route('campaign');
         if (!empty($campaign)) {
-            $rules['default_map_id'] = 'nullable|exists:maps,id,campaign_id,'.$campaign->id;
-            $rules['default_entity_id'] = 'exists:entities,id,campaign_id,'.$campaign->id;
+            $rules['default_map_id'] = 'nullable|exists:maps,id,campaign_id,' . $campaign->id;
+            $rules['default_entity_id'] = 'exists:entities,id,campaign_id,' . $campaign->id;
         }
 
         return $rules;

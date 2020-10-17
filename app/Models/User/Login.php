@@ -13,7 +13,7 @@ class Login extends Model
         'ip', 'user_id', 'user_agent',
     ];
 
-    public function User()
+    public function user()
     {
         $this->hasOne(User::class);
     }

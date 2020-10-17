@@ -14,10 +14,12 @@ class SlugsAndGeo extends Migration
     public function up()
     {
         Schema::table('entities', function (Blueprint $table) {
-            $table->string('slug')->after('name');
+            $table->string('slug')->nullable()->after('name');
             $table->text('geo')->nullable()->after('type');
+        });
+        // SQL lite doesn't create other columns if this is run together
+        Schema::table('entities', function (Blueprint $table) {
             $table->renameColumn('type', 'category');
-           
         });
     }
 

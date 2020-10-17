@@ -6,13 +6,15 @@ use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Entity;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Campaign\EntityRequest;
 use App\Http\Resources\Campaign\EntityResource;
 
 class EntityController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Entity::class, 'entity');;
+        $this->authorizeResource(Entity::class, 'entity');
+        ;
     }
 
     /**
@@ -32,7 +34,6 @@ class EntityController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -41,16 +42,11 @@ class EntityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Campaign $campaign)
+    public function store(EntityRequest $request, Campaign $campaign)
     {
-        $entity = new Entity([
-            'name'      => $request->input('data.name'),
-            'category'  => $request->input('data.category'),
-            'map_id'    => $request->input('data.map_id'),
-            'geo'       => $request->input('data.geo')
-        ]);
-
+        $entity = new Entity($request->validated()['data']);
         $campaign->entities()->save($entity);
+
         return new EntityResource($entity);
     }
 
@@ -73,7 +69,6 @@ class EntityController extends Controller
      */
     public function edit(Campaign $campaign, Entity $entity)
     {
-        //
     }
 
     /**
@@ -83,15 +78,9 @@ class EntityController extends Controller
      * @param  \App\Entity  $entity
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Campaign $campaign, Entity $entity)
+    public function update(EntityRequest $request, Campaign $campaign, Entity $entity)
     {
-        $updates = [];
-        if ($request->has('data.name')) $updates['name'] = $request->input('data.name');
-        if ($request->has('data.category')) $updates['category'] = $request->input('data.category');
-        if ($request->has('data.map_id')) $updates['map_id'] = $request->input('data.map_id');
-        if ($request->has('data.geo')) $updates['geo'] = $request->input('data.geo');
-
-        $entity->update($updates);
+        $entity->update($request->validated()['data']);
         return new EntityResource($entity);
     }
 
@@ -103,6 +92,5 @@ class EntityController extends Controller
      */
     public function destroy(Campaign $campaign, Entity $entity)
     {
-        //
     }
 }

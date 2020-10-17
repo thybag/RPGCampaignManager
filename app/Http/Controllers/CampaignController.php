@@ -11,7 +11,8 @@ class CampaignController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Campaign::class, 'campaign');;
+        $this->authorizeResource(Campaign::class, 'campaign');
+        ;
     }
 
     /**
@@ -59,7 +60,7 @@ class CampaignController extends Controller
         $user = Auth::user();
         $user->campaigns()->save($campaign);
 
-        return redirect(url('campaign/'.$campaign->id));
+        return redirect(url('campaign/' . $campaign->id));
     }
 
     /**
@@ -82,8 +83,8 @@ class CampaignController extends Controller
      */
     public function update(CampaignRequest $request, Campaign $campaign)
     {
-       $campaign->update($request->validated());
-       return redirect(url('campaign/'.$campaign->id));
+        $campaign->update($request->validated());
+        return redirect(url('campaign/' . $campaign->id));
     }
 
     /**
@@ -94,6 +95,5 @@ class CampaignController extends Controller
      */
     public function destroy(Campaign $campaign)
     {
-        //
     }
 }
