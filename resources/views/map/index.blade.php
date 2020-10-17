@@ -19,7 +19,7 @@
                         <div>
                             <a class="preview" href="{{url("campaign/{$campaign->id}/map/{$map->id}/edit")}}" data-type='map' data-id='{{$map->id}}' style="background-image:url()">
                                 <img src="{{ optional($map->image)->preview }}">
-                                <div>{{$map->name}} <span class="poi">12 poi's</span></div>
+                                <div>{{$map->name}} <span class="poi">{{$map->entities()->count()}} poi's</span></div>
                             </a>
                         </div>
                     @endforeach

@@ -164,6 +164,8 @@ class ImageTest extends TestCase
      */
     public function testCreateImageWithoutNameTest()
     {
+        Storage::fake('public');
+
         $response = $this->actingAs($this->user)->json(
             'POST',
             'campaign/1/image/',
