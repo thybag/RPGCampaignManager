@@ -15,7 +15,8 @@ class MapController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Map::class, 'map');;
+        $this->authorizeResource(Map::class, 'map');
+        ;
     }
 
     /**

@@ -13,7 +13,8 @@ class EntityController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Entity::class, 'entity');;
+        $this->authorizeResource(Entity::class, 'entity');
+        ;
     }
 
     /**
@@ -33,7 +34,6 @@ class EntityController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -69,7 +69,6 @@ class EntityController extends Controller
      */
     public function edit(Campaign $campaign, Entity $entity)
     {
-        //
     }
 
     /**
@@ -93,6 +92,5 @@ class EntityController extends Controller
      */
     public function destroy(Campaign $campaign, Entity $entity)
     {
-        //
     }
 }

@@ -53,7 +53,7 @@ class ImagePolicy extends BasePolicy
      */
     public function update(User $user, Image $image)
     {
-       return ($this->userOwnsCampaign($user) && $this->ownedByCampaign($image));
+        return ($this->userOwnsCampaign($user) && $this->ownedByCampaign($image));
     }
 
     /**

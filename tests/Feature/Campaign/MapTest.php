@@ -173,6 +173,6 @@ class MapTest extends TestCase
                 'name' => 'My second map',
             ]
         );
-        $response->assertStatus(403); 
+        $response->assertStatus(403);
     }
 }

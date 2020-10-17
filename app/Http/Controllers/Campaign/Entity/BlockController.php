@@ -13,7 +13,8 @@ class BlockController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Block::class, 'block');;
+        $this->authorizeResource(Block::class, 'block');
+        ;
     }
     /**
      * Display a listing of the resource.
@@ -22,7 +23,6 @@ class BlockController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -32,7 +32,6 @@ class BlockController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -56,7 +55,6 @@ class BlockController extends Controller
      */
     public function show(Campaign $campaign, Entity $entity, Block $block)
     {
-
     }
 
     /**
@@ -67,7 +65,6 @@ class BlockController extends Controller
      */
     public function edit(Campaign $campiagn, Entity $entity, Block $block)
     {
-
     }
 
     /**
@@ -91,6 +88,5 @@ class BlockController extends Controller
      */
     public function destroy(Block $block)
     {
-        //
     }
 }

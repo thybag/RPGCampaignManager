@@ -269,6 +269,6 @@ class EntityTest extends TestCase
                 ]
             ]
         );
-        $response->assertStatus(403); 
+        $response->assertStatus(403);
     }
 }

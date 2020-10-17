@@ -13,7 +13,8 @@ class ImageController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Image::class, 'image');;
+        $this->authorizeResource(Image::class, 'image');
+        ;
     }
 
     /**
@@ -33,7 +34,7 @@ class ImageController extends Controller
      */
     public function create(Campaign $campaign)
     {
-       return view('image.edit', ['campaign' => $campaign]);
+        return view('image.edit', ['campaign' => $campaign]);
     }
 
     /**
@@ -50,7 +51,7 @@ class ImageController extends Controller
             return new ImageResource($image);
         }
 
-        return redirect(url("campaign/{$campaign->id}/image/". $image->id ."/edit"));
+        return redirect(url("campaign/{$campaign->id}/image/" . $image->id . "/edit"));
     }
 
     /**
@@ -88,7 +89,7 @@ class ImageController extends Controller
         $image->swap($request->file('image'));
         $image->save();
 
-        return redirect(url("campaign/{$campaign->id}/image/".$image->id ."/edit"));
+        return redirect(url("campaign/{$campaign->id}/image/" . $image->id . "/edit"));
     }
 
     /**

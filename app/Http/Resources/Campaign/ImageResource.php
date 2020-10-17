@@ -26,7 +26,7 @@ class ImageResource extends BaseResource
             'url'       =>   $this->mapURL,
             'preview'   => $this->preview,
             'size_kb'   => $this->size_kb,
-            'type'      => $this->type,         
+            'type'      => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
@@ -39,5 +39,4 @@ class ImageResource extends BaseResource
             'update' => "/campaign/{$this->campaign_id}/image/{$this->id}"
         ];
     }
-
 }

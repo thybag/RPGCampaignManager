@@ -39,6 +39,4 @@ class EntityResource extends BaseResource
             'newBlock'  => url("/campaign/{$this->campaign_id}/entity/{$this->id}/block"),
         ];
     }
-
-
 }

@@ -12,7 +12,7 @@ class ImageRequest extends FormRequest
         $required = $this->method() === 'POST' ? 'required|' : '';
         return [
             'name'   => 'string|max:255',
-            'image' =>  $required.'mimes:jpeg,jpg,png,gif'
+            'image' =>  $required . 'mimes:jpeg,jpg,png,gif'
         ];
     }
 }

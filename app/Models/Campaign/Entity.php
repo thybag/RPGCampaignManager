@@ -8,18 +8,19 @@ use App\Models\Campaign\Entity\Block;
 
 class Entity extends Model
 {
-    public function __construct(array $attributes = []) {
+    public function __construct(array $attributes = [])
+    {
         // Add slug listener
-        static::saving(function($model) {
+        static::saving(function ($model) {
             $model->slug = Str::slug($model->name);
         });
 
         parent::__construct($attributes);
     }
 
-	protected $with = [
-		'blocks'
-	];
+    protected $with = [
+        'blocks'
+    ];
 
     protected $fillable = [
         'name',

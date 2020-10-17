@@ -233,6 +233,6 @@ class ImageTest extends TestCase
                 'name' => 'My second image',
             ]
         );
-        $response->assertStatus(403); 
+        $response->assertStatus(403);
     }
 }

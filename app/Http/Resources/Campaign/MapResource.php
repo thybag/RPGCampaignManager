@@ -37,5 +37,4 @@ class MapResource extends BaseResource
             'update' => "/campaign/{$this->campaign_id}/map/{$this->id}"
         ];
     }
-
 }
