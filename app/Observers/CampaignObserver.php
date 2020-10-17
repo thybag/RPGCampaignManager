@@ -28,7 +28,9 @@ class CampaignObserver
             Block::make(
                 [
                     'type'=>'text',
-                    'content'=> "Welcome to your new RPG Campaign! \n Hit edit to update this content with whatever you like. \n \n Maps can be added via the top navigation bar."
+                    'content'=> "Welcome to your new RPG Campaign! \n
+                        Hit edit to update this content with whatever you like.
+                        \n \n Maps can be added via the top navigation bar."
                  ]
             )
         );
