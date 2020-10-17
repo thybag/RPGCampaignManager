@@ -1,35 +1,33 @@
 <?php
-
 namespace App\Http\Resources\Campaign\Entity;
 
-use Route;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\BaseResource;
 
-class BlockResource extends JsonResource
+class BlockResource extends BaseResource
 {
-    public static $wrap = null;
-
     /**
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
      * @return array
      */
-    public function toArray($request)
+    public function attributes($request)
     {
         return [
-            'id' => $this->id,
-            'type' => 'block',
-            'data' => [
-                'name' => $this->name,
-                'content' => $this->content,
-                'created_at' => $this->created_at,
-                'updated_at' => $this->updated_at,
-            ],
-            'links' => [
-                'get' => url("/campaign/{$this->entity->campaign_id}/entity/{$this->entity_id}/block{$this->id}"),
-                'update' => url("/campaign/{$this->entity->campaign_id}/entity/{$this->entity_id}/block/{$this->id}"),
-            ],
+            'id'         => $this->id,
+            'type'       => 'block',
+            'block_type' => $this->type,
+            'content'    => $this->content,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
+    }
+
+    public function links($request)
+    {
+        return [
+            'get' => url("/campaign/{$this->entity->campaign_id}/entity/{$this->entity_id}/block/{$this->id}"),
+            'update' => url("/campaign/{$this->entity->campaign_id}/entity/{$this->entity_id}/block/{$this->id}"),
         ];
     }
 }

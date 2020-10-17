@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class BaseResource extends JsonResource
 {
     public static $wrap = null;
+    protected $includes = [];
 
     protected function handleIncludes($request)
     {
