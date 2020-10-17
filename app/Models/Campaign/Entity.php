@@ -25,7 +25,7 @@ class Entity extends Model
         'name',
         'category',
         'map_id',
-        'geo'
+        'geo',
     ];
 
     public function blocks()
