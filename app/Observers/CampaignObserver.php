@@ -28,12 +28,17 @@ class CampaignObserver
             Block::make(
                 [
                     'type' => 'text',
-                    'content' => "Welcome to your new RPG Campaign! \n\n" .
-                                 " * To add a map, select the main menu (top right) and Campaign maps.\n" .
-                                 " * To add a content section, hit New... on the left hand menu. \n" .
-                                 " * You can add images to content by dragging them in to the text area. \n" .
-                                 "\n\n" .
-                                 "Thanks for trying RPG Campaign Manager."
+                    'content' => implode(
+                        "\n",
+                        [
+                            "Welcome to your new RPG Campaign! \n",
+                            " * To add a map, select the main menu (top right) and Campaign maps.",
+                            " * To add a content section, hit New... on the left hand menu.",
+                            " * You can add images to content by dragging them in to the text area.",
+                            "\n",
+                            "Thanks for trying RPG Campaign Manager."
+                        ]
+                    )
                  ]
             )
         );
