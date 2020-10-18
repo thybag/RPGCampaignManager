@@ -15906,73 +15906,173 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   el: document.querySelector('#map'),
+  mapId: null,
   map: null,
   mapLookup: {},
   _editingPoi: null,
   initialize: function initialize() {
-    var _this = this;
-
-    // Listen to state
-    this.state.on('update:tab', /*#__PURE__*/function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(tab) {
-        var data, json;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!(tab === 'content')) {
-                  _context.next = 2;
-                  break;
-                }
-
-                return _context.abrupt("return", _this.clearMap());
-
-              case 2:
-                _context.next = 4;
-                return _this.state.loadMap(tab);
-
-              case 4:
-                data = _context.sent;
-                _context.next = 7;
-                return data.json();
-
-              case 7:
-                json = _context.sent;
-
-                _this.createMap(json);
-
-              case 9:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }());
-    this.state.on('map:focus', function (e) {
-      // Change map            
-      if (e.map != _this.state.data.tab) {
-        _this.state.data.tab = e.map;
-      }
-
-      if (_this.hasMarker(e.entity)) {
-        _this.highLightMarker(e.entity);
-      }
-    });
-    this.state.on('map:poi', function (entity) {
-      console.log("place marker mode");
-      _this._editingPoi = entity;
-
-      _this.map.pm.enableDraw('Marker');
-    });
-    this.state.on('entity:updated', function (entity) {
-      _this.addEntityToMap(entity);
-    });
+    // Connect to state
+    this.listenTo(this.state);
   },
+  events: {
+    'update:tab': 'showMap',
+    'map:focus': 'focus',
+    // Focus on a poi
+    'map:poi:create': 'create',
+    // Draw new Poi
+    'map:poi:edit': 'edit',
+    // Enter edit mode on poi
+    'map:poi:save': 'save',
+    // Save currently editing poi
+    'entity:updated': 'redraw' // Draw poi based on new data
+
+  },
+  focus: function () {
+    var _focus = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e) {
+      var _this = this;
+
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return this.showMap(e.map);
+
+            case 2:
+              if (this.hasMarker(e.entity)) {
+                setTimeout(function () {
+                  _this.highLightMarker(e.entity);
+                }, 200);
+              }
+
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function focus(_x) {
+      return _focus.apply(this, arguments);
+    }
+
+    return focus;
+  }(),
+  create: function create() {
+    // Set edit mode and allow draw
+    this._editingPoi = entity;
+    this.map.pm.enableDraw('Marker');
+  },
+  redraw: function redraw(entity) {
+    // redraw an enitity to map
+    this.addEntityToMap(entity);
+  },
+  edit: function () {
+    var _edit = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(entity) {
+      var _this2 = this;
+
+      var m;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
+              return this.showMap(entity.data.map_id);
+
+            case 2:
+              // Set edit mode
+              m = this.getMarker(entity.id);
+              this._editingPoi = entity; // depending on type, init edit
+
+              if (m._icon) {
+                this.removeMarker(entity.id);
+                this.map.pm.enableDraw('Marker');
+              } else {
+                m.pm.enable();
+                m.once('pm:update', function (item) {
+                  _this2.state.trigger('entity:update', {
+                    geo: item,
+                    entity: _this2._editingPoi
+                  });
+
+                  _this2._editingPoi = null;
+                });
+              }
+
+            case 5:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    function edit(_x2) {
+      return _edit.apply(this, arguments);
+    }
+
+    return edit;
+  }(),
+  save: function save(entity) {
+    var m = this.getMarker(this._editingPoi.id);
+    m.pm.disable();
+  },
+  showMap: function () {
+    var _showMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(map) {
+      var data, json;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              if (!(map == this.mapId)) {
+                _context3.next = 2;
+                break;
+              }
+
+              return _context3.abrupt("return");
+
+            case 2:
+              // Update tabs if not already done
+              this.mapId = map;
+              this.state.data.tab = map; // Load map locations
+
+              if (!(map === 'content')) {
+                _context3.next = 6;
+                break;
+              }
+
+              return _context3.abrupt("return", this.clearMap());
+
+            case 6:
+              _context3.next = 8;
+              return this.state.loadMap(map);
+
+            case 8:
+              data = _context3.sent;
+              _context3.next = 11;
+              return data.json();
+
+            case 11:
+              json = _context3.sent;
+              this.mapId = json.id;
+              _context3.next = 15;
+              return this.createMap(json);
+
+            case 15:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, this);
+    }));
+
+    function showMap(_x3) {
+      return _showMap.apply(this, arguments);
+    }
+
+    return showMap;
+  }(),
   clearMap: function clearMap() {
     if (this.map) {
       this.map.off();
@@ -16014,13 +16114,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.map.panTo(this._offsetPoi(l));
   },
   createMap: function () {
-    var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(map) {
-      var _this2 = this;
+    var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(map) {
+      var _this3 = this;
 
-      var mapPath, img, width, height, bounds, image;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      var mapPath, img, width, height, bounds, image, zoom;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context4.prev = _context4.next) {
             case 0:
               if (this.map) {
                 this.clearMap();
@@ -16028,7 +16128,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               mapPath = map.data.image.data.url; // Load image
 
-              _context2.next = 4;
+              _context4.next = 4;
               return new Promise(function (resolve, reject) {
                 var img = document.createElement('img');
                 img.src = mapPath;
@@ -16041,68 +16141,78 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
 
             case 4:
-              img = _context2.sent;
-              width = Math.round(img.width / 10);
-              height = Math.round(img.height / 10);
+              img = _context4.sent;
+              // Create map
               this.map = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.map('map', {
                 crs: leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.CRS.Simple,
-                zoomSnap: 0.20,
-                maxZoom: 4,
-                minZoom: 1
-              }); // Config
+                zoomSnap: 0.20
+              }); // Config map size
 
+              width = Math.round(img.width / 10);
+              height = Math.round(img.height / 10);
               bounds = [[0, 0], [height, width]];
               image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(mapPath, bounds).addTo(this.map);
-              this.map.fitBounds(bounds);
-              this.map.setZoom(1.4);
+              this.map.fitBounds(bounds); // Config map zoom.
+
+              zoom = this.map.getZoom();
+              this.map.setZoom(zoom + .5);
+              this.map.setMaxZoom(zoom + 4);
+              this.map.setMinZoom(zoom - .5); // Controls
+
               this.map.pm.addControls({
                 position: 'topleft',
                 drawCircle: false,
                 drawPolyline: false,
-                drawCircleMarker: false
-              });
+                drawCircleMarker: false,
+                editMode: false,
+                dragMode: false,
+                cutPolygon: false,
+                removalMode: false
+              }); // Draw entities
+
               map.data.entities.map(function (m) {
-                _this2.addEntityToMap(m);
-              });
+                _this3.addEntityToMap(m);
+              }); // Listen for map initiaed creation
+
               this.map.on('pm:create', function (item) {
-                if (_this2._editingPoi != null) {
-                  _this2.state.trigger('entity:update', {
+                if (_this3._editingPoi != null) {
+                  _this3.state.trigger('entity:update', {
                     geo: item,
-                    entity: _this2._editingPoi
+                    entity: _this3._editingPoi
                   });
                 } else {
-                  _this2.state.trigger('entity:create', {
+                  _this3.state.trigger('entity:create', {
                     geo: item,
                     category: 'Location'
                   });
                 }
 
-                _this2._editingPoi = null;
+                _this3._editingPoi = null;
 
-                _this2.map.pm.Draw.disable();
+                _this3.map.pm.Draw.disable();
               });
 
-            case 15:
+            case 18:
             case "end":
-              return _context2.stop();
+              return _context4.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee4, this);
     }));
 
-    function createMap(_x2) {
+    function createMap(_x4) {
       return _createMap.apply(this, arguments);
     }
 
     return createMap;
   }(),
   addEntityToMap: function addEntityToMap(entity) {
-    var _this3 = this;
+    var _this4 = this;
 
     // Skip if no geo
     if (!entity.data.geo) return; // Skip if not on this map
 
-    if (entity.data.map_id != this.state.data.tab) return; // Remove existing marker if we have one
+    if (entity.data.map_id != this.mapId) return; // Remove existing marker if we have one
 
     if (this.hasMarker(entity.id)) {
       this.removeMarker(entity.id);
@@ -16113,13 +16223,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       onEachFeature: function onEachFeature(feature, layer) {
         layer.on({
           'click': function click(point) {
-            _this3.state.trigger('entity:show', {
+            _this4.state.trigger('entity:show', {
               'entity': entity.id
             });
           }
         }); // Let us lookup "linked" marker easily
 
-        _this3.mapLookup[entity.id] = layer;
+        _this4.mapLookup[entity.id] = layer;
       }
     }).addTo(this.map);
   }
@@ -16242,6 +16352,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
 /* harmony import */ var _Section_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Section.js */ "./resources/js/Components/Section.js");
 /* harmony import */ var _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Element/Menu.js */ "./resources/js/Components/Element/Menu.js");
+/* harmony import */ var _Panel_GeoControl_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Panel/GeoControl.js */ "./resources/js/Components/Panel/GeoControl.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -16252,8 +16363,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <header>\n            <span class='editEntity menu'>&#x22ef;</span>\n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            <span class='editEntity menu'>&#x22ef;</span>\n            <h2>".concat(title, "</h2>\n            <div class='geo'></div>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -16289,9 +16401,14 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   el: document.querySelector('.panel'),
   children: [],
+  geoControls: null,
   initialize: function initialize() {
     // Listen to model events
-    this.listenTo(this.state);
+    this.listenTo(this.state); // Setup controls
+
+    this.geoControls = _Panel_GeoControl_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
+      state: this.state
+    });
   },
   content: null,
   mode: 'hide',
@@ -16306,7 +16423,6 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
     // Entity General
     "click .saveEntity": "saveEntity",
     "click .cancelEntity": "cancelEntity",
-    "click .poi": "managePoi",
     // Model events
     "update:tab": "updatePanelDisplay",
     "entity:create": "createEntity",
@@ -16315,20 +16431,6 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
   },
   menu: function menu() {
     _menu.attach(this);
-  },
-  hasPoi: function hasPoi() {
-    return this.content.data.geo != null;
-  },
-  managePoi: function managePoi() {
-    if (this.hasPoi()) {
-      this.state.trigger('map:focus', {
-        map: this.content.data.map_id,
-        entity: this.content.id
-      });
-      return;
-    }
-
-    this.state.trigger('map:poi', this.content);
   },
   updateEntity: function updateEntity(entity) {
     this.content = entity.entity;
@@ -16401,7 +16503,9 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
 
               if (this.content.data._geo) {
                 payload.data.map_id = this.state.data.tab;
-                payload.data.geo = JSON.stringify(this.content.data._geo.layer.toGeoJSON());
+                payload.data.geo = JSON.stringify(this.content.data._geo.layer.toGeoJSON()); // Tidy from map
+
+                this.content.data._geo.layer.remove();
               }
 
               if (!(this.mode == 'edit')) {
@@ -16476,13 +16580,10 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
 
     var template = panelTpl(this.content.data.name);
     var container = template.querySelector('.panel-content');
-
-    if (this.hasPoi()) {
-      template.querySelector('.poi').innerText = "Locate";
-    } else {
-      template.querySelector('.poi').innerText = "Create";
-    }
-
+    this.geoControls.attach({
+      el: template.querySelector('.geo'),
+      entity: this.content
+    });
     var blocks = this.content.data.blocks;
     blocks.forEach(function (block) {
       var section = _Section_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
@@ -16571,6 +16672,73 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
 
     return showContent;
   }()
+}));
+
+/***/ }),
+
+/***/ "./resources/js/Components/Panel/GeoControl.js":
+/*!*****************************************************!*\
+  !*** ./resources/js/Components/Panel/GeoControl.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+
+var templateHasPoi = "\n    <span data-action=\"locate\">Show</span>\n    <span data-action=\"edit\">Update</span>\n";
+var templateNoPoi = "\n    <span data-action=\"create\">Create new</span>\n";
+var templateEditing = "\n    <span data-action=\"save\">Finish editing</span>\n";
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  events: {
+    "click span[data-action='locate']": "locate",
+    "click span[data-action='create']": "create",
+    "click span[data-action='edit']": "edit",
+    "click span[data-action='save']": "save"
+  },
+  editing: false,
+  entity: null,
+  hasGeo: function hasGeo() {
+    return this.entity.data.geo != null && this.entity.data.map_id != null;
+  },
+  attach: function attach(_ref) {
+    var el = _ref.el,
+        entity = _ref.entity;
+    this.editing = false;
+    this.entity = entity;
+    el.appendChild(this.el); // Render
+
+    this.render();
+  },
+  render: function render() {
+    if (this.editing) {
+      this.el.innerHTML = templateEditing;
+    } else {
+      this.el.innerHTML = this.hasGeo() ? templateHasPoi : templateNoPoi;
+    }
+  },
+  locate: function locate() {
+    // Trigger map focus on PoI
+    this.state.trigger('map:focus', {
+      map: this.entity.data.map_id,
+      entity: this.entity.id
+    });
+  },
+  create: function create() {
+    // Create PoI for entity
+    this.state.trigger('map:poi:create', this.entity);
+  },
+  edit: function edit() {
+    this.editing = true; // Create PoI for entity
+
+    this.state.trigger('map:poi:edit', this.entity);
+    this.render();
+  },
+  save: function save() {
+    this.editing = false;
+    this.state.trigger('map:poi:save', this.entity);
+  }
 }));
 
 /***/ }),
