@@ -4,53 +4,87 @@ import '@geoman-io/leaflet-geoman-free';
 
 export default Component.define({
     el: document.querySelector('#map'),
+    mapId: null,
     map: null,
     mapLookup: {},
     _editingPoi: null,
     initialize: function () {
-        // Listen to state
-        this.state.on('update:tab', async (tab) => {
-        	// Load map locations
-        	if (tab === 'content') {
-        		return this.clearMap();
-        	}
+        // Connect to state
+        this.listenTo(this.state);
+    },
+    events: {
+        'update:tab':       'showMap',
+        'map:focus':        'focus',    // Focus on a poi
+        'map:poi:create':   'create',   // Draw new Poi
+        'map:poi:edit':     'edit',     // Enter edit mode on poi
+        'map:poi:save':     'save',     // Save currently editing poi
+        'entity:updated':   'redraw'    // Draw poi based on new data
+    },
+    focus: async  function(e) {
+        await this.showMap(e.map);
+        if (this.hasMarker(e.entity)) {
+            setTimeout(() => { this.highLightMarker(e.entity); }, 200);
+        }
+    },
+    create: function() {
+        // Set edit mode and allow draw
+        this._editingPoi = entity;
+        this.map.pm.enableDraw('Marker');
+    },
+    redraw: function(entity) {
+        // redraw an enitity to map
+        this.addEntityToMap(entity);
+    },
+    edit: async function(entity) {
+        // Get correct map
+        await this.showMap(entity.data.map_id);
+        // Set edit mode
+        const m = this.getMarker(entity.id);
+        this._editingPoi = entity;
 
-        	let data = await this.state.loadMap(tab);
-        	let json = await data.json();
-
-            this.createMap(json);
-        });
-
-        this.state.on('map:focus', (e) => {
-            // Change map            
-            if (e.map != this.state.data.tab){
-                this.state.data.tab = e.map;
-            }
-
-            if (this.hasMarker(e.entity)) {
-                this.highLightMarker(e.entity);
-            }
-        });
-
-        this.state.on('map:poi', (entity) => {
-            console.log("place marker mode");
-            this._editingPoi = entity;
+        // depending on type, init edit
+        if (m._icon) {
+            this.removeMarker(entity.id);
             this.map.pm.enableDraw('Marker');
-        });
+        } else {
+            m.pm.enable();
+            m.once('pm:update', (item) => {
+                this.state.trigger('entity:update', {geo: item, entity: this._editingPoi});
+                this._editingPoi = null;
+            });
+        }
+    },
+    save: function(entity) {
+        const m = this.getMarker(this._editingPoi.id);
+        m.pm.disable();
+    },
+    showMap: async function(map) {
+        if (map == this.mapId) {
+            return;
+        }
 
-        this.state.on('entity:updated', (entity) => {
-            this.addEntityToMap(entity);
-        });
+        // Update tabs if not already done
+        this.mapId = map;
+        this.state.data.tab = map;
 
+        // Load map locations
+        if (map === 'content') {
+            return this.clearMap();
+        }
+
+        let data = await this.state.loadMap(map);
+        let json = await data.json();
+        this.mapId = json.id;
+        await this.createMap(json);
     },
     clearMap: function()
     {
-    	if(this.map) {
-    		this.map.off();
-  			this.map.remove();
+        if(this.map) {
+            this.map.off();
+            this.map.remove();
             this.mapLookup = {};
-  			this.map = null;
-    	}
+            this.map = null;
+        }
     },
     hasMarker: function(e_id){
         return (this.mapLookup[e_id]);
@@ -86,46 +120,57 @@ export default Component.define({
        
     },
     createMap: async function(map) {
-    	if (this.map) {
-    		this.clearMap();
-    	}
+        if (this.map) {
+            this.clearMap();
+        }
 
         const mapPath = map.data.image.data.url;
-    	// Load image
-    	let img = await new Promise((resolve, reject) => {
-    			let img = document.createElement('img');
-    			img.src = mapPath;
-		        img.onload = () => resolve(img);
-		        img.onerror = reject;
-		});
-    	
-    	let width = Math.round(img.width/10);
-    	let height = Math.round(img.height/10);
+        // Load image
+        let img = await new Promise((resolve, reject) => {
+                let img = document.createElement('img');
+                img.src = mapPath;
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+        });
+        
+        // Create map
+        this.map = L.map('map', {
+            crs: L.CRS.Simple,
+            zoomSnap: 0.20,
+        });
 
-	 	this.map = L.map('map', {
-	        crs: L.CRS.Simple,
-	        zoomSnap: 0.20,
-	        maxZoom: 4,
-	        minZoom: 1
-	    });
-        // Config
-	    var bounds = [[0,0], [height,width]];
-	    var image = L.imageOverlay(mapPath, bounds).addTo(this.map);
-	    this.map.fitBounds(bounds);    
-	   	this.map.setZoom(1.4);
+        // Config map size
+        const width = Math.round(img.width/10);
+        const height = Math.round(img.height/10);
+        const bounds = [[0,0], [height,width]];
+        const image = L.imageOverlay(mapPath, bounds).addTo(this.map);
+        this.map.fitBounds(bounds);    
 
-	    this.map.pm.addControls({
-	      position: 'topleft',
+        // Config map zoom.
+        const zoom = this.map.getZoom();
+        this.map.setZoom(zoom+.5);
+        this.map.setMaxZoom(zoom+4);
+        this.map.setMinZoom(zoom-.5);
+
+        // Controls
+        this.map.pm.addControls({
+          position: 'topleft',
           drawCircle: false,
           drawPolyline: false,
-          drawCircleMarker: false
-	    });
+          drawCircleMarker: false,
+          editMode: false,
+          dragMode: false,
+          cutPolygon: false,
+          removalMode: false
+        });
 
+        // Draw entities
         map.data.entities.map((m) => {
             this.addEntityToMap(m);    
         });
 
-	    this.map.on('pm:create', (item) => {
+        // Listen for map initiaed creation
+        this.map.on('pm:create', (item) => {
             if(this._editingPoi != null) {
                 this.state.trigger('entity:update', {geo: item, entity: this._editingPoi});
             } else {
@@ -134,13 +179,13 @@ export default Component.define({
 
             this._editingPoi = null;
             this.map.pm.Draw.disable();
-	    });
+        });
     },
     addEntityToMap: function(entity) {
         // Skip if no geo
         if (!entity.data.geo) return;
         // Skip if not on this map
-        if (entity.data.map_id != this.state.data.tab) return;
+        if (entity.data.map_id != this.mapId) return;
 
         // Remove existing marker if we have one
         if (this.hasMarker(entity.id)) {

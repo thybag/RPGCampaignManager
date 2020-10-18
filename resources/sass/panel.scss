@@ -34,6 +34,36 @@
         }
     }
 
+    .geo {
+        background-image: url(../images/map/marker-icon-2x-blue.png);
+        background-repeat: no-repeat;
+        background-size: 13px;
+        background-position: 10px;
+        padding: 0;
+        padding-left: 0.5rem;
+        border: 1px solid #ccc;
+        display: inline-block;
+
+        div {
+            margin-left: 25px;
+            display: flex;
+            span {
+                display: inline-block;;
+                padding:.4rem;
+                border-left: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                cursor:pointer;
+                margin-right:-1px;
+            }
+            span:hover {
+                color:#fff;
+                background:#636490;
+            }
+        }
+    }
+
+
+
     .menu {
         float: right;
         @include threedotmenu;

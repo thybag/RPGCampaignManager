@@ -1221,6 +1221,32 @@ textarea.uploadable {
 .panel.min .menu-content span[data-action="menu:close"] {
   display: block;
 }
+.panel .geo {
+  background-image: url(../images/map/marker-icon-2x-blue.png);
+  background-repeat: no-repeat;
+  background-size: 13px;
+  background-position: 10px;
+  padding: 0;
+  padding-left: 0.5rem;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+.panel .geo div {
+  margin-left: 25px;
+  display: flex;
+}
+.panel .geo div span {
+  display: inline-block;
+  padding: 0.4rem;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  cursor: pointer;
+  margin-right: -1px;
+}
+.panel .geo div span:hover {
+  color: #fff;
+  background: #636490;
+}
 .panel .menu {
   float: right;
   font-size: 2.4rem;
