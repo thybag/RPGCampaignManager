@@ -1153,6 +1153,7 @@ textarea.uploadable {
 .content-nav h3 {
   display: block;
   padding: 0.5rem;
+  padding-right: 1rem;
   margin: 0;
   background: #080924;
   color: #fff;
@@ -1170,6 +1171,22 @@ textarea.uploadable {
 }
 .content-nav a:first-child {
   border-top: none;
+}
+.content-nav h3 span {
+  float: right;
+  display: block;
+  font-size: 2rem;
+  line-height: 0.5rem;
+  transform: rotate(-90deg);
+  transition: transform 0.5s;
+  height: 16px;
+  width: 10px;
+  vertical-align: middle;
+  pointer-events: none;
+  margin-top: 2px;
+}
+.content-nav h3.closed span {
+  transform: rotate(90deg);
 }
 
 .panel {

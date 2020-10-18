@@ -15543,7 +15543,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 var categoryTpl = function categoryTpl(title, links) {
-  var tpl = "\n        <h3>".concat(title, "</h3>\n        <div class='panel-content'>\n            ").concat(Object.entries(links).map(function (_ref) {
+  var tpl = "\n        <h3>".concat(title, " <span>&rsaquo;</span></h3>\n        <div class='panel-content'>\n            ").concat(Object.entries(links).map(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         id = _ref2[0],
         entity = _ref2[1];
@@ -15627,12 +15627,14 @@ var categoryTpl = function categoryTpl(title, links) {
       'entity': target.dataset.entity
     });
   },
-  toggleSection: function toggleSection() {
+  toggleSection: function toggleSection(e, target) {
     if (this.open) {
       // Refresh
+      target.classList.add('closed');
       var section = this.el.querySelector(".panel-content").style.height = "0px";
       this.open = false;
     } else {
+      target.classList.remove('closed');
       this.refreshHeight();
       this.open = true;
     }
