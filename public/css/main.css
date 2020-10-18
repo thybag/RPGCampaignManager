@@ -1408,17 +1408,34 @@ textarea {
   min-height: 120px;
 }
 
-/*
-padding:1rem;max-width:400px; margin:0 auto;
- */
 .campaign-item {
-  display: block;
+  display: flex;
   text-decoration: none;
   color: #000;
   border-bottom: 1px solid #ccc;
   margin-bottom: 1rem;
   padding: 1rem;
   padding-top: 0;
+}
+.campaign-item:hover h2 {
+  color: #000;
+}
+.campaign-item div {
+  flex: 2;
+}
+.campaign-item ul {
+  flex: 1;
+  margin: 0;
+  background: #fafafa;
+  border: solid 1px #ddd;
+  padding: 0.6rem;
+  border-radius: 3px;
+}
+.campaign-item ul li {
+  list-style: none;
+}
+.campaign-item ul strong {
+  color: #555;
 }
 
 button.add {
