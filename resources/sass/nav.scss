@@ -33,15 +33,13 @@
         }
     }
 
-
-    .main-menu {
+    .menu-content {
         @include menu;
         width:180px;
         position: absolute;
         right: 20px;
         top: 30px;
         z-index: 9999990;
-       
     }
 
     span.menu {float:right;}

@@ -1,0 +1,95 @@
+.panel {
+    position: absolute;
+    left:210px;
+    top:37px;
+    width: calc(100vw - 210px);
+    height: calc(100vh - 37px);
+    background: #fff;
+    z-index: 999999;
+    padding:1rem;
+    box-sizing: border-box;
+    overflow-x:auto;
+    box-shadow: none;
+
+    .menu-content span[data-action="menu:close"] {
+        display:none;
+    }
+
+    &.min {
+        position: absolute;
+        width: 31vw;
+        min-width: 400px;
+        height: calc(100vh - 110px);
+        right:20px;
+        left:auto;
+        top:50px;
+        box-shadow: 1px 1px 5px 2px #444;
+
+        &.hide {
+            display: none;
+        }
+
+        .menu-content span[data-action="menu:close"] {
+            display:block;
+        }
+    }
+
+    .menu {
+        float: right;
+        @include threedotmenu;
+    }
+
+    .menu-content {
+        position: absolute;
+        top:40px;
+        right:20px;
+        @include menu;
+    }
+
+
+
+    header {
+        margin-bottom:1rem;
+    }
+
+    header h2 {
+        margin-top:0;
+        margin-bottom:.6rem;
+    }
+
+
+    .panel-block {
+
+        .controls {
+            border-bottom: solid 1px #000;
+            text-align: right;
+            padding: .4rem 0;
+            margin-bottom: 1rem;
+        }
+
+        a {
+            font-weight:bold;
+            color:blue;
+            cursor: pointer;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        img { width: 100%; cursor: pointer;}
+
+        blockquote {
+            background: #fdeec3;
+            margin: 0;
+            padding: .2rem;
+            border-top: solid 3px #e09f61;
+            border-bottom: solid 3px #e09f61;
+            box-shadow: 1px 1px 2px 1px #ccc;
+        }
+        p, blockquote {
+            margin-top:0;
+            margin-bottom: 1rem;
+         }
+     }
+}

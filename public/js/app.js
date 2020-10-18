@@ -15646,6 +15646,126 @@ var categoryTpl = function categoryTpl(title, links) {
 
 /***/ }),
 
+/***/ "./resources/js/Components/Element/Menu.js":
+/*!*************************************************!*\
+  !*** ./resources/js/Components/Element/Menu.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
+  open: false,
+  parent: null,
+  options: {},
+  initialize: function initialize() {
+    // Add menu button
+    var menu = document.createElement('div');
+    menu.className = 'menu-content';
+    this.el = menu;
+    this.el.tabIndex = 0;
+  },
+  events: {
+    "blur": "hide",
+    "click span": "action"
+  },
+  attach: function attach(parent) {
+    this.parent = parent; // Ensure exists
+
+    this.parent.el.appendChild(this.el);
+    this.show();
+  },
+  setOptions: function setOptions(options) {
+    this.options = options;
+  },
+  render: function render() {
+    var tpl = '';
+
+    for (var _i = 0, _Object$entries = Object.entries(this.options); _i < _Object$entries.length; _i++) {
+      var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+          action = _Object$entries$_i[0],
+          name = _Object$entries$_i[1];
+
+      tpl += "<span data-action=\"".concat(action, "\">").concat(name, "</span>");
+    }
+
+    this.el.innerHTML = tpl; // Change state
+
+    if (this.open) {
+      this.el.classList.add('show');
+      this.el.focus();
+    } else {
+      this.el.classList.remove('show');
+    }
+  },
+  "show": function show() {
+    this.open = true;
+    this.render();
+  },
+  "hide": function hide() {
+    var _this = this;
+
+    // Slight delay so the click fires before blur
+    setTimeout(function () {
+      _this.open = false;
+
+      _this.render();
+    }, 150);
+  },
+  "action": function () {
+    var _action = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e, target) {
+      var action;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              e.preventDefault();
+              action = target.dataset.action; // Trigger action on parent
+
+              this.parent.trigger(action);
+              this.hide();
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function action(_x, _x2) {
+      return _action.apply(this, arguments);
+    }
+
+    return action;
+  }()
+}));
+
+/***/ }),
+
 /***/ "./resources/js/Components/Element/Preview.js":
 /*!****************************************************!*\
   !*** ./resources/js/Components/Element/Preview.js ***!
@@ -16015,6 +16135,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _Element_Menu_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Element/Menu.js */ "./resources/js/Components/Element/Menu.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -16028,6 +16149,21 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
+
+
+var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_1__["default"].make();
+
+var menuCampaign = {
+  'menu:settings': 'Campaign settings',
+  'menu:images': 'Campaign Images',
+  'menu:maps': 'Campaign Maps',
+  'menu:home': 'Main Menu',
+  'menu:logout': 'Logout'
+};
+var menuBasic = {
+  'menu:home': 'Main Menu',
+  'menu:logout': 'Logout'
+};
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
   el: document.querySelector('.bar'),
   initialize: function initialize() {
@@ -16040,11 +16176,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   events: {
     "click .bar nav a[data-tab]": "viewTab",
-    "click .menu": "showMenu",
-    "click .main-menu .logout": "logout"
+    // Menu
+    "click .menu": "menu",
+    "menu:logout": "logout",
+    "menu:home": "home",
+    'menu:settings': 'settings',
+    'menu:maps': 'maps',
+    'menu:images': 'images'
   },
-  "showMenu": function showMenu(e, target) {
-    this.el.querySelector('.main-menu').classList.toggle('show');
+  "menu": function menu(e, target) {
+    if (this.state.get('campaign_id')) {
+      _menu.setOptions(menuCampaign);
+    } else {
+      _menu.setOptions(menuBasic);
+    }
+
+    _menu.attach(this);
   },
   viewTab: function viewTab(e, target) {
     this.state.data.tab = target.dataset.tab;
@@ -16056,8 +16203,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     target.classList.add('selected');
   },
-  logout: function logout(e) {
-    e.preventDefault();
+  // Menu
+  campaignUrl: function campaignUrl(path) {
+    return this.state.data.url + /campaign/ + this.state.data.campaign_id + path;
+  },
+  settings: function settings() {
+    document.location = this.campaignUrl('/edit');
+  },
+  images: function images() {
+    document.location = this.campaignUrl('/image');
+  },
+  maps: function maps() {
+    document.location = this.campaignUrl('/map');
+  },
+  home: function home() {
+    document.location = this.state.data.url;
+  },
+  logout: function logout() {
     document.getElementById('logout-form').submit();
   }
 }));
@@ -16077,6 +16239,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
 /* harmony import */ var _Section_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Section.js */ "./resources/js/Components/Section.js");
+/* harmony import */ var _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Element/Menu.js */ "./resources/js/Components/Element/Menu.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -16086,8 +16249,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 var panelTpl = function panelTpl(title) {
-  var tpl = "\n        <header>\n            \n            <span class='editEntity menu'>&#x22ef;</span>\n            <div class=\"entity-menu\">\n                <span class='edit-entity'>Edit</span>\n                <span class='hide-panel'>Close</span>\n                <span class='remove-entity'>Remove</span>\n            </div>\n        \n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
+  var tpl = "\n        <header>\n            <span class='editEntity menu'>&#x22ef;</span>\n            <h2>".concat(title, "</h2>\n            <span class='poi'></span>\n        </header>\n        \n        <div class='panel-content'>\n        </div>\n        <div class='controls'><button class='add'>Add Content Section</button></div>\n    ");
   var template = document.createElement('div');
   template.innerHTML = tpl;
   return template;
@@ -16112,6 +16276,14 @@ var panelEditTpl = function panelEditTpl(data, action) {
   return template;
 };
 
+var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
+  options: {
+    'menu:edit': 'Edit',
+    'menu:close': 'Close',
+    'menu:remove': 'Remove'
+  }
+});
+
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   el: document.querySelector('.panel'),
   children: [],
@@ -16124,11 +16296,11 @@ var panelEditTpl = function panelEditTpl(data, action) {
   events: {
     // Sections
     "click .add": "addContentSection",
-    // Entity Menu
-    "click .menu": "showMenu",
-    "click .hide-panel": "hidePanel",
-    "click .edit-entity": "editEntity",
-    "click .remove-entity": "removeEntity",
+    // Menu actions
+    "click .menu": "menu",
+    "menu:close": "hidePanel",
+    "menu:edit": "editEntity",
+    "menu:remove": "removeEntity",
     // Entity General
     "click .saveEntity": "saveEntity",
     "click .cancelEntity": "cancelEntity",
@@ -16139,8 +16311,8 @@ var panelEditTpl = function panelEditTpl(data, action) {
     "entity:show": "showEntity",
     "entity:update": "updateEntity"
   },
-  showMenu: function showMenu() {
-    this.el.querySelector('.entity-menu').classList.toggle('show');
+  menu: function menu() {
+    _menu.attach(this);
   },
   hasPoi: function hasPoi() {
     return this.content.data.geo != null;
@@ -16183,7 +16355,7 @@ var panelEditTpl = function panelEditTpl(data, action) {
       this.hidePanel();
     }
 
-    this.showMenu();
+    this.menu();
   },
   showEntity: function showEntity(entity) {
     // Clean up, if unsaved entity

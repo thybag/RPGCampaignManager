@@ -1020,30 +1020,31 @@ textarea.uploadable {
 .bar nav a.selected, .bar span.menu a.selected {
   background: #515278;
 }
-.bar .main-menu {
+.bar .menu-content {
   width: 120px;
   box-sizing: border-box;
   box-shadow: 1px 1px 5px 2px #444;
   display: block;
   background: #fff;
   display: none;
+  outline: none;
   width: 180px;
   position: absolute;
   right: 20px;
   top: 30px;
   z-index: 9999990;
 }
-.bar .main-menu.show {
+.bar .menu-content.show {
   display: block;
 }
-.bar .main-menu span, .bar .main-menu a {
+.bar .menu-content span, .bar .menu-content a {
   display: block;
   padding: 0.5rem;
   cursor: pointer;
   color: #000;
   text-decoration: none;
 }
-.bar .main-menu span:hover, .bar .main-menu a:hover {
+.bar .menu-content span:hover, .bar .menu-content a:hover {
   background: #eee;
 }
 .bar span.menu {
@@ -1171,6 +1172,114 @@ textarea.uploadable {
   border-top: none;
 }
 
+.panel {
+  position: absolute;
+  left: 210px;
+  top: 37px;
+  width: calc(100vw - 210px);
+  height: calc(100vh - 37px);
+  background: #fff;
+  z-index: 999999;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-x: auto;
+  box-shadow: none;
+}
+.panel .menu-content span[data-action="menu:close"] {
+  display: none;
+}
+.panel.min {
+  position: absolute;
+  width: 31vw;
+  min-width: 400px;
+  height: calc(100vh - 110px);
+  right: 20px;
+  left: auto;
+  top: 50px;
+  box-shadow: 1px 1px 5px 2px #444;
+}
+.panel.min.hide {
+  display: none;
+}
+.panel.min .menu-content span[data-action="menu:close"] {
+  display: block;
+}
+.panel .menu {
+  float: right;
+  font-size: 2.4rem;
+  line-height: 0.5rem;
+  height: 16px;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  padding: 0 2px;
+  transition: background 0.6s;
+}
+.panel .menu:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+.panel .menu-content {
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  width: 120px;
+  box-sizing: border-box;
+  box-shadow: 1px 1px 5px 2px #444;
+  display: block;
+  background: #fff;
+  display: none;
+  outline: none;
+}
+.panel .menu-content.show {
+  display: block;
+}
+.panel .menu-content span, .panel .menu-content a {
+  display: block;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #000;
+  text-decoration: none;
+}
+.panel .menu-content span:hover, .panel .menu-content a:hover {
+  background: #eee;
+}
+.panel header {
+  margin-bottom: 1rem;
+}
+.panel header h2 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+.panel .panel-block .controls {
+  border-bottom: solid 1px #000;
+  text-align: right;
+  padding: 0.4rem 0;
+  margin-bottom: 1rem;
+}
+.panel .panel-block a {
+  font-weight: bold;
+  color: blue;
+  cursor: pointer;
+}
+.panel .panel-block a:hover {
+  text-decoration: underline;
+}
+.panel .panel-block img {
+  width: 100%;
+  cursor: pointer;
+}
+.panel .panel-block blockquote {
+  background: #fdeec3;
+  margin: 0;
+  padding: 0.2rem;
+  border-top: solid 3px #e09f61;
+  border-bottom: solid 3px #e09f61;
+  box-shadow: 1px 1px 2px 1px #ccc;
+}
+.panel .panel-block p, .panel .panel-block blockquote {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
 .content-list {
   border: 1px solid rgba(8, 9, 36, 0.5);
   margin: 0 auto;
@@ -1210,6 +1319,7 @@ textarea.uploadable {
   display: block;
   background: #fff;
   display: none;
+  outline: none;
 }
 .menu-content.show {
   display: block;
@@ -1223,107 +1333,6 @@ textarea.uploadable {
 }
 .menu-content span:hover, .menu-content a:hover {
   background: #eee;
-}
-
-.panel {
-  position: absolute;
-  left: 210px;
-  top: 37px;
-  width: calc(100vw - 210px);
-  height: calc(100vh - 37px);
-  background: #fff;
-  z-index: 999999;
-  padding: 1rem;
-  box-sizing: border-box;
-  overflow-x: auto;
-  box-shadow: none;
-}
-.panel.min {
-  position: absolute;
-  width: 31vw;
-  min-width: 400px;
-  height: calc(100vh - 110px);
-  right: 20px;
-  left: auto;
-  top: 50px;
-  box-shadow: 1px 1px 5px 2px #444;
-}
-.panel.min.hide {
-  display: none;
-}
-.panel .menu {
-  float: right;
-  font-size: 2.4rem;
-  line-height: 0.5rem;
-  height: 16px;
-  cursor: pointer;
-  border-radius: 0.4rem;
-  padding: 0 2px;
-  transition: background 0.6s;
-}
-.panel .menu:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
-.panel .entity-menu {
-  position: absolute;
-  top: 40px;
-  right: 20px;
-  width: 120px;
-  box-sizing: border-box;
-  box-shadow: 1px 1px 5px 2px #444;
-  display: block;
-  background: #fff;
-  display: none;
-}
-.panel .entity-menu.show {
-  display: block;
-}
-.panel .entity-menu span, .panel .entity-menu a {
-  display: block;
-  padding: 0.5rem;
-  cursor: pointer;
-  color: #000;
-  text-decoration: none;
-}
-.panel .entity-menu span:hover, .panel .entity-menu a:hover {
-  background: #eee;
-}
-.panel header {
-  margin-bottom: 1rem;
-}
-.panel header h2 {
-  margin-top: 0;
-  margin-bottom: 0.6rem;
-}
-.panel .panel-block .controls {
-  border-bottom: solid 1px #000;
-  text-align: right;
-  padding: 0.4rem 0;
-  margin-bottom: 1rem;
-}
-.panel .panel-block a {
-  font-weight: bold;
-  color: blue;
-  cursor: pointer;
-}
-.panel .panel-block a:hover {
-  text-decoration: underline;
-}
-.panel .panel-block img {
-  width: 100%;
-  cursor: pointer;
-}
-.panel .panel-block blockquote {
-  background: #fdeec3;
-  margin: 0;
-  padding: 0.2rem;
-  border-top: solid 3px #e09f61;
-  border-bottom: solid 3px #e09f61;
-  box-shadow: 1px 1px 2px 1px #ccc;
-}
-.panel .panel-block p, .panel .panel-block blockquote {
-  margin-top: 0;
-  margin-bottom: 1rem;
 }
 
 .badge {
