@@ -1,17 +1,12 @@
 import Component from 'lumpjs/src/component.js';
 import Section from './Section.js';
+import Menu from './Element/Menu.js';
+
 
 const panelTpl = function(title) {
     const tpl = `
         <header>
-            
             <span class='editEntity menu'>&#x22ef;</span>
-            <div class="entity-menu">
-                <span class='edit-entity'>Edit</span>
-                <span class='hide-panel'>Close</span>
-                <span class='remove-entity'>Remove</span>
-            </div>
-        
             <h2>${title}</h2>
             <span class='poi'></span>
         </header>
@@ -56,6 +51,14 @@ const panelEditTpl = function(data, action) {
     return template;
 }
 
+const menu = Menu.make({
+    options: {
+        'menu:edit': 'Edit',
+        'menu:close': 'Close',
+        'menu:remove': 'Remove',
+    }
+});
+
 export default Component.define({
     el: document.querySelector('.panel'),
     children: [],
@@ -68,11 +71,11 @@ export default Component.define({
     events: {
         // Sections
         "click .add": "addContentSection",
-        // Entity Menu
-        "click .menu": "showMenu",
-        "click .hide-panel": "hidePanel",
-        "click .edit-entity": "editEntity",
-        "click .remove-entity": "removeEntity",
+        // Menu actions
+        "click .menu": "menu",
+        "menu:close": "hidePanel",
+        "menu:edit": "editEntity",
+        "menu:remove": "removeEntity",
         // Entity General
         "click .saveEntity": "saveEntity",
         "click .cancelEntity": "cancelEntity",
@@ -84,9 +87,9 @@ export default Component.define({
         "entity:show": "showEntity",
         "entity:update": "updateEntity",
     },
-    showMenu: function()
+    menu: function()
     {
-        this.el.querySelector('.entity-menu').classList.toggle('show');
+        menu.attach(this);
     },
     hasPoi: function(){
         return (this.content.data.geo != null);
@@ -118,7 +121,7 @@ export default Component.define({
             // DO remove
             this.hidePanel();
         }
-        this.showMenu();
+        this.menu();
     },
     showEntity: function(entity) {
         // Clean up, if unsaved entity
