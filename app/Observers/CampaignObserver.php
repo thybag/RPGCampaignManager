@@ -27,10 +27,18 @@ class CampaignObserver
         $entity->blocks()->save(
             Block::make(
                 [
-                    'type'=>'text',
-                    'content'=> "Welcome to your new RPG Campaign! \n
-                        Hit edit to update this content with whatever you like.
-                        \n \n Maps can be added via the top navigation bar."
+                    'type' => 'text',
+                    'content' => implode(
+                        "\n",
+                        [
+                            "Welcome to your new RPG Campaign! \n",
+                            " * To add a map, select the main menu (top right) and Campaign maps.",
+                            " * To add a content section, hit New... on the left hand menu.",
+                            " * You can add images to content by dragging them in to the text area.",
+                            "\n",
+                            "Thanks for trying RPG Campaign Manager."
+                        ]
+                    )
                  ]
             )
         );

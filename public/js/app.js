@@ -16690,12 +16690,14 @@ __webpack_require__.r(__webpack_exports__);
 var templateHasPoi = "\n    <span data-action=\"locate\">Show</span>\n    <span data-action=\"edit\">Update</span>\n";
 var templateNoPoi = "\n    <span data-action=\"create\">Create new</span>\n";
 var templateEditing = "\n    <span data-action=\"save\">Finish editing</span>\n";
+var templateNoMap = "\n    <span data-action=\"add\">Add a map?</span>\n";
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
   events: {
     "click span[data-action='locate']": "locate",
     "click span[data-action='create']": "create",
     "click span[data-action='edit']": "edit",
-    "click span[data-action='save']": "save"
+    "click span[data-action='save']": "save",
+    "click span[data-action='add']": "add"
   },
   editing: false,
   entity: null,
@@ -16713,10 +16715,14 @@ var templateEditing = "\n    <span data-action=\"save\">Finish editing</span>\n"
   },
   render: function render() {
     if (this.editing) {
-      this.el.innerHTML = templateEditing;
-    } else {
-      this.el.innerHTML = this.hasGeo() ? templateHasPoi : templateNoPoi;
+      return this.el.innerHTML = templateEditing;
     }
+
+    if (this.state.data.tab == 'content') {
+      return this.el.innerHTML = templateNoMap;
+    }
+
+    return this.el.innerHTML = this.hasGeo() ? templateHasPoi : templateNoPoi;
   },
   locate: function locate() {
     // Trigger map focus on PoI
@@ -16738,6 +16744,9 @@ var templateEditing = "\n    <span data-action=\"save\">Finish editing</span>\n"
   save: function save() {
     this.editing = false;
     this.state.trigger('map:poi:save', this.entity);
+  },
+  add: function add() {
+    window.location = this.state.data.url + /campaign/ + this.state.data.campaign_id + '/map';
   }
 }));
 

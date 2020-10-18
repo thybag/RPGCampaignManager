@@ -37,10 +37,6 @@ body {
 
 
 
-
-
-
-
     .badge {
         @include badge;
     }
@@ -66,20 +62,37 @@ body {
         min-height:120px;
     }
 
-/*
-padding:1rem;max-width:400px; margin:0 auto;
- */
-
-
 
 .campaign-item {
-    display: block;
+    display: flex;
     text-decoration: none;
     color:#000;
     border-bottom: 1px solid #ccc;
     margin-bottom:1rem;
     padding:1rem;
     padding-top:0;
+
+    &:hover h2 {
+        color:#000;
+    }
+
+    div { flex: 2;}
+    ul { 
+        flex: 1;
+        margin: 0;
+        background:#fafafa;
+        border: solid 1px #ddd;
+        padding:.6rem;
+        border-radius: 3px;
+
+        li {
+            list-style: none;
+        }
+
+        strong {
+            color:#555;
+        }
+    }
 }
 
 
