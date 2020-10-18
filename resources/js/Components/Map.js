@@ -99,20 +99,23 @@ export default Component.define({
 		        img.onerror = reject;
 		});
     	
-    	let width = Math.round(img.width/10);
-    	let height = Math.round(img.height/10);
-
+        // Create map
 	 	this.map = L.map('map', {
 	        crs: L.CRS.Simple,
 	        zoomSnap: 0.20,
-	        maxZoom: 4,
-	        minZoom: 1
 	    });
-        // Config
-	    var bounds = [[0,0], [height,width]];
-	    var image = L.imageOverlay(mapPath, bounds).addTo(this.map);
+
+        // Config map size
+        const width = Math.round(img.width/10);
+        const height = Math.round(img.height/10);
+	    const bounds = [[0,0], [height,width]];
+	    const image = L.imageOverlay(mapPath, bounds).addTo(this.map);
 	    this.map.fitBounds(bounds);    
-	   	this.map.setZoom(1.4);
+        // Config map zoom.
+        const zoom = this.map.getZoom();
+	   	this.map.setZoom(zoom+.5);
+        this.map.setMaxZoom(zoom+4);
+        this.map.setMinZoom(zoom-.5);
 
 	    this.map.pm.addControls({
 	      position: 'topleft',
