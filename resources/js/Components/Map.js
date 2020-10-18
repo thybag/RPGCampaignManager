@@ -79,12 +79,12 @@ export default Component.define({
     },
     clearMap: function()
     {
-    	if(this.map) {
-    		this.map.off();
-  			this.map.remove();
+        if(this.map) {
+            this.map.off();
+            this.map.remove();
             this.mapLookup = {};
-  			this.map = null;
-    	}
+            this.map = null;
+        }
     },
     hasMarker: function(e_id){
         return (this.mapLookup[e_id]);
@@ -120,41 +120,41 @@ export default Component.define({
        
     },
     createMap: async function(map) {
-    	if (this.map) {
-    		this.clearMap();
-    	}
+        if (this.map) {
+            this.clearMap();
+        }
 
         const mapPath = map.data.image.data.url;
-    	// Load image
-    	let img = await new Promise((resolve, reject) => {
-    			let img = document.createElement('img');
-    			img.src = mapPath;
-		        img.onload = () => resolve(img);
-		        img.onerror = reject;
-		});
-    	
+        // Load image
+        let img = await new Promise((resolve, reject) => {
+                let img = document.createElement('img');
+                img.src = mapPath;
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+        });
+        
         // Create map
-	 	this.map = L.map('map', {
-	        crs: L.CRS.Simple,
-	        zoomSnap: 0.20,
-	    });
+        this.map = L.map('map', {
+            crs: L.CRS.Simple,
+            zoomSnap: 0.20,
+        });
 
         // Config map size
         const width = Math.round(img.width/10);
         const height = Math.round(img.height/10);
-	    const bounds = [[0,0], [height,width]];
-	    const image = L.imageOverlay(mapPath, bounds).addTo(this.map);
-	    this.map.fitBounds(bounds);    
+        const bounds = [[0,0], [height,width]];
+        const image = L.imageOverlay(mapPath, bounds).addTo(this.map);
+        this.map.fitBounds(bounds);    
 
         // Config map zoom.
         const zoom = this.map.getZoom();
-	   	this.map.setZoom(zoom+.5);
+        this.map.setZoom(zoom+.5);
         this.map.setMaxZoom(zoom+4);
         this.map.setMinZoom(zoom-.5);
 
         // Controls
-	    this.map.pm.addControls({
-	      position: 'topleft',
+        this.map.pm.addControls({
+          position: 'topleft',
           drawCircle: false,
           drawPolyline: false,
           drawCircleMarker: false,
@@ -162,7 +162,7 @@ export default Component.define({
           dragMode: false,
           cutPolygon: false,
           removalMode: false
-	    });
+        });
 
         // Draw entities
         map.data.entities.map((m) => {
@@ -170,7 +170,7 @@ export default Component.define({
         });
 
         // Listen for map initiaed creation
-	    this.map.on('pm:create', (item) => {
+        this.map.on('pm:create', (item) => {
             if(this._editingPoi != null) {
                 this.state.trigger('entity:update', {geo: item, entity: this._editingPoi});
             } else {
@@ -179,7 +179,7 @@ export default Component.define({
 
             this._editingPoi = null;
             this.map.pm.Draw.disable();
-	    });
+        });
     },
     addEntityToMap: function(entity) {
         // Skip if no geo
