@@ -11,18 +11,21 @@ const templateNoPoi = `
 const templateEditing = `
     <span data-action="save">Finish editing</span>
 `;
-
+const templateNoMap = `
+    <span data-action="add">Add a map?</span>
+`;
 export default Component.define({
     events: 
     {
         "click span[data-action='locate']": "locate",
         "click span[data-action='create']": "create",
         "click span[data-action='edit']": "edit",
-        "click span[data-action='save']": "save"
+        "click span[data-action='save']": "save",
+        "click span[data-action='add']": "add"
     },
     editing: false,
     entity: null,
-    hasGeo: function(){
+    hasGeo: function() {
         return (this.entity.data.geo != null && this.entity.data.map_id != null);
     },
     attach: function({el, entity}) {
@@ -34,11 +37,13 @@ export default Component.define({
     },
     render: function()
     {
-        if(this.editing) {
-           this.el.innerHTML = templateEditing;
-        } else {
-            this.el.innerHTML = this.hasGeo() ? templateHasPoi : templateNoPoi;
+        if (this.editing) {
+           return this.el.innerHTML = templateEditing;
         }
+        if (this.state.data.tab == 'content') {
+            return this.el.innerHTML = templateNoMap;
+        }
+        return  this.el.innerHTML = this.hasGeo() ? templateHasPoi : templateNoPoi;
     },
     locate: function() {
         // Trigger map focus on PoI
@@ -57,5 +62,8 @@ export default Component.define({
     save: function() {
         this.editing = false;
         this.state.trigger('map:poi:save', this.entity);
+    },
+    add: function() {
+        window.location = this.state.data.url + /campaign/ + this.state.data.campaign_id + '/map';
     }
 });
