@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campaign;
 use Auth;
+use App\Models\Campaign;
+use Illuminate\Http\Request;
 use App\Http\Requests\CampaignRequest;
 
 class CampaignController extends Controller
