@@ -20,11 +20,13 @@ class ImageResource extends BaseResource
     public function attributes($request)
     {
         return [
-            'id' => $this->id,
-            'type' => 'image',
-            'name' => $this->name,
-            'url' =>   $this->mapURL,
-            'preview' => $this->preview,
+            'id'        => $this->id,
+            'type'      => 'image',
+            'name'      => $this->name,
+            'url'       =>   $this->mapURL,
+            'preview'   => $this->preview,
+            'size_kb'   => $this->size_kb,
+            'type'      => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
@@ -37,5 +39,4 @@ class ImageResource extends BaseResource
             'update' => "/campaign/{$this->campaign_id}/image/{$this->id}"
         ];
     }
-
 }

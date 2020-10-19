@@ -54,7 +54,7 @@ class EntityPolicy extends BasePolicy
      */
     public function update(User $user, Entity $entity)
     {
-       return ($this->userOwnsCampaign($user) && $this->ownedByCampaign($entity));
+        return ($this->userOwnsCampaign($user) && $this->ownedByCampaign($entity));
     }
 
     /**

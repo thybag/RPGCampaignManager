@@ -2,31 +2,34 @@
 
 A fully Open-Source RPG Campaign Manager and World Building tool.
 
-This tool is currently in early development and not ready for general use. Although the basic functionality now work, a lot of it is still fairly rough around the edges and potentially quite buggy. I **strongly** recommend against hosting this on a public server until it reaches a stable release.
+Please note, this tool is still in development and not ready for production use. Some areas of functionality are still incomplete and likely buggy. Feedback and bug reports are much appreciated. It is not recommend to to run this on a public server until a stable version is released.
 
 ![image](https://user-images.githubusercontent.com/887397/95174567-27e7ae00-07b2-11eb-9877-dbce0eab12c9.png)
 
 ## Key features
 
-* Create and manage multiple custom maps. Just upload a map image and draw on whatever points of interest you choose..
-* Create unlimited amount of Locations, Buildings, NPC's, Players, Items, Events etc.
-* Easily filter campaign content to find the content you need.
-* Run as many campaigns as you like.
-* Manage content using markdown, with drag & drop image uploading supported.
+#### Unlimited Campaigns/Worlds
+* Create as many campaigns or worlds as you'd like. Each with their own maps, content and imagery.
 
-## Missing features
+#### Unlimited Maps
+* Any image can become an interactive map. Just upload your map image, and start adding your points of interest.
+* Both markers and areas can be drawn on and linked to your content.
 
-* Setup of requests (validation) and Better auth flow (email verification if none local).
-* Move off of generated bootstrap entirely + setup better styling for all pages.
-* More content types - for example stat blocks for common RPG style games.
-* Some proper tests & CI.
-* Utils "cli", to allow commands like `d6 2` to provide the values of 2 d6 rolls.
+#### Unlimited content
+* Create and manage as many interlinked content entry's as you like.
+* Edit your content with markdown and drag/drop uploading for any images you'd like to embed.
+* Easily interlink your content using `[[name]]`.
+* Content can be linked to your map, or stand alone. It can all be easily filtered and categorized by the left menu.
+* Freely categorize content; Locations, buildings, NPC's, Items, events, players or anything else.
+
+#### Manage media
+* Easily manage your uploaded images, maps and other data via the UI.
 
 ## Setup
 
 This project is based on Laravel, so easy to get setup and working locally. You will need up to date PHP & MySQL available.
 
-First off clone the repository down to where you want it to run.
+First off clone the repository down to where you'd like it to run.
 
 ```
 git clone git@github.com:thybag/RPGCampaignManager.git

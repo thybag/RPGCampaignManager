@@ -8,12 +8,13 @@ use App\Models\Model;
 use App\Models\Campaign;
 use Image as Intervention;
 
-
 class Image extends Model
 {
     protected $fillable = [
         'name',
         'path',
+        'size_kb',
+        'type',
     ];
 
     public function campaign()
@@ -23,26 +24,28 @@ class Image extends Model
 
     public function getPreviewAttribute()
     {
-    	return asset('storage/'.str_replace('.', '_preview.', $this->path));
+        return asset('storage/' . str_replace('.', '_preview.', $this->path));
     }
 
     public function getMapURLAttribute()
     {
-    	return asset('storage/'.$this->path);
+        return asset('storage/' . $this->path);
     }
 
-    public static function upload($campaign, $img, $name = null) 
+    public static function upload($campaign, $img, $name = null)
     {
         if ($image = static::findImageByHash($campaign, $img)) {
             return $image;
         }
 
-        return DB::transaction(function() use ($campaign, $img, $name) {
+        return DB::transaction(function () use ($campaign, $img, $name) {
             $path = static::uploadImage($campaign, $img);
             $title = ($name) ? $name : $img->getClientOriginalName();
 
+            $type = $img->getMimeType();
+            $size = $img->getsize()/1000;
             // FIle is okay!
-            $model = static::make(['path' => $path, 'name'=> $title]);
+            $model = static::make(['path' => $path, 'name'=> $title, 'type' => $type, 'size_kb' => $size]);
             $campaign->images()->save($model);
             return $model;
         });
@@ -51,6 +54,8 @@ class Image extends Model
     public function swap($img, $name = null)
     {
         if ($img) {
+            $this->type = $img->getMimeType();
+            $this->size_kb = $img->getsize()/1000;
             $this->path = static::uploadImage($this->campaign, $img);
         }
 
@@ -71,11 +76,14 @@ class Image extends Model
         $hash = md5_file($img->getRealPath());
 
         $img->storeAs("{$campaign->user_id}/{$campaign->id}", "{$hash}.{$ext}", 'public');
-        $preview = Intervention::make($img)->resize(400, 400, 
+        $preview = Intervention::make($img)->resize(
+            400,
+            400,
             function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
-            })
+            }
+        )
         ->encode();
         Storage::disk('public')->put("{$campaign->user_id}/{$campaign->id}/{$hash}_preview.{$ext}", $preview);
 

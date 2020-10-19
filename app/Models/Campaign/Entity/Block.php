@@ -8,6 +8,10 @@ use App\Http\Resources\Campaign\Entity\BlockResource;
 
 class Block extends Model
 {
+    protected $attributes = [
+        'type' => 'text'
+    ];
+
     protected $fillable = [
         'type',
         'content'

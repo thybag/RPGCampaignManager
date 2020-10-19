@@ -25,12 +25,11 @@ class Map extends Model
 
     public function getPreviewAttribute()
     {
-    	return asset('storage/'.str_replace('.', '_preview.', $this->path));
+        return asset('storage/' . str_replace('.', '_preview.', $this->path));
     }
 
     public function getMapURLAttribute()
     {
-    	return asset('storage/'.$this->path);
+        return asset('storage/' . $this->path);
     }
-
 }

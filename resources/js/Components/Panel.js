@@ -1,19 +1,14 @@
 import Component from 'lumpjs/src/component.js';
 import Section from './Section.js';
+import Menu from './Element/Menu.js';
+import GeoControl from './Panel/GeoControl.js';
 
 const panelTpl = function(title) {
     const tpl = `
         <header>
-            
             <span class='editEntity menu'>&#x22ef;</span>
-            <div class="entity-menu">
-                <span class='edit-entity'>Edit</span>
-                <span class='hide-panel'>Close</span>
-                <span class='remove-entity'>Remove</span>
-            </div>
-        
             <h2>${title}</h2>
-            <span class='poi'></span>
+            <div class='geo'></div>
         </header>
         
         <div class='panel-content'>
@@ -56,49 +51,46 @@ const panelEditTpl = function(data, action) {
     return template;
 }
 
+const menu = Menu.make({
+    options: {
+        'menu:edit': 'Edit',
+        'menu:close': 'Close',
+        'menu:remove': 'Remove',
+    }
+});
+
 export default Component.define({
     el: document.querySelector('.panel'),
     children: [],
+    geoControls: null,
     initialize: function () {
         // Listen to model events
         this.listenTo(this.state);
+        // Setup controls
+        this.geoControls = GeoControl.make({state: this.state});
     },
     content: null,
     mode: 'hide',
     events: {
         // Sections
         "click .add": "addContentSection",
-        // Entity Menu
-        "click .menu": "showMenu",
-        "click .hide-panel": "hidePanel",
-        "click .edit-entity": "editEntity",
-        "click .remove-entity": "removeEntity",
+        // Menu actions
+        "click .menu": "menu",
+        "menu:close": "hidePanel",
+        "menu:edit": "editEntity",
+        "menu:remove": "removeEntity",
         // Entity General
         "click .saveEntity": "saveEntity",
-        "click .cancelEntity": "cancelEntity",
-        "click .poi": "managePoi",
-        
+        "click .cancelEntity": "cancelEntity",        
         // Model events
         "update:tab": "updatePanelDisplay",
         "entity:create": "createEntity",
         "entity:show": "showEntity",
         "entity:update": "updateEntity",
     },
-    showMenu: function()
+    menu: function()
     {
-        this.el.querySelector('.entity-menu').classList.toggle('show');
-    },
-    hasPoi: function(){
-        return (this.content.data.geo != null);
-    },
-    managePoi: function()
-    { 
-        if (this.hasPoi()) {
-            this.state.trigger('map:focus', {map: this.content.data.map_id, entity: this.content.id});   
-            return;  
-        }
-
-        this.state.trigger('map:poi', this.content);
+        menu.attach(this);
     },
     updateEntity: function(entity) {
         this.content = entity.entity;
@@ -118,7 +110,7 @@ export default Component.define({
             // DO remove
             this.hidePanel();
         }
-        this.showMenu();
+        this.menu();
     },
     showEntity: function(entity) {
         // Clean up, if unsaved entity
@@ -155,6 +147,8 @@ export default Component.define({
         if (this.content.data._geo) {
             payload.data.map_id = this.state.data.tab;
             payload.data.geo = JSON.stringify(this.content.data._geo.layer.toGeoJSON());
+            // Tidy from map
+            this.content.data._geo.layer.remove();
         }
 
         let results;
@@ -195,11 +189,10 @@ export default Component.define({
         let template = panelTpl(this.content.data.name);
         let container = template.querySelector('.panel-content');
 
-        if (this.hasPoi()) {
-            template.querySelector('.poi').innerText = "Locate";
-        } else {
-            template.querySelector('.poi').innerText = "Create";
-        }
+        this.geoControls.attach({
+            el: template.querySelector('.geo'),
+            entity: this.content
+        });
 
         let blocks = this.content.data.blocks;
         blocks.forEach((block) => {

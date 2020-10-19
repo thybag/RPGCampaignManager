@@ -2,7 +2,7 @@ import Component from 'lumpjs/src/component.js';
 
 const categoryTpl = function(title, links) {
     const tpl = `
-        <h3>${title}</h3>
+        <h3>${title} <span>&rsaquo;</span></h3>
         <div class='panel-content'>
             ${Object.entries(links).map(([id, entity]) => 
                 `<a href="#${entity.slug}" data-entity="${id}">${entity.name}</a>`
@@ -63,12 +63,14 @@ export default Component.define({
         e.preventDefault();
         this.state.trigger('entity:show', {'entity': target.dataset.entity});
     },
-    toggleSection: function() {
+    toggleSection: function(e, target) {
         if (this.open) {
             // Refresh
+            target.classList.add('closed');
             let section = this.el.querySelector(".panel-content").style.height = `0px`;
             this.open = false;
         } else {
+            target.classList.remove('closed');
             this.refreshHeight();
             this.open = true;
         }

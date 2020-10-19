@@ -1,24 +1,53 @@
-.container .form {
-    @include box;
-    width:66%;
-}
-
 .form {
     & > div {
-        padding:0 1rem 1rem 1rem;
+        padding:0 1rem .8rem 1rem;
 
         label {
             display:block;
             margin-bottom:.4rem;
         }
 
-        input, textarea {
+        input[type=text],input[type=email],input[type=password], textarea, select {
             border: 1px solid #ccc;
             box-shadow: inset 0 1px 3px #ddd;
             padding:.5rem;
             width: calc(100% - 1rem);
+
+            &.invalid {
+                border-color: #dc3545;
+            }
+        }
+
+        select * {
+            padding:.5rem;  
+        }
+
+        span.errors {
+            color: #dc3545;
+            font-size: 0.9rem;
+        }
+
+        span.notice {
+            padding: 1rem;
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #bee5eb;
+            background-color: #d1ecf1;
+        }
+
+        span.warning {
+            padding: 1rem;
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #ffeeba;
+            background-color: #fff3cd;
         }
     }
+}
+
+.container .form {
+    @include box;
+    width:66%;
 }
 
 .panel .form div {
@@ -26,11 +55,10 @@
     padding-right:0;
 }
 
-
 button, .button, input[type='submit'] {
     background: #515278;
     border: none;
-    padding: .5rem 1rem;
+    padding: .6rem 1.4rem;
     color: #fff;
     cursor: pointer;
     text-decoration: none;
@@ -38,18 +66,25 @@ button, .button, input[type='submit'] {
     display: inline-block;
     line-height: 1rem;
     vertical-align: top;
-    border: solid 2px $header-primary;
-    border-radius: 3px;
-}
-.button.right, button.right,input[type='submit'].right {
-    float:right;
+    margin-bottom: .5rem;
+
+    &:hover, &:active {
+        background: #636490;
+    }
+
+    &.full {
+        width: 100%;
+    }
+
+    &.right {
+        float:right;
+    }
+
+    &.cancel {
+        background-color: $secondary-alt;
+    }
 }
 
-.button.cancel, button.cancel {
-    border: solid 2px $secondary;
-    background-color: $secondary-alt;
-}
-   
 textarea.uploadable {
     border: solid 2px blue;
 }

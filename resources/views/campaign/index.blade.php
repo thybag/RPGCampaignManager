@@ -1,4 +1,4 @@
-@extends('layouts.wrapper')
+@extends('layouts.app')
 
 @section('nav')
         <a href="#" data-tab='content' class="selected">Content</a>

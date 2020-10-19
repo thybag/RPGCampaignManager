@@ -8,13 +8,15 @@ use Illuminate\Http\Request;
 use App\Models\Campaign\Map;
 use App\Models\Campaign\Image;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Campaign\MapRequest;
 use App\Http\Resources\Campaign\MapResource;
 
 class MapController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Map::class, 'map');;
+        $this->authorizeResource(Map::class, 'map');
+        ;
     }
 
     /**
@@ -44,10 +46,9 @@ class MapController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Campaign $campaign, Request $request)
+    public function store(MapRequest $request, Campaign $campaign)
     {
-        $img = $request->file('image');
-
+        // Create image model
         $image = Image::upload($campaign, $request->file('image'));
        
         $campaign->maps()->save(Map::make([
@@ -87,7 +88,7 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Campaign $campaign, Map $map)
+    public function update(MapRequest $request, Campaign $campaign, Map $map)
     {
         $updates = ['name' => $request->name];
         if ($request->file('image')) {

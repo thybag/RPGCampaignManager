@@ -8,12 +8,14 @@ use App\Http\Requests\Campaign\CreateRequest;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CampaignRequest;
 
 class CampaignController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Campaign::class, 'campaign');;
+        $this->authorizeResource(Campaign::class, 'campaign');
+        ;
     }
 
     /**
@@ -48,12 +50,20 @@ class CampaignController extends Controller
         return view('campaign.edit');
     }
 
-    public function store(CreateRequest $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(CampaignRequest $request)
     {
-        $dto = new CreateCampaignDTO($request->validated());
-        $campaign = CreateCampaignService::handle($request->user(), $dto);
+        $campaign = Campaign::make($request->validated());
 
-        return redirect(url("campaign/{$campaign->id}"));
+        $user = Auth::user();
+        $user->campaigns()->save($campaign);
+
+        return redirect(url('campaign/' . $campaign->id));
     }
 
     /**
@@ -64,7 +74,7 @@ class CampaignController extends Controller
      */
     public function edit(Campaign $campaign)
     {
-        //
+        return view('campaign.edit', ['campaign' => $campaign]);
     }
 
     /**
@@ -74,9 +84,10 @@ class CampaignController extends Controller
      * @param  \App\Campaign  $campaign
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Campaign $campaign)
+    public function update(CampaignRequest $request, Campaign $campaign)
     {
-        //
+        $campaign->update($request->validated());
+        return redirect(url('campaign/' . $campaign->id));
     }
 
     /**
@@ -87,6 +98,5 @@ class CampaignController extends Controller
      */
     public function destroy(Campaign $campaign)
     {
-        //
     }
 }

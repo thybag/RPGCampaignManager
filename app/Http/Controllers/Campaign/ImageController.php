@@ -6,13 +6,15 @@ use App\Models\Campaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign\Image;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Campaign\ImageRequest;
 use App\Http\Resources\Campaign\ImageResource;
 
 class ImageController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Image::class, 'image');;
+        $this->authorizeResource(Image::class, 'image');
+        ;
     }
 
     /**
@@ -32,7 +34,7 @@ class ImageController extends Controller
      */
     public function create(Campaign $campaign)
     {
-       return view('image.edit', ['campaign' => $campaign]);
+        return view('image.edit', ['campaign' => $campaign]);
     }
 
     /**
@@ -41,14 +43,15 @@ class ImageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Campaign $campaign)
+    public function store(ImageRequest $request, Campaign $campaign)
     {
         $image = Image::upload($campaign, $request->file('image'), $request->name);
 
         if ($request->ajax()) {
             return new ImageResource($image);
         }
-        return redirect(url("campaign/{$campaign->id}/image/". $image->id ."/edit"));
+
+        return redirect(url("campaign/{$campaign->id}/image/" . $image->id . "/edit"));
     }
 
     /**
@@ -80,13 +83,13 @@ class ImageController extends Controller
      * @param  \App\Image  $image
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Campaign $campaign, Image $image)
+    public function update(ImageRequest $request, Campaign $campaign, Image $image)
     {
         $image->name = $request->name;
         $image->swap($request->file('image'));
         $image->save();
 
-        return redirect(url("campaign/{$campaign->id}/image/".$image->id ."/edit"));
+        return redirect(url("campaign/{$campaign->id}/image/" . $image->id . "/edit"));
     }
 
     /**

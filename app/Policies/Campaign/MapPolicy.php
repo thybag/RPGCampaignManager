@@ -53,7 +53,7 @@ class MapPolicy extends BasePolicy
      */
     public function update(User $user, Map $map)
     {
-       return ($this->userOwnsCampaign($user) && $this->ownedByCampaign($map));
+        return ($this->userOwnsCampaign($user) && $this->ownedByCampaign($map));
     }
 
     /**
