@@ -36,7 +36,7 @@ class CreateCampaignTest extends DatabaseTestCase
         $dummyData = $this->getDummyData();
 
         $response = $this->post('campaign', $dummyData);
-
+       
         $campaign = Campaign::where($dummyData)->firstOrFail();
         $response->assertRedirect(url("campaign/{$campaign->id}"));
         $this->assertEquals($user->id, $campaign->user_id);

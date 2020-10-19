@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         foreach (static::USERS as $data) {
-            User::create(['password' => Hash::make($data['password'])] + $data);
+            factory(User::class)->create(['password' => Hash::make($data['password'])] + $data);
         }
     }
 }

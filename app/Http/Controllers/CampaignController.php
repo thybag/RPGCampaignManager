@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Domains\Campaign\Dto\CreateCampaignDTO;
-use App\Domains\Campaign\Services\CreateCampaignService;
-use App\Http\Requests\Campaign\CreateRequest;
 use App\Models\Campaign;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CampaignRequest;
 
