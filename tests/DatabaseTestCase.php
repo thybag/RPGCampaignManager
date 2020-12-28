@@ -2,16 +2,16 @@
 
 namespace Tests;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 abstract class DatabaseTestCase extends TestCase
 {
     use RefreshDatabase;
 
-    public array $seedClasses = [];
+    public $seedClasses = [];
 
     public function setUp(): void
     {

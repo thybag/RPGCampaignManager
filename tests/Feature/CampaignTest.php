@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Feature\Campaign;
+namespace Tests\Feature;
 
-use App\Models\Campaign;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\DatabaseTestCase;
 use UserSeeder;
+use App\Models\Campaign;
+use Tests\DatabaseTestCase;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class CreateCampaignTest extends DatabaseTestCase
+class CampaignTest extends DatabaseTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
-    protected string $userEmail;
-    public array $seedClasses = [UserSeeder::class];
+    protected $userEmail;
+    public $seedClasses = [UserSeeder::class];
 
     public function setUp(): void
     {
