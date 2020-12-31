@@ -92,5 +92,6 @@ class EntityController extends Controller
      */
     public function destroy(Campaign $campaign, Entity $entity)
     {
+        $entity->delete();
     }
 }

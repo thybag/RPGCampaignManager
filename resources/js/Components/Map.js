@@ -26,7 +26,7 @@ export default Component.define({
             setTimeout(() => { this.highLightMarker(e.entity); }, 200);
         }
     },
-    create: function() {
+    create: function(entity) {
         // Set edit mode and allow draw
         this._editingPoi = entity;
         this.map.pm.enableDraw('Marker');

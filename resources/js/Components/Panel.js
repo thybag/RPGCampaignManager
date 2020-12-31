@@ -105,9 +105,11 @@ export default Component.define({
         this.content = {data: {category: entity.category, name: entity.name, _geo: entity.geo}, links: {'create': this.content.links.create}};
         return this.render();
     },
-    removeEntity: function(){
-        if(confirm("are you sure you want to perminently delete this Entity?")){
+    removeEntity: function(entity)
+    {
+        if (confirm("Are you sure you want to permanently delete this content?")) {
             // DO remove
+            this.state.deleteItem('entity', this.content.id);
             this.hidePanel();
         }
         this.menu();

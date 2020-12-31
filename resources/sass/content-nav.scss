@@ -42,8 +42,15 @@
          border-top: solid 1px #706f7e;
          font-size:0.9rem;
     }
+    a:hover {
+        background: #706f7e;
+    }
     a:first-child{
         border-top:none;
+    }
+    a[data-category] {
+        text-align: right;
+        padding-right: 1rem;
     }
 
     h3 span {

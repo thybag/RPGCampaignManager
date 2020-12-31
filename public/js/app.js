@@ -15619,7 +15619,7 @@ var categoryTpl = function categoryTpl(title, links) {
   },
   refreshHeight: function refreshHeight() {
     var section = this.el.querySelector(".panel-content");
-    section.style.height = (Object.keys(this.filtered).length + 1) * 27.4 + 'px';
+    section.style.height = (Object.keys(this.filtered).length + 1) * 1.65 + 'rem';
   },
   showEntity: function showEntity(e, target) {
     e.preventDefault();
@@ -15959,7 +15959,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
     return focus;
   }(),
-  create: function create() {
+  create: function create(entity) {
     // Set edit mode and allow draw
     this._editingPoi = entity;
     this.map.pm.enableDraw('Marker');
@@ -16453,9 +16453,12 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
     };
     return this.render();
   },
-  removeEntity: function removeEntity() {
-    if (confirm("are you sure you want to perminently delete this Entity?")) {
+  removeEntity: function removeEntity(entity) {
+    console.log(this.content);
+
+    if (confirm("Are you sure you want to permanently delete this content?")) {
       // DO remove
+      this.state.deleteItem('entity', this.content.id);
       this.hidePanel();
     }
 
@@ -16688,7 +16691,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
 
 var templateHasPoi = "\n    <span data-action=\"locate\">Show</span>\n    <span data-action=\"edit\">Update</span>\n";
-var templateNoPoi = "\n    <span data-action=\"create\">Create new</span>\n";
+var templateNoPoi = "\n    <span data-action=\"create\">Add</span>\n";
 var templateEditing = "\n    <span data-action=\"save\">Finish editing</span>\n";
 var templateNoMap = "\n    <span data-action=\"add\">Add a map?</span>\n";
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({

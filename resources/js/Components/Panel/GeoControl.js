@@ -6,7 +6,7 @@ const templateHasPoi = `
 `;
 
 const templateNoPoi = `
-    <span data-action="create">Create new</span>
+    <span data-action="create">Add</span>
 `;
 const templateEditing = `
     <span data-action="save">Finish editing</span>
