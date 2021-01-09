@@ -15879,6 +15879,64 @@ var menu = function menu(title) {
 
 /***/ }),
 
+/***/ "./resources/js/Components/Encounter/Map.js":
+/*!**************************************************!*\
+  !*** ./resources/js/Components/Encounter/Map.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Service/leafletMap.js */ "./resources/js/Service/leafletMap.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
+  el: document.querySelector('#map'),
+  initialize: function initialize() {
+    this.render();
+  },
+  events: {},
+  render: function () {
+    var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var url, image;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              // Grab image from URL
+              url = new URLSearchParams(window.location.search);
+              image = url.get('img');
+              _context.next = 4;
+              return Object(_Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_2__["default"])('map', image);
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    function render() {
+      return _render.apply(this, arguments);
+    }
+
+    return render;
+  }()
+}));
+
+/***/ }),
+
 /***/ "./resources/js/Components/Map.js":
 /*!****************************************!*\
   !*** ./resources/js/Components/Map.js ***!
@@ -15895,11 +15953,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _geoman_io_leaflet_geoman_free__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @geoman-io/leaflet-geoman-free */ "./node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js");
 /* harmony import */ var _geoman_io_leaflet_geoman_free__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_geoman_io_leaflet_geoman_free__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Service/leafletMap.js */ "./resources/js/Service/leafletMap.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -16114,51 +16174,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.map.panTo(this._offsetPoi(l));
   },
   createMap: function () {
-    var _createMap = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(map) {
+    var _createMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(map) {
       var _this3 = this;
 
-      var mapPath, img, width, height, bounds, image, zoom;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
               if (this.map) {
                 this.clearMap();
-              }
+              } // Make the map
 
-              mapPath = map.data.image.data.url; // Load image
 
-              _context4.next = 4;
-              return new Promise(function (resolve, reject) {
-                var img = document.createElement('img');
-                img.src = mapPath;
+              _context4.next = 3;
+              return Object(_Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_4__["default"])('map', map.data.image.data.url);
 
-                img.onload = function () {
-                  return resolve(img);
-                };
-
-                img.onerror = reject;
-              });
-
-            case 4:
-              img = _context4.sent;
-              // Create map
-              this.map = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.map('map', {
-                crs: leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.CRS.Simple,
-                zoomSnap: 0.20
-              }); // Config map size
-
-              width = Math.round(img.width / 10);
-              height = Math.round(img.height / 10);
-              bounds = [[0, 0], [height, width]];
-              image = leaflet__WEBPACK_IMPORTED_MODULE_2___default.a.imageOverlay(mapPath, bounds).addTo(this.map);
-              this.map.fitBounds(bounds); // Config map zoom.
-
-              zoom = this.map.getZoom();
-              this.map.setZoom(zoom + .5);
-              this.map.setMaxZoom(zoom + 4);
-              this.map.setMinZoom(zoom - .5); // Controls
-
+            case 3:
+              this.map = _context4.sent;
+              // Controls
               this.map.pm.addControls({
                 position: 'topleft',
                 drawCircle: false,
@@ -16192,7 +16225,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this3.map.pm.Draw.disable();
               });
 
-            case 18:
+            case 7:
             case "end":
               return _context4.stop();
           }
@@ -16201,7 +16234,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }));
 
     function createMap(_x4) {
-      return _createMap.apply(this, arguments);
+      return _createMap2.apply(this, arguments);
     }
 
     return createMap;
@@ -16454,8 +16487,6 @@ var _menu = _Element_Menu_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
     return this.render();
   },
   removeEntity: function removeEntity(entity) {
-    console.log(this.content);
-
     if (confirm("Are you sure you want to permanently delete this content?")) {
       // DO remove
       this.state.deleteItem('entity', this.content.id);
@@ -16808,8 +16839,8 @@ var editTpl = function editTpl(content) {
     target.classList.remove('uploadable');
   },
   viewImage: function viewImage(e, target) {
-    console.log(target);
-    var win = window.open(target.src, '_blank');
+    console.log(this.state.getEncounterUrl());
+    var win = window.open(this.state.getEncounterUrl() + '?img=' + target.src, '_blank');
     win.focus();
   },
   upload: function () {
@@ -16902,7 +16933,7 @@ var editTpl = function editTpl(content) {
   },
   renderView: function renderView(container, block) {
     var parsed = marked_marked_min_js__WEBPACK_IMPORTED_MODULE_2___default()(block.content);
-    parsed = parsed.replace(/\[\[([a-zA-Z0-9_ ]*)\]\]/g, '<a data-link="$1">$1</a>');
+    parsed = parsed.replace(/\[\[([a-zA-Z0-9_\- ]*)\]\]/g, '<a data-link="$1">$1</a>');
     container.innerHTML = viewTpl(parsed);
     this.el.appendChild(container);
   },
@@ -17083,6 +17114,10 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.upload = /
   };
 }();
 
+lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.getEncounterUrl = function (id) {
+  return "".concat(this.get('url'), "/campaign/").concat(this.get('campaign_id'), "/encounter");
+};
+
 lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.loadEntities = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(id) {
     var url;
@@ -17202,6 +17237,84 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.deleteItem
 
 /***/ }),
 
+/***/ "./resources/js/Service/leafletMap.js":
+/*!********************************************!*\
+  !*** ./resources/js/Service/leafletMap.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _geoman_io_leaflet_geoman_free__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @geoman-io/leaflet-geoman-free */ "./node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js");
+/* harmony import */ var _geoman_io_leaflet_geoman_free__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_geoman_io_leaflet_geoman_free__WEBPACK_IMPORTED_MODULE_2__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (_x, _x2) {
+  return _ref.apply(this, arguments);
+});
+
+function _ref() {
+  _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(target, mapPath) {
+    var img, map, width, height, bounds, image, zoom;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return new Promise(function (resolve, reject) {
+              var img = document.createElement('img');
+              img.src = mapPath;
+
+              img.onload = function () {
+                return resolve(img);
+              };
+
+              img.onerror = reject;
+            });
+
+          case 2:
+            img = _context.sent;
+            // Create map
+            map = leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.map(target, {
+              crs: leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.CRS.Simple,
+              zoomSnap: 0.20
+            }); // Config map size
+
+            width = Math.round(img.width / 10);
+            height = Math.round(img.height / 10);
+            bounds = [[0, 0], [height, width]];
+            image = leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.imageOverlay(mapPath, bounds).addTo(map);
+            map.fitBounds(bounds); // Config defualt map zoom.
+
+            zoom = map.getZoom();
+            map.setZoom(zoom + .5);
+            map.setMaxZoom(zoom + 4);
+            map.setMinZoom(zoom - .5);
+            return _context.abrupt("return", map);
+
+          case 14:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _ref.apply(this, arguments);
+}
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -17212,11 +17325,13 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.deleteItem
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Models_App_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Models/App.js */ "./resources/js/Models/App.js");
-/* harmony import */ var _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Components/NavBar.js */ "./resources/js/Components/NavBar.js");
-/* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
-/* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
-/* harmony import */ var _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/ContentNav.js */ "./resources/js/Components/ContentNav.js");
-/* harmony import */ var _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Components/Element/Preview.js */ "./resources/js/Components/Element/Preview.js");
+/* harmony import */ var _Components_Encounter_Map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Components/Encounter/Map.js */ "./resources/js/Components/Encounter/Map.js");
+/* harmony import */ var _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/NavBar.js */ "./resources/js/Components/NavBar.js");
+/* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
+/* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
+/* harmony import */ var _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Components/ContentNav.js */ "./resources/js/Components/ContentNav.js");
+/* harmony import */ var _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Components/Element/Preview.js */ "./resources/js/Components/Element/Preview.js");
+
 
 
 
@@ -17232,18 +17347,18 @@ var Bus = new _Models_App_js__WEBPACK_IMPORTED_MODULE_0__["default"]({
   }
 }); // Setup Global "views"
 
-var nav = _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
+var nav = _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
   state: Bus
 });
 
 function bootCampaign() {
-  var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
+  var panel = _Components_Panel_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
     state: Bus
   });
-  var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({
+  var map = _Components_Map_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
     state: Bus
   });
-  var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({
+  var contentNav = _Components_ContentNav_js__WEBPACK_IMPORTED_MODULE_5__["default"].make({
     state: Bus
   }); // Show default
 
@@ -17253,9 +17368,16 @@ function bootCampaign() {
   Bus.data.tab = window._campaign.default_map == '' ? 'content' : window._campaign.default_map;
 }
 
+function bootEncounter() {
+  console.log("hi");
+  var map = _Components_Encounter_Map_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
+    state: Bus
+  });
+}
+
 function bootPreviews() {
   document.querySelectorAll(".preview").forEach(function (el) {
-    _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_5__["default"].make({
+    _Components_Element_Preview_js__WEBPACK_IMPORTED_MODULE_6__["default"].make({
       state: Bus,
       el: el
     });
@@ -17269,10 +17391,15 @@ document.addEventListener('DOMContentLoaded', function () {
   Bus.data.campaign_id = window._campaign.id;
   Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  if (Bus.data.mode == 'campaign') {
-    return bootCampaign();
-  } else {
-    return bootPreviews();
+  switch (Bus.data.mode) {
+    case 'campaign':
+      return bootCampaign();
+
+    case 'encounter':
+      return bootEncounter();
+
+    default:
+      return bootPreviews();
   }
 });
 

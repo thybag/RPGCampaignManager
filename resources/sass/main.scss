@@ -33,9 +33,12 @@ textarea,input {
 }
 
 #map {
-    width: calc(100vw - 200px);
+    width: calc(100vw);
     height: calc(100vh - 37px);
     margin:0;   
+}
+.campaign #map {
+    width: calc(100vw - 200px);
 }
 
 .menu-content {

@@ -39,9 +39,9 @@ export default Component.define({
         target.classList.remove('uploadable');
     },
     viewImage: function(e, target)
-    {
-        console.log(target);
-        var win = window.open(target.src, '_blank');
+    {   
+        console.log(this.state.getEncounterUrl());
+        var win = window.open(this.state.getEncounterUrl()+'?img='+target.src, '_blank');
         win.focus();
     },
     upload: async function(e, target) {
@@ -82,7 +82,7 @@ export default Component.define({
     },
     renderView: function(container, block) {
         let parsed = Marked(block.content);
-        parsed = parsed.replace(/\[\[([a-zA-Z0-9_ ]*)\]\]/g,'<a data-link="$1">$1</a>');
+        parsed = parsed.replace(/\[\[([a-zA-Z0-9_\- ]*)\]\]/g,'<a data-link="$1">$1</a>');
         container.innerHTML = viewTpl(parsed);
         this.el.appendChild(container);
     },

@@ -1,5 +1,9 @@
 import App from './Models/App.js';
 
+
+import EncounterMap from './Components/Encounter/Map.js';
+
+
 import NavBar from './Components/NavBar.js';
 import Panel from './Components/Panel.js';
 import Map from './Components/Map.js';
@@ -25,6 +29,13 @@ function bootCampaign()
     Bus.trigger('entity:show', {entity: window._campaign.default_entity});
     Bus.data.tab = window._campaign.default_map == '' ?  'content' : window._campaign.default_map;
 }
+
+function bootEncounter()
+{
+	console.log("hi");
+	const map = EncounterMap.make({state: Bus});
+}
+
 function bootPreviews()
 {
 	document.querySelectorAll(".preview").forEach(function(el){
@@ -40,10 +51,13 @@ document.addEventListener('DOMContentLoaded', function()
 
 	Bus.data.csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-	if (Bus.data.mode == 'campaign') {
-		return bootCampaign();
-	} else {
-		return bootPreviews();
+	switch (Bus.data.mode) {
+		case 'campaign': 
+			return bootCampaign();
+		case 'encounter':
+			return bootEncounter();
+		default:
+			return bootPreviews();
 	}
 });
 
