@@ -1,5 +1,6 @@
 import Component from 'lumpjs/src/component.js';
 import createMap from '../../Service/leafletMap.js';
+import fogOfWar from '../../Service/fogOfWar.js'
 
 export default Component.define({
     el: document.querySelector('#map'),
@@ -15,7 +16,7 @@ export default Component.define({
         const url = new URLSearchParams(window.location.search);
         const image = url.get('img');
 
-        await createMap('map', image);
+        const map = await createMap('map', image);
+        fogOfWar(map);
     }
-
 });
