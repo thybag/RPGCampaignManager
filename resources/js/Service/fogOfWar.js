@@ -7,7 +7,7 @@ L.Fog = L.Rectangle.extend({
     stroke: false,
     color: '#111',
     fillOpacity: 0.7,
-    clickable: true,
+    clickable: false,
   },
   initialize: function (bounds, options) {
     L.Polygon.prototype.initialize.call(this, [this._boundsToLatLngs(bounds)], options);       
@@ -39,17 +39,7 @@ L.fog = function (bounds, options) {
   return new L.Fog(bounds, options);
 };
 
-export default async function(map) {
+export default function(map) {
   // Create fog of war mask
-  const fog = L.fog(map.getBounds()).addTo(map);
-
-  fog.addEventListener("click", function(e) {
-    fog.clearFog(e.latlng);
-  });
-
-  fog.addEventListener("contextmenu", function(e) {
-    fog.addFog(e.latlng);
-  });
-
-  return map;
+  return L.fog(map.getBounds()).addTo(map);
 }

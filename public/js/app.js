@@ -16213,7 +16213,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   events: {},
   render: function () {
     var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var url, image, map;
+      var url, image, map, fog;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -16226,9 +16226,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 4:
               map = _context.sent;
-              Object(_Service_fogOfWar_js__WEBPACK_IMPORTED_MODULE_3__["default"])(map);
+              fog = Object(_Service_fogOfWar_js__WEBPACK_IMPORTED_MODULE_3__["default"])(map);
+              map.on('click', function (e) {
+                fog.clearFog(e.latlng);
+              });
+              map.on('contextmenu', function (e) {
+                fog.addFog(e.latlng);
+              });
 
-            case 6:
+            case 8:
             case "end":
               return _context.stop();
           }
@@ -17555,42 +17561,34 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.deleteItem
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/circleToPolygon.js */ "./resources/js/Service/utils/circleToPolygon.js");
-/* harmony import */ var _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils/fogManager.js */ "./resources/js/Service/utils/fogManager.js");
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/circleToPolygon.js */ "./resources/js/Service/utils/circleToPolygon.js");
+/* harmony import */ var _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/fogManager.js */ "./resources/js/Service/utils/fogManager.js");
 
 
 
-
-leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.Fog = leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.Rectangle.extend({
+leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Fog = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Rectangle.extend({
   options: {
     stroke: false,
     color: '#111',
     fillOpacity: 0.7,
-    clickable: true
+    clickable: false
   },
   initialize: function initialize(bounds, options) {
-    leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.Polygon.prototype.initialize.call(this, [this._boundsToLatLngs(bounds)], options);
+    leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Polygon.prototype.initialize.call(this, [this._boundsToLatLngs(bounds)], options);
   },
   clearFog: function clearFog(latLng) {
     var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 36;
     // Get area Poly
-    var areaPoly = Object(_utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_2__["default"])([latLng.lat, latLng.lng], size);
-    var cutouts = _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_3__["default"].addCutOut(areaPoly);
+    var areaPoly = Object(_utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__["default"])([latLng.lat, latLng.lng], size);
+    var cutouts = _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_2__["default"].addCutOut(areaPoly);
     return this.applyFog(cutouts);
   },
   addFog: function addFog(latLng) {
     var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 36;
-    var areaPoly = Object(_utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_2__["default"])([latLng.lat, latLng.lng], size);
-    var cutouts = _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_3__["default"].removeCutOut(areaPoly);
+    var areaPoly = Object(_utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__["default"])([latLng.lat, latLng.lng], size);
+    var cutouts = _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_2__["default"].removeCutOut(areaPoly);
     return this.applyFog(cutouts);
   },
   applyFog: function applyFog(cutouts) {
@@ -17604,40 +17602,14 @@ leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.Fog = leaflet__WEBPACK_IMPORTED_M
   }
 });
 
-leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.fog = function (bounds, options) {
-  return new leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.Fog(bounds, options);
+leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.fog = function (bounds, options) {
+  return new leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Fog(bounds, options);
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (function (_x) {
-  return _ref.apply(this, arguments);
+/* harmony default export */ __webpack_exports__["default"] = (function (map) {
+  // Create fog of war mask
+  return leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.fog(map.getBounds()).addTo(map);
 });
-
-function _ref() {
-  _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(map) {
-    var fog;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            // Create fog of war mask
-            fog = leaflet__WEBPACK_IMPORTED_MODULE_1___default.a.fog(map.getBounds()).addTo(map);
-            fog.addEventListener("click", function (e) {
-              fog.clearFog(e.latlng);
-            });
-            fog.addEventListener("contextmenu", function (e) {
-              fog.addFog(e.latlng);
-            });
-            return _context.abrupt("return", map);
-
-          case 4:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-  return _ref.apply(this, arguments);
-}
 
 /***/ }),
 

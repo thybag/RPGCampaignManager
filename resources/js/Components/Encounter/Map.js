@@ -17,6 +17,13 @@ export default Component.define({
         const image = url.get('img');
 
         const map = await createMap('map', image);
-        fogOfWar(map);
+        const fog = fogOfWar(map);
+
+        map.on('click', function(e){ 
+            fog.clearFog(e.latlng); 
+        });
+        map.on('contextmenu', function(e){ 
+            fog.addFog(e.latlng); 
+        });
     }
 });
