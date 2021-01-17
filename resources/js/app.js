@@ -1,8 +1,7 @@
 import App from './Models/App.js';
 
 
-import EncounterMap from './Components/Encounter/Map.js';
-
+import Encounter from './Components/Encounter/Encounter.js';
 
 import NavBar from './Components/NavBar.js';
 import Panel from './Components/Panel.js';
@@ -33,7 +32,7 @@ function bootCampaign()
 function bootEncounter()
 {
 	console.log("hi");
-	const map = EncounterMap.make({state: Bus});
+	const map = Encounter.make({state: Bus});
 }
 
 function bootPreviews()

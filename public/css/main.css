@@ -1142,7 +1142,6 @@ textarea.uploadable {
 }
 
 .content-nav {
-  width: 210px;
   height: calc(100vh - 37px);
   box-sizing: border-box;
   background-color: #515278;
@@ -1181,6 +1180,9 @@ textarea.uploadable {
   text-decoration: none;
   border-top: solid 1px #706f7e;
   font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .content-nav a:hover {
   background: #706f7e;
@@ -1227,7 +1229,6 @@ textarea.uploadable {
 }
 .panel.min {
   position: absolute;
-  width: 31vw;
   min-width: 400px;
   height: calc(100vh - 110px);
   right: 20px;
@@ -1375,8 +1376,12 @@ textarea.uploadable {
   margin: 0;
 }
 
-.campaign #map {
-  width: calc(100vw - 200px);
+.content-nav {
+  width: 210px;
+}
+
+.panel.min {
+  width: 31vw;
 }
 
 .menu-content {
@@ -1402,6 +1407,11 @@ textarea.uploadable {
   background: #eee;
 }
 
+@media only screen and (min-width: 1921px) {
+  .content-nav {
+    width: 280px;
+  }
+}
 .badge {
   border: solid 1px #9495bf;
   display: inline-block;
@@ -1478,4 +1488,28 @@ button.editEntity {
 
 .controls {
   text-align: center;
+}
+
+.encounter #players {
+  position: absolute;
+  bottom: 3rem;
+  left: 3rem;
+  z-index: 9999;
+  height: 100px;
+}
+.encounter #players div {
+  width: 70px;
+  display: inline-block;
+  padding: 0.1rem;
+  background: #fff;
+  margin: 2px;
+}
+.encounter #players div img {
+  pointer-events: none;
+}
+.encounter .character-icon {
+  width: 70px;
+  padding: 0.1rem;
+  background: #fff;
+  margin: 2px;
 }

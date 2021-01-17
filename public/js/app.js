@@ -15922,7 +15922,7 @@ var categoryTpl = function categoryTpl(title, links) {
   },
   refreshHeight: function refreshHeight() {
     var section = this.el.querySelector(".panel-content");
-    section.style.height = (Object.keys(this.filtered).length + 1) * 1.65 + 'rem';
+    section.style.height = (Object.keys(this.filtered).length + 1) * 27.38 + 'px';
   },
   showEntity: function showEntity(e, target) {
     e.preventDefault();
@@ -16182,6 +16182,39 @@ var menu = function menu(title) {
 
 /***/ }),
 
+/***/ "./resources/js/Components/Encounter/Encounter.js":
+/*!********************************************************!*\
+  !*** ./resources/js/Components/Encounter/Encounter.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _Map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Map.js */ "./resources/js/Components/Encounter/Map.js");
+/* harmony import */ var _Players_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Players.js */ "./resources/js/Components/Encounter/Players.js");
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function initialize() {
+    var map = _Map_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
+      state: this.state
+    });
+    var players = _Players_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
+      state: this.state
+    });
+    players.on('select:player', function (player) {
+      map.trigger('select:player', player);
+    });
+  },
+  events: {},
+  render: function render() {}
+}));
+
+/***/ }),
+
 /***/ "./resources/js/Components/Encounter/Map.js":
 /*!**************************************************!*\
   !*** ./resources/js/Components/Encounter/Map.js ***!
@@ -16207,13 +16240,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
   el: document.querySelector('#map'),
+  map: null,
   initialize: function initialize() {
     this.render();
   },
-  events: {},
+  events: {
+    "select:player": "selectPlayer"
+  },
+  selectPlayer: function selectPlayer() {
+    // focus on them or create them
+    var testIcon2 = L.divIcon({
+      className: 'character-icon',
+      html: "<img src='https://placeimg.com/70/70/animals'><span>Hello world</span>",
+      iconSize: [70, 90],
+      iconAnchor: [35, 35]
+    });
+    L.marker(this.map.getCenter(), {
+      icon: testIcon2,
+      draggable: true
+    }).addTo(this.map);
+  },
   render: function () {
     var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var url, image, map, fog;
+      var url, image, fog;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -16225,16 +16274,104 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return Object(_Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_2__["default"])('map', image);
 
             case 4:
-              map = _context.sent;
-              fog = Object(_Service_fogOfWar_js__WEBPACK_IMPORTED_MODULE_3__["default"])(map);
-              map.on('click', function (e) {
+              this.map = _context.sent;
+              fog = Object(_Service_fogOfWar_js__WEBPACK_IMPORTED_MODULE_3__["default"])(this.map);
+              this.map.on('click', function (e) {
                 fog.clearFog(e.latlng);
               });
-              map.on('contextmenu', function (e) {
+              this.map.on('contextmenu', function (e) {
                 fog.addFog(e.latlng);
               });
 
             case 8:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function render() {
+      return _render.apply(this, arguments);
+    }
+
+    return render;
+  }()
+}));
+
+/***/ }),
+
+/***/ "./resources/js/Components/Encounter/Players.js":
+/*!******************************************************!*\
+  !*** ./resources/js/Components/Encounter/Players.js ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _Service_utils_dragSort_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Service/utils/dragSort.js */ "./resources/js/Service/utils/dragSort.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+
+var playerTpl = function playerTpl(player) {
+  var tpl = "\n        <img src=\"".concat(player.img, "\">\n        ").concat(player.name, "\n    ");
+  var template = document.createElement('div');
+  template.innerHTML = tpl;
+  return template;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
+  el: document.querySelector('#players'),
+  initialize: function initialize() {
+    this.render();
+  },
+  events: {
+    "click div": "playerSelect"
+  },
+  playerSelect: function playerSelect(e, target) {
+    this.trigger("select:player");
+  },
+  render: function () {
+    var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var _this = this;
+
+      var data;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              data = [{
+                "name": "Player 1",
+                img: "https://placeimg.com/70/70/animals"
+              }, {
+                "name": "Player 2",
+                img: "https://placeimg.com/70/70/animals?2"
+              }, {
+                "name": "Player 3",
+                img: "https://placeimg.com/70/70/animals?3"
+              }, {
+                "name": "Player 4",
+                img: "https://placeimg.com/70/70/animals?4"
+              }, {
+                "name": "Player 5",
+                img: "https://placeimg.com/70/70/animals?5"
+              }];
+              data.map(function (player) {
+                _this.el.appendChild(playerTpl(player));
+              });
+              Object(_Service_utils_dragSort_js__WEBPACK_IMPORTED_MODULE_2__["default"])(document.querySelectorAll("#players div"));
+
+            case 3:
             case "end":
               return _context.stop();
           }
@@ -17719,6 +17856,60 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Service/utils/dragSort.js":
+/*!************************************************!*\
+  !*** ./resources/js/Service/utils/dragSort.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var selected = null;
+
+function dragOver(e) {
+  if (isBefore(selected, e.target)) {
+    e.target.parentNode.insertBefore(selected, e.target);
+  } else {
+    e.target.parentNode.insertBefore(selected, e.target.nextSibling);
+  }
+}
+
+function dragEnd() {
+  selected = null;
+}
+
+function dragStart(e) {
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', null);
+  selected = e.target;
+}
+
+function isBefore(el1, el2) {
+  var cur;
+
+  if (el2.parentNode === el1.parentNode) {
+    for (cur = el1.previousSibling; cur; cur = cur.previousSibling) {
+      if (cur === el2) return true;
+    }
+  }
+
+  return false;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (function (elements) {
+  console.log(elements);
+  Array.from(elements).map(function (el) {
+    console.log(el);
+    el.addEventListener('dragend', dragEnd);
+    el.addEventListener('dragstart', dragStart);
+    el.addEventListener('dragover', dragOver);
+    el.draggable = true;
+  });
+});
+
+/***/ }),
+
 /***/ "./resources/js/Service/utils/fogManager.js":
 /*!**************************************************!*\
   !*** ./resources/js/Service/utils/fogManager.js ***!
@@ -17769,7 +17960,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Models_App_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Models/App.js */ "./resources/js/Models/App.js");
-/* harmony import */ var _Components_Encounter_Map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Components/Encounter/Map.js */ "./resources/js/Components/Encounter/Map.js");
+/* harmony import */ var _Components_Encounter_Encounter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Components/Encounter/Encounter.js */ "./resources/js/Components/Encounter/Encounter.js");
 /* harmony import */ var _Components_NavBar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Components/NavBar.js */ "./resources/js/Components/NavBar.js");
 /* harmony import */ var _Components_Panel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Components/Panel.js */ "./resources/js/Components/Panel.js");
 /* harmony import */ var _Components_Map_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Components/Map.js */ "./resources/js/Components/Map.js");
@@ -17814,7 +18005,7 @@ function bootCampaign() {
 
 function bootEncounter() {
   console.log("hi");
-  var map = _Components_Encounter_Map_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
+  var map = _Components_Encounter_Encounter_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
     state: Bus
   });
 }

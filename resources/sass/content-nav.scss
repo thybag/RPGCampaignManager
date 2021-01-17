@@ -1,5 +1,4 @@
 .content-nav {
-    width:210px;
     height: calc(100vh - 37px);
     box-sizing: border-box;
     background-color:#515278;
@@ -41,6 +40,10 @@
          text-decoration: none;
          border-top: solid 1px #706f7e;
          font-size:0.9rem;
+
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
     }
     a:hover {
         background: #706f7e;

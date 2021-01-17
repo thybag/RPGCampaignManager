@@ -56,7 +56,7 @@ export default Component.define({
     },
     refreshHeight: function(){
         let section = this.el.querySelector(".panel-content");
-        section.style.height = (Object.keys(this.filtered).length+1)*1.65 + 'rem';
+        section.style.height = (Object.keys(this.filtered).length+1)*27.38 + 'px';
     },
     showEntity: function(e, target)
     {

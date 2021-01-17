@@ -5,7 +5,11 @@
 @endsection
 
 @section('content')
-<div class="wrapper">
+<div class="wrapper encounter">
     <div id="map"></div>
+    <div id="players">
+
+    </div>
 </div>
+
 @endsection

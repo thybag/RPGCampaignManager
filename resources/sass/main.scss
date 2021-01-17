@@ -32,18 +32,30 @@ textarea,input {
     .row { margin: 0 1rem; }
 }
 
+
+// Overall component sizing
 #map {
     width: calc(100vw);
     height: calc(100vh - 37px);
     margin:0;   
 }
-.campaign #map {
-    width: calc(100vw - 200px);
+.content-nav {
+    width:210px;
+}
+.panel.min {
+    width: 31vw;
 }
 
 .menu-content {
     @include menu;
 }
+
+@media only screen and (min-width: 1921px) {
+    .content-nav {
+        width:280px;
+    }
+}
+
 
 
 
@@ -124,3 +136,32 @@ textarea,input {
     .controls {
         text-align:center;
     }
+
+
+.encounter {
+    #players {
+        position: absolute;
+        bottom:3rem;
+        left:3rem;
+        z-index:9999;
+        height:100px;
+    }
+    #players div {
+        width: 70px;
+        display:inline-block;
+        padding:.1rem;
+        background:#fff;
+        margin:2px;
+    }
+    #players div img {
+        pointer-events: none;
+    }
+
+
+    .character-icon {
+        width: 70px;
+        padding:.1rem;
+        background:#fff;
+        margin:2px;
+    }
+}
