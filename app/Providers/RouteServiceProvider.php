@@ -32,7 +32,10 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         Route::bind('entity', function ($value) {
-            return Entity::where('id', $value)->orWhere('slug', $value)->firstOrFail();
+            if (!is_numeric($value)) {
+                 return Entity::where('slug', $value)->firstOrFail();
+            }
+            return Entity::where('id', $value)->firstOrFail();
         });
 
         parent::boot();

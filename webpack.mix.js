@@ -15,3 +15,5 @@ mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/main.scss', 'public/css').options({
         processCssUrls: false,
     });
+
+mix.copy('node_modules/rpg-quick-encounter/assets', 'public/images/encounter');

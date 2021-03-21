@@ -15,7 +15,7 @@
     <script>
         window._campaign = {
             'id': '{{$campaign->id}}',
-            'mode': '{{empty($mode) ? 'default' : 'campaign'}}',
+            'mode': '{{empty($mode) ? 'default' : $mode}}',
             'url': '{{url('/')}}',
             'default_entity': '{{$campaign->default_entity_id ?? $campaign->entities->first()->id}}',
             'default_map': '{{$campaign->default_map_id}}'
@@ -31,7 +31,7 @@
 @endif
 </head>
 
-<body>
+<body class='$mode'>
 <div class="bar">
     <a href="{{url('/')}}" ><h1>RPG Campaign Manager</h1></a>
 
