@@ -139,29 +139,9 @@ textarea,input {
 
 
 .encounter {
-    #players {
-        position: absolute;
-        bottom:3rem;
-        left:3rem;
-        z-index:9999;
-        height:100px;
-    }
-    #players div {
-        width: 70px;
-        display:inline-block;
-        padding:.1rem;
-        background:#fff;
-        margin:2px;
-    }
-    #players div img {
-        pointer-events: none;
-    }
+    @import '~rpg-quick-encounter/dist/encounter.css';
 
-
-    .character-icon {
-        width: 70px;
-        padding:.1rem;
-        background:#fff;
-        margin:2px;
+    #map {
+        height: calc(100vh - 74px);
     }
 }

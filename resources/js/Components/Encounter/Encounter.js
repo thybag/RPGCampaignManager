@@ -1,18 +1,21 @@
 import Component from 'lumpjs/src/component.js';
-import EncounterMap from './Map.js';
-import Players from './Players.js';
+import QuickEncounter from 'rpg-quick-encounter/src/Encounter.js';
 
 export default Component.define({
     initialize: function () {
-        const map = EncounterMap.make({state: this.state});
-        const players = Players.make({state: this.state});
 
-        players.on('select:player', function(player) {
-            map.trigger('select:player', player);
-        });
-    },
-    events: {
+        const url = new URLSearchParams(window.location.search);
+        const map = url.get('map');
 
+        const options = {
+            'assetPath': this.state.get('url') + '/images/encounter/',
+            'map': map,
+            'players':[
+                {id: 1, name: "test", spawned: false, x: 0, y: 0}
+            ],
+        };
+
+        QuickEncounter.make({options, save: true});
     },
     render: function () 
     {

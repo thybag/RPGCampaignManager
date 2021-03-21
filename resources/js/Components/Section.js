@@ -41,7 +41,8 @@ export default Component.define({
     viewImage: function(e, target)
     {   
         console.log(this.state.getEncounterUrl());
-        var win = window.open(this.state.getEncounterUrl()+'?img='+target.src, '_blank');
+
+        var win = window.open(this.state.getEncounterUrl()+'?map='+target.src, '_blank');
         win.focus();
     },
     upload: async function(e, target) {

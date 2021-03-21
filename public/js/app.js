@@ -14315,7 +14315,8 @@ const nativeEvents = [
     'paste',
     'contextmenu',
     'focusin', // focus
-    'focusout' // blur?
+    'focusout', // blur?
+    'change'
 ];
 // Blur/focus cannot be defered, so use 
 // override events instead on listeners
@@ -14342,7 +14343,7 @@ const Component = function() {
         this.initialize.apply(this, arguments);
         this.connect.apply(this, [config.events]);
     }
-    ComponentImplementation.prototype._events = {};
+
     ComponentImplementation.prototype.trigger = function(event, ...args) {
         for (let i of this._events[event] || []) {
             // Trigger event (either func or method to call)
@@ -14403,6 +14404,8 @@ const Component = function() {
         delete this._events[key];
     }
     ComponentImplementation.prototype.connect = function(events) {
+        // Create events on new obj, so components don't share
+        this._events = [];
         if (!events || typeof events !== 'object') return;
         // connected all events
         for (let [key, method] of Object.entries(events)) {
@@ -14444,6 +14447,7 @@ const Component = function() {
 
 /* harmony default export */ __webpack_exports__["default"] = (new Component);
 
+
 /***/ }),
 
 /***/ "./node_modules/lumpjs/src/model.js":
@@ -14475,7 +14479,10 @@ const Model = function(_data) {
         // Detect changes to data
         let change = this.detectChanges(ctx.split('.'), _original, _data);
         // Update internal data to match
-        if (change !== 'NONE') this.commitChanges(ctx.split('.'), _original, _data);
+        if (change !== 'NONE') {
+            this.commitChanges(ctx.split('.'), _original, _data);
+            this.trigger('updated');
+        } 
     }
 
     // Create watcher proxy
@@ -14485,7 +14492,8 @@ const Model = function(_data) {
             {
                 let ctx = context ? context + '.' + prop : prop;
                 let result = Reflect.get(obj, prop);
-                if (typeof result === 'object') {
+
+                if (parent.isObject(result)) {
                     result = newProxy(result, ctx);
                 }
 
@@ -14597,15 +14605,23 @@ Model.prototype.copy = function(data)
 {
     return (typeof data == 'object') ? JSON.parse(JSON.stringify(data)) : data;
 }
+
 // Detect change type for a primative
 Model.prototype.detectChangeType = function(original, updated)
 {
-    if(!original) return "CREATE"; // additional key added to our new data
-    if(!updated) return "REMOVE"; // old key removed from our new data
+    if(typeof original === 'undefined') return "CREATE"; // additional key added to our new data
+    if(typeof updated === 'undefined') return "REMOVE"; // old key removed from our new data
     if(original==updated) return "NONE"; // data unchanged between the two keys
 
     return "UPDATE"; // A mix - so an update
 }
+
+// Detect objects that are not NULL values
+Model.prototype.isObject = function (value)
+{
+   return (typeof value === 'object' && value !== null);
+}
+
 // Detect changes in watched data
 Model.prototype.detectChanges = function (keys, original, updated, namespace = '')
 {
@@ -14626,7 +14642,7 @@ Model.prototype.detectChanges = function (keys, original, updated, namespace = '
     // Target depth reached.
     if (keys.length == 0) {
         // Detect attribute changes to children
-        if (typeof updated == 'object' || typeof original == 'object') {
+        if (this.isObject(updated) ||this.isObject(original)) {
             // Check for field changes
             let fields = new Set([
                 ...(updated) ? Object.keys(updated) : [],
@@ -14638,8 +14654,8 @@ Model.prototype.detectChanges = function (keys, original, updated, namespace = '
                 results.push(this.detectChanges([key], original, updated, namespace));
             }
             // Object checks
-            if(!original) returnType = 'CREATE';
-            if(!updated) returnType = 'REMOVE';
+            if(!original && original !== false) returnType = 'CREATE';
+            if(!updated && updated !== false) returnType = 'REMOVE';
             if (results.every(function(val){ return val == 'NONE'})) {
                 returnType = 'NONE';
             }
@@ -15657,6 +15673,1316 @@ try {
 
 /***/ }),
 
+/***/ "./node_modules/rpg-quick-encounter/src/Encounter.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/Encounter.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/model.js */ "./node_modules/lumpjs/src/model.js");
+/* harmony import */ var _components_Map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Map.js */ "./node_modules/rpg-quick-encounter/src/components/Map.js");
+/* harmony import */ var _components_PlayerBar_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/PlayerBar.js */ "./node_modules/rpg-quick-encounter/src/components/PlayerBar.js");
+/* harmony import */ var _components_Controls_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Controls.js */ "./node_modules/rpg-quick-encounter/src/components/Controls.js");
+/* harmony import */ var _services_localData_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./services/localData.js */ "./node_modules/rpg-quick-encounter/src/services/localData.js");
+/* harmony import */ var _utils_applyDefaults_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/applyDefaults.js */ "./node_modules/rpg-quick-encounter/src/utils/applyDefaults.js");
+/* harmony import */ var _utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/getIconImage.js */ "./node_modules/rpg-quick-encounter/src/utils/getIconImage.js");
+
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function(config) {
+    // Take control of root
+    this.el = document.querySelector('body');
+    this.el.classList = 'app';
+
+    // Apply defaults and sanity check
+    let options = Object(_utils_applyDefaults_js__WEBPACK_IMPORTED_MODULE_6__["default"])(config.options);
+
+    if (options.assetPath) {
+      Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_7__["setIconPath"])(options.assetPath);
+    }
+
+    // Get config or load from local storage
+    if (_services_localData_js__WEBPACK_IMPORTED_MODULE_5__["default"].hasMap(options.map) && config.save !== 'false') {
+      options = _services_localData_js__WEBPACK_IMPORTED_MODULE_5__["default"].loadMap(options.map);
+    }
+
+    // Set global state
+    const props = new lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"](options);
+
+    const map = _components_Map_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({options: props.data, bus: props});
+    const players = _components_PlayerBar_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({options: props.data, bus: props});
+    const controls = _components_Controls_js__WEBPACK_IMPORTED_MODULE_4__["default"].make({options: props.data, bus: props});
+
+    // Pass model eventing
+    map.listenTo(props);
+
+    players.on('map:player:spawn', function(player) {
+      map.trigger('map:player:spawn', player);
+    });
+    players.on('map:player:focus', function(player) {
+      map.trigger('map:player:focus', player);
+    });
+
+    controls.on('map:spawn', function(v) {
+      const spawn = {
+        ...v,
+        id: props.data.spawns.length,
+        x: 0,
+        y: 0,
+        spawned: true,
+      };
+      props.data.spawns.push(spawn);
+      map.trigger('map:spawn', props.data.spawns[props.data.spawns.length - 1]);
+    });
+
+    // Save local storage
+    props.on('updated', () => {
+      _services_localData_js__WEBPACK_IMPORTED_MODULE_5__["default"].saveMap(config.options.map, props.data);
+    });
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/Controls.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/Controls.js ***!
+  \*********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _Controls_FogControls_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Controls/FogControls.js */ "./node_modules/rpg-quick-encounter/src/components/Controls/FogControls.js");
+/* harmony import */ var _Controls_SpawnControls_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Controls/SpawnControls.js */ "./node_modules/rpg-quick-encounter/src/components/Controls/SpawnControls.js");
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function(config) {
+    this.el = document.querySelector(config.options.controlBar);
+    this.fogControls = _Controls_FogControls_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({fogProps: config.options.fog});
+    this.spawnControls = _Controls_SpawnControls_js__WEBPACK_IMPORTED_MODULE_2__["default"].make();
+    this.render();
+
+    // Pass it up
+    this.spawnControls.on('map:spawn', (v) => {
+      this.trigger('map:spawn', v);
+    });
+  },
+  events: {
+    'click span.fog': 'fogToggle',
+    'click span.spawn': 'spawnToggle',
+  },
+  fogToggle: function(e, target) {
+    this.fogControls.toggle();
+  },
+  spawnToggle: function(e, target) {
+    this.spawnControls.toggle();
+  },
+  render: async function() {
+
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/Controls/FogControls.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/Controls/FogControls.js ***!
+  \*********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+
+
+const controlTpl = function(fogProps) {
+  const tpl = `
+        <label>
+            <span>Fog opacity</span>
+            <input type="range" min="1" max="100" value="${fogProps.opacity}" name='opacity'>
+        </label>
+        <label>
+            <span>Fog clear size</span>
+            <input type="range" min="1" max="100" value="${fogProps.clearSize}" name='clearSize'>
+        </label>
+        <label class="enable">
+            <span>Fog enabled</span>
+            <span class="toggle">
+                <input type="checkbox" name='enabled' checked>
+                <span></span>
+          </span>
+        </label>
+    `;
+  const template = document.createElement('div');
+  template.innerHTML = tpl;
+  return template;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function(options) {
+    this.el = controlTpl(this.fogProps);
+    this.el.className = 'fog-controls';
+    this.el.style.display = 'none';
+    document.body.appendChild(this.el);
+  },
+  prop: {
+    visible: false,
+  },
+  events: {
+    'click input[name=enabled]': 'toggleFog',
+    'change input[name=opacity]': 'changeOpacity',
+    'change input[name=clearSize]': 'changeClearSize',
+  },
+  toggleFog: function(e, target) {
+    this.fogProps.enabled = target.checked;
+  },
+  changeOpacity: function(e, target) {
+    this.fogProps.opacity = target.value;
+  },
+  changeClearSize: function(e, target) {
+    this.fogProps.clearSize = target.value;
+  },
+  toggle: function() {
+    this.prop.visible = !this.prop.visible;
+    this.render();
+  },
+  show: function() {
+    this.prop.visible = true;
+    this.render();
+  },
+  hide: function() {
+    this.prop.visible = false;
+    this.render();
+  },
+  render: async function() {
+    if (this.prop.visible) {
+      this.el.style.display = 'flex';
+    } else {
+      this.el.style.display = 'none';
+    }
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/Controls/ImagePicker.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/Controls/ImagePicker.js ***!
+  \*********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _utils_template_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/template.js */ "./node_modules/rpg-quick-encounter/src/utils/template.js");
+/* harmony import */ var _services_localData_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/localData.js */ "./node_modules/rpg-quick-encounter/src/services/localData.js");
+/* harmony import */ var _utils_checkImage_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/checkImage.js */ "./node_modules/rpg-quick-encounter/src/utils/checkImage.js");
+/* harmony import */ var _utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/getIconImage.js */ "./node_modules/rpg-quick-encounter/src/utils/getIconImage.js");
+
+
+
+
+
+
+
+
+const controlTpl = new _utils_template_js__WEBPACK_IMPORTED_MODULE_1__["default"]({
+  template: () => {
+    return `
+      <main></main>
+      <footer><button>Cancel</button></footer>
+    `;
+  },
+});
+
+const iconList = new _utils_template_js__WEBPACK_IMPORTED_MODULE_1__["default"]({
+  template: () => {
+    let NPCList = ''; let MonsterList = ''; let CustomList = '';
+
+    Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__["getPlayerIcons"])().forEach((i) => {
+      NPCList += `<img src="${Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__["default"])(i)}" data-id="${i}">`;
+    });
+    Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__["getMonsterIcons"])().forEach((i) => {
+      MonsterList += `<img src="${Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__["default"])(i)}" data-id="${i}">`;
+    });
+    Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__["getCustomIcons"])().forEach((i) => {
+      CustomList += `<img src="${Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_4__["default"])(i)}" data-id="${i}">`;
+    });
+
+    return `
+      <div>Your images</div>
+          <span>+</span>  ${CustomList}
+      <div>NPCs/Players</div>
+          ${NPCList}
+      <div>Monsters</div>
+          ${MonsterList}
+      `;
+  },
+});
+
+/**
+ * load filedata from upload
+ *
+ * @param  {[type]} iconImg [description]
+ * @return {[type]}         [description]
+ */
+async function loadFile(iconImg) {
+  const imgData = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(iconImg);
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+  });
+
+  return Object(_utils_checkImage_js__WEBPACK_IMPORTED_MODULE_3__["default"])(imgData);
+}
+
+/**
+ * resize and return as final icon image to store
+ *
+ * @param  {[type]} iconImg [description]
+ * @return {[type]}         [description]
+ */
+async function imageToIcon(iconImg) {
+  const img = await loadFile(iconImg);
+
+  // Local storage is small so we wanna scale it down before we save
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // draw source image into the off-screen canvas:
+  canvas.width = 70;
+  canvas.height = 70;
+  ctx.drawImage(img, 0, 0, 70, 70);
+
+  return canvas.toDataURL('image/webp', 0.8);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function(options) {
+    this.el = controlTpl.render();
+    this.el.className = 'image-picker';
+    this.el.style.display = 'none';
+    document.body.appendChild(this.el);
+  },
+  parent: null,
+  prop: {
+    visible: false,
+  },
+  events: {
+    'click img': 'select',
+    'click button': 'close',
+    'click span': 'addIcon',
+
+    'dragover main': 'uploadEnable',
+    'drop main': 'upload',
+    'dragenter main': 'uploadFocus',
+    'dragleave main': 'uploadBlur',
+  },
+  uploadEnable: function(e) {
+    // Need this to be able to upload.
+    e.preventDefault();
+  },
+  open: function(parent) {
+    this.prop.visible = true;
+    this.parent = parent;
+    this.render();
+  },
+  select: function(e, item) {
+    this.parent.src = item.src;
+    this.parent.dataset.id = (item.dataset.id) ? item.dataset.id : item.src;
+
+    this.close();
+  },
+  close: function() {
+    this.parent = null;
+    this.prop.visible = false;
+    this.render();
+  },
+  uploadFocus: function(e) {
+    e.preventDefault();
+    this.el.classList.add('uploadHover');
+  },
+  uploadBlur: function(e) {
+    e.preventDefault();
+    this.el.classList.remove('uploadHover');
+  },
+  upload: async function(e) {
+    e.preventDefault();
+
+    const files = e.dataTransfer.files;
+
+    // Get files that were dragged
+    for (let f = 0; f < files.length; f++) {
+      const file = files[f];
+      // Only deal with images
+      if (!file.type.match('image.*')) continue;
+
+      const newIcon = await imageToIcon(file);
+      _services_localData_js__WEBPACK_IMPORTED_MODULE_2__["default"].saveIcon(newIcon);
+    }
+    this.render();
+    this.uploadBlur(e);
+  },
+  addIcon: async function() {
+    const iconPath = prompt('Icon image url');
+    if (iconPath) {
+      try {
+        await Object(_utils_checkImage_js__WEBPACK_IMPORTED_MODULE_3__["default"])(iconPath);
+        _services_localData_js__WEBPACK_IMPORTED_MODULE_2__["default"].saveIcon(iconPath);
+        this.render();
+      } catch (e) {
+        alert('failed to load image');
+      }
+    }
+  },
+  render: async function() {
+    this.el.querySelector('main').innerHTML = iconList.render().innerHTML;
+
+    if (this.prop.visible) {
+      this.el.style.display = 'block';
+    } else {
+      this.el.style.display = 'none';
+    }
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/Controls/SpawnControls.js":
+/*!***********************************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/Controls/SpawnControls.js ***!
+  \***********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _utils_template_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/template.js */ "./node_modules/rpg-quick-encounter/src/utils/template.js");
+/* harmony import */ var _ImagePicker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ImagePicker.js */ "./node_modules/rpg-quick-encounter/src/components/Controls/ImagePicker.js");
+/* harmony import */ var _utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/getIconImage.js */ "./node_modules/rpg-quick-encounter/src/utils/getIconImage.js");
+
+
+
+
+
+const controlTpl = new _utils_template_js__WEBPACK_IMPORTED_MODULE_1__["default"]({
+  template: () => {
+    const defaultIcon = Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__["getRandomMonsterIcon"])();
+    return `
+      <img src="${Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__["default"])(defaultIcon)}" data-id="${defaultIcon}">
+      <div>
+          <label>Name</label>
+          <input type="text" value="Unknown">
+          <input type='submit' value="Spawn">
+      </div>
+    `;
+  },
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function(options) {
+    this.el = controlTpl.render();
+    this.el.className = 'spawn-controls';
+    this.el.style.display = 'none';
+    document.body.appendChild(this.el);
+
+    this.picker = null;
+  },
+  prop: {
+    visible: false,
+  },
+  events: {
+    'click img': 'openPickList',
+    'click input[type=submit]': 'spawn',
+  },
+  openPickList: function(e, target) {
+    if (!this.picker) this.picker = _ImagePicker_js__WEBPACK_IMPORTED_MODULE_2__["default"].make();
+    this.picker.open(target);
+  },
+  spawn: function(e, target) {
+    // default
+    this.trigger('map:spawn', {name: this.el.querySelector('input[type=text]').value, icon: this.el.querySelector('img').dataset.id});
+  },
+  toggle: function() {
+    this.prop.visible = !this.prop.visible;
+    this.render();
+  },
+  show: function() {
+    this.prop.visible = true;
+    this.render();
+  },
+  hide: function() {
+    this.prop.visible = false;
+    this.render();
+  },
+  render: async function() {
+    if (this.prop.visible) {
+      this.el.style.display = 'block';
+    } else {
+      this.el.style.display = 'none';
+    }
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/Map.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/Map.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _utils_leafletMap_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/leafletMap.js */ "./node_modules/rpg-quick-encounter/src/utils/leafletMap.js");
+/* harmony import */ var _utils_fogOfWar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/fogOfWar.js */ "./node_modules/rpg-quick-encounter/src/utils/fogOfWar.js");
+/* harmony import */ var _Map_Character_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Map/Character.js */ "./node_modules/rpg-quick-encounter/src/components/Map/Character.js");
+
+
+
+
+
+const playerToIconMap = {};
+const npcToIconMap = {};
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  map: null,
+  fog: null,
+  initialize: function(config) {
+    this.el = document.querySelector(config.options.container);
+    this.render();
+  },
+  events: {
+    'map:player:spawn': 'spawnPlayer',
+    'map:player:focus': 'focusPlayer',
+    'map:spawn': 'spawnNpc',
+    'update:fog.enabled': 'fogToggled',
+    'update:fog.opacity': 'fogOpacityChanged',
+  },
+  spawnPlayer: function(player) {
+    const marker = this.generateMarker(player.name, player.icon, player);
+    playerToIconMap[player.id] = marker;
+    player.spawned = true;
+  },
+  spawnNpc: function(npc) {
+    const marker = this.generateMarker(npc.name, npc.icon, npc);
+    npcToIconMap[npc.id] = marker;
+    npc.spawned = true;
+  },
+  generateMarker: function(name, img, ref) {
+    return _Map_Character_js__WEBPACK_IMPORTED_MODULE_3__["default"].make({ref: ref, map: this.map});
+  },
+  focusPlayer: function(player) {
+    playerToIconMap[player.id].panTo();
+  },
+  fogToggled: function(newValue) {
+    if (newValue) {
+      this.fog.setLatLngs(JSON.parse(this.options.fog.mask));
+    } else {
+      this.options.fog.mask = JSON.stringify(this.fog.getLatLngs());
+      this.fog.setLatLngs(false);
+    }
+  },
+  fogOpacityChanged: function(newValue) {
+    this.fog.setOpacity(newValue / 100);
+  },
+  render: async function() {
+    // Grab image from URL
+    this.map = await Object(_utils_leafletMap_js__WEBPACK_IMPORTED_MODULE_1__["default"])('map', this.options.map);
+    this.fog = Object(_utils_fogOfWar_js__WEBPACK_IMPORTED_MODULE_2__["default"])(this.map);
+
+    this.map.on('click', (e) => {
+      if (!this.options.fog.enabled) return;
+
+      this.fog.clearFog(e.latlng, this.options.fog.clearSize);
+      this.options.fog.mask = JSON.stringify(this.fog.getLatLngs());
+    });
+    this.map.on('contextmenu', (e) => {
+      if (!this.options.fog.enabled) return;
+
+      this.fog.addFog(e.latlng, this.options.fog.clearSize);
+      this.options.fog.mask = JSON.stringify(this.fog.getLatLngs());
+    });
+
+    this.reloadData();
+  },
+  reloadData: function() {
+    // Reload save data
+    // Load config from settings
+    if (!this.options.fog.mask) {
+      this.options.fog.mask = JSON.stringify(this.fog.getLatLngs());
+    } else {
+      this.fog.initFog(JSON.parse(this.options.fog.mask));
+    }
+
+    this.fogOpacityChanged(this.options.fog.opacity);
+    this.fogToggled(this.options.fog.enabled);
+
+    // Boot players
+    for (const player of Object.values(this.options.players)) {
+      if (player.spawned) {
+        this.trigger('map:player:spawn', player);
+      }
+    }
+    // Boot spawns
+    for (const spawn of Object.values(this.options.spawns)) {
+      if (spawn.spawned) this.trigger('map:spawn', spawn);
+    }
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/Map/Character.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/Map/Character.js ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_template_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/template.js */ "./node_modules/rpg-quick-encounter/src/utils/template.js");
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/getIconImage.js */ "./node_modules/rpg-quick-encounter/src/utils/getIconImage.js");
+
+
+
+
+
+const iconTpl = new _utils_template_js__WEBPACK_IMPORTED_MODULE_1__["default"]({
+  template: (name, icon) => {
+    return `
+        <img src="${Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__["default"])(icon)}">
+        <span>${name}</span>
+    `;
+  },
+});
+
+function makeIcon(name, icon) {
+  return leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.divIcon({
+    className: 'character-icon',
+    html: iconTpl.render(name, icon),
+    iconSize: [60, 80],
+    iconAnchor: [35, 35],
+  });
+}
+
+function makeMarker(ref, icon, map) {
+  const position = (ref.x) ? leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.latLng(ref.x, ref.y) : map.getCenter();
+  return leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.marker(
+      position,
+      {
+        icon: icon,
+        draggable: true,
+      },
+  );
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_2__["default"].define({
+  marker: null,
+  icon: null,
+  ref: null,
+  map: null,
+  events: {
+    'marker:click': 'characterClick',
+    'marker:dblclick': 'characterDblClick',
+    'marker:dragend': 'characterDragend',
+    'marker:contextmenu': 'characterRemove',
+  },
+  initialize: function({ref, map}) {
+    // Store key vals
+    this.ref = ref;
+    this.map = map;
+    this.icon = makeIcon(ref.name, ref.icon);
+    this.marker = makeMarker(ref, this.icon, map);
+
+    // Register events
+    this.marker.on('click', (e) => this.trigger('marker:click', e));
+    this.marker.on('dblclick', (e) => this.trigger('marker:dblclick', e));
+    this.marker.on('dragend', (e) => this.trigger('marker:dragend', e));
+    this.marker.on('contextmenu', (e) => this.trigger('marker:contextmenu', e));
+    this.render();
+  },
+  panTo: function() {
+    this.map.panTo(this.marker.getLatLng());
+  },
+  characterClick: function(event) {
+    event.preventDefault;
+    console.log('click me');
+  },
+  characterDblClick: function(event) {
+    event.preventDefault;
+    // Going old school for now
+    const name = prompt('Rename?', this.ref.name);
+    if (name) {
+      event.target._icon.querySelector('span').innerText = this.ref.name = name;
+    }
+  },
+  characterDragend: function(event) {
+    const latLng = event.target.getLatLng();
+    // Sync
+    this.ref.x = latLng.lat;
+    this.ref.y = latLng.lng;
+  },
+  characterRemove: function(event) {
+    event.preventDefault;
+    if (confirm('Are you sure you want to remove this character?')) {
+      this.ref.spawned = false;
+      this.marker.remove();
+    }
+  },
+  render: function() {
+    // Add to map
+    this.marker.addTo(this.map);
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/components/PlayerBar.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/components/PlayerBar.js ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
+/* harmony import */ var _utils_dragSort_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/dragSort.js */ "./node_modules/rpg-quick-encounter/src/utils/dragSort.js");
+/* harmony import */ var _utils_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/template.js */ "./node_modules/rpg-quick-encounter/src/utils/template.js");
+/* harmony import */ var _utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/getIconImage.js */ "./node_modules/rpg-quick-encounter/src/utils/getIconImage.js");
+
+
+
+
+
+const playerMap = new WeakMap();
+
+const playerTpl = new _utils_template_js__WEBPACK_IMPORTED_MODULE_2__["default"]({
+  template: (name, icon) => {
+    return `
+        <img src="${Object(_utils_getIconImage_js__WEBPACK_IMPORTED_MODULE_3__["default"])(icon)}">
+        <span>${name}</span>
+    `;
+  },
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
+  initialize: function(config) {
+    this.el = document.querySelector(config.options.playerBar);
+    this.render();
+  },
+  events: {
+    'click div': 'playerSelect',
+  },
+  playerSelect: function(e, target) {
+    const player = playerMap.get(target);
+
+    // Spawn em to map if we want em
+    if (!player.spawned) {
+      this.trigger('map:player:spawn', player);
+      return;
+    }
+
+    // If already spawned lets focus them
+    this.trigger('map:player:focus', player);
+  },
+  render: async function() {
+    this.options.players.map((player, index) => {
+      const playerToken = playerTpl.render(player.name, player.icon);
+      playerMap.set(playerToken, player);
+
+      playerToken.setAttribute('title', player.name);
+
+      if (player.spawned) playerToken.classList.add('spawned');
+
+      // Listen for name changes
+      this.bus.on(`update:players.${index}.name`, (newName) => {
+        playerToken.querySelector('span').innerText = newName;
+        playerToken.setAttribute('title', newName);
+      });
+
+      this.bus.on(`update:players.${index}.spawned`, (spawned) => {
+        if (spawned) {
+          playerToken.classList.add('spawned');
+        } else {
+          playerToken.classList.remove('spawned');
+        }
+      });
+
+      this.el.appendChild(playerToken);
+    });
+
+    Object(_utils_dragSort_js__WEBPACK_IMPORTED_MODULE_1__["default"])(this.el.children);
+  },
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/services/localData.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/services/localData.js ***!
+  \********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+let allocated = 0;
+
+function uid() {
+  return (new Date().getTime()) + '_' + (allocated++);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (new function() {
+  const storage = window.localStorage;
+  const mapPrefix = 'map:';
+
+  this.hasMap = function(key) {
+    return (storage.getItem(mapPrefix + key));
+  };
+
+  this.loadMap = function(key) {
+    return JSON.parse(storage.getItem(mapPrefix + key));
+  };
+
+  this.saveMap = function(key, data) {
+    return storage.setItem(mapPrefix + key, JSON.stringify(data));
+  };
+
+  this.getMaps = function() {
+    return Object.keys(storage).filter((x) => {
+      return x.startsWith('map:');
+    });
+  };
+
+  this.getIcons = function() {
+    const icons = JSON.parse(storage.getItem('icons'));
+    return (icons) || {};
+  };
+
+  this.getIcon = function(id) {
+    const icons = this.getIcons();
+    return icons[id];
+  };
+
+  this.saveIcon = function(iconPath) {
+    const icons = this.getIcons();
+    icons['icon:' + uid()] = iconPath;
+    storage.setItem('icons', JSON.stringify(icons));
+  };
+
+  this.removeIcon = function() {
+
+  };
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/applyDefaults.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/applyDefaults.js ***!
+  \*********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const base = {
+  'container': '#map',
+  'playerBar': '#player-bar',
+  'controlBar': '#control-bar',
+  'map': null,
+  'players': [],
+  'spawns': [],
+  'fog': {
+    enabled: true,
+    opacity: 70,
+    clearSize: 36,
+    mask: '',
+  },
+  'icon': {
+    'tilesize': '60',
+    'mode': 'default',
+  },
+  'data:version': 2,
+};
+
+function applySettings(base, overrides) {
+  for (const [key, value] of Object.entries(overrides)) {
+    if (typeof value === 'object' && value !== null) {
+      base[key] = applySettings(base[key] ? base[key] : {}, value);
+    } else {
+      base[key] = value;
+    }
+  }
+  return base;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (function(options) {
+  return applySettings(base, options);
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/checkImage.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/checkImage.js ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (async function(imgPath) {
+  return await new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    img.src = imgPath;
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+  });
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/circleToPolygon.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/circleToPolygon.js ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (function(center, radius) {
+  const n = 20;
+  const angles = 2 * Math.PI / n;
+  const coordinates = [];
+
+  for (let i = 0; i < n; i++) {
+    const x = center[0] + radius * Math.cos(i * angles);
+    const y = center[1] + radius * Math.sin(i * angles);
+    coordinates.push([x, y]);
+  }
+
+  // Form valid poly line by adding first to the end
+  coordinates.push(coordinates[0]);
+
+  return coordinates;
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/dragSort.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/dragSort.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+let selected = null;
+
+function dragOver(e) {
+  if (isBefore(selected, e.target)) {
+    e.target.parentNode.insertBefore(selected, e.target);
+  } else {
+    e.target.parentNode.insertBefore(selected, e.target.nextSibling);
+  }
+}
+
+function dragEnd() {
+  selected = null;
+}
+
+function dragStart(e) {
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', null);
+  selected = e.target;
+}
+
+function isBefore(el1, el2) {
+  let cur;
+  if (el2.parentNode === el1.parentNode) {
+    for (cur = el1.previousSibling; cur; cur = cur.previousSibling) {
+      if (cur === el2) return true;
+    }
+  }
+  return false;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (function(elements) {
+  Array.from(elements).map((el) => {
+    el.addEventListener('dragend', dragEnd);
+    el.addEventListener('dragstart', dragStart);
+    el.addEventListener('dragover', dragOver);
+    el.draggable = true;
+  });
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/fog.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/fog.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _turf_turf__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @turf/turf */ "./node_modules/@turf/turf/turf.min.js");
+/* harmony import */ var _turf_turf__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_turf_turf__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function mployToPairs(mpoly) {
+  return mpoly.map((poly) => {
+    if (poly.lat) return [poly.lat, poly.lng];
+
+    return mployToPairs(poly);
+  });
+}
+
+// Keep track of cut out sections
+/* harmony default export */ __webpack_exports__["default"] = (new function() {
+  this.cutouts = null;
+
+  this.loadCutOuts = function(multipolys) {
+    // Load cutouts from restore.
+    //
+    // This data is the drawn multipoly of the leaflet mask
+    // so we need to strip off the outer mask (as we don't deal with
+    // that here) and the convert the poly or multipolys from leaflet
+    // latLngs to [lat,lng] pairs.
+    multipolys.shift();
+    this.cutouts = mployToPairs(multipolys);
+
+    return this.cutouts;
+  };
+
+  this.addCutOut = function(poly) {
+    if (!this.cutouts) {
+      this.cutouts = [poly];
+      return this.cutouts;
+    }
+    const cutoutPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["multiPolygon"](this.cutouts);
+    const newPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["polygon"]([poly]);
+    const u = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["union"](cutoutPoly, newPoly);
+
+    this.cutouts = u.geometry.coordinates;
+
+    return this.cutouts;
+  };
+
+  this.removeCutOut = function(poly) {
+    const cutoutPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["multiPolygon"](this.cutouts);
+    const newPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["polygon"]([poly]);
+
+    const u = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["difference"](cutoutPoly, newPoly);
+
+    // Handle null if no difference found (ie. we cleared it all)
+    if (!u) {
+      return this.cutouts = [];
+    }
+
+    return this.cutouts = u.geometry.coordinates;
+  };
+}());
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/fogOfWar.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/fogOfWar.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./circleToPolygon.js */ "./node_modules/rpg-quick-encounter/src/utils/circleToPolygon.js");
+/* harmony import */ var _fog_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fog.js */ "./node_modules/rpg-quick-encounter/src/utils/fog.js");
+
+
+
+
+leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Fog = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Rectangle.extend({
+  options: {
+    stroke: false,
+    color: '#111',
+    fillOpacity: 0.7,
+    clickable: false,
+  },
+  initialize: function(bounds, options) {
+    leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Polygon.prototype.initialize.call(this, [this._boundsToLatLngs(bounds)], options);
+  },
+  initFog: function(mask) {
+    // Load mask back to fog format & apply it from reload
+    const newFog = _fog_js__WEBPACK_IMPORTED_MODULE_2__["default"].loadCutOuts(mask);
+    this.applyFog(newFog);
+  },
+  clearFog: function(latLng, size = 36) {
+    // Get area Poly
+    const areaPoly = Object(_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__["default"])([latLng.lat, latLng.lng], size);
+    const cutouts = _fog_js__WEBPACK_IMPORTED_MODULE_2__["default"].addCutOut(areaPoly);
+
+    return this.applyFog(cutouts);
+  },
+  addFog: function(latLng, size = 36) {
+    const areaPoly = Object(_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__["default"])([latLng.lat, latLng.lng], size);
+    const cutouts = _fog_js__WEBPACK_IMPORTED_MODULE_2__["default"].removeCutOut(areaPoly);
+
+    return this.applyFog(cutouts);
+  },
+  setOpacity: function(opacity) {
+    this.setStyle({fillOpacity: opacity});
+  },
+  applyFog: function(cutouts) {
+    this._latlngs = [this._latlngs[0]];
+    cutouts.map((value, index) => {
+      this._latlngs[index + 1] = this._convertLatLngs(value);
+    });
+    return this.redraw();
+  },
+});
+
+leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.fog = function(bounds, options) {
+  return new leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Fog(bounds, options);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (function(map) {
+  // Create fog of war mask
+  return leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.fog(map.getBounds()).addTo(map);
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/getIconImage.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/getIconImage.js ***!
+  \********************************************************************/
+/*! exports provided: default, getRandomPlayerIcon, getRandomPlayerIconList, getRandomMonsterIcon, getPlayerIcons, getMonsterIcons, getCustomIcons, setIconPath */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRandomPlayerIcon", function() { return getRandomPlayerIcon; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRandomPlayerIconList", function() { return getRandomPlayerIconList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRandomMonsterIcon", function() { return getRandomMonsterIcon; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPlayerIcons", function() { return getPlayerIcons; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMonsterIcons", function() { return getMonsterIcons; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCustomIcons", function() { return getCustomIcons; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setIconPath", function() { return setIconPath; });
+/* harmony import */ var _services_localData_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/localData.js */ "./node_modules/rpg-quick-encounter/src/services/localData.js");
+
+
+// Player icons
+const playerIcons = 9;
+const monsterIcons = 33;
+let iconPath = 'assets/';
+
+const iconList = []; const monsterList = [];
+
+for (let i = 1; i <= playerIcons; i++) iconList.push('p:' + i);
+for (let i = 1; i <= monsterIcons; i++) monsterList.push('m:' + i);
+
+// Get all player icons
+const getPlayerIcons = function() {
+  return iconList;
+};
+// Get all monster icons
+const getMonsterIcons = function() {
+  return monsterList;
+};
+
+// Get all custom icons
+const getCustomIcons = function() {
+  return Object.keys(_services_localData_js__WEBPACK_IMPORTED_MODULE_0__["default"].getIcons());
+};
+
+// Get random player icon
+const getRandomPlayerIcon = function() {
+  return iconList[Math.floor((Math.random() * iconList.length))];
+};
+
+// Get random monster icon
+const getRandomMonsterIcon = function() {
+  return monsterList[Math.floor((Math.random() * monsterList.length))];
+};
+
+// Get player icons as unique list
+const getRandomPlayerIconList = function() {
+  // No point using a smarter algo for 8 elements.
+  return iconList.sort(() => Math.random() - 0.5);
+};
+
+// Change icon path if being used via another app
+const setIconPath = function(path) {
+  iconPath = path;
+};
+
+// Convert icon to image path
+/* harmony default export */ __webpack_exports__["default"] = (function(icon) {
+  if (!icon) {
+    return '';
+  }
+
+  if (icon.startsWith('icon:')) {
+    return _services_localData_js__WEBPACK_IMPORTED_MODULE_0__["default"].getIcon(icon);
+  }
+  if (icon.startsWith('p:')) {
+    return `${iconPath}players/${icon.substr(2)}.png`;
+  }
+  if (icon.startsWith('m:')) {
+    return `${iconPath}monsters/${icon.substr(2)}.png`;
+  }
+
+  return icon;
+});
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/leafletMap.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/leafletMap.js ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _checkImage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./checkImage.js */ "./node_modules/rpg-quick-encounter/src/utils/checkImage.js");
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (async function(target, mapPath) {
+  const img = await Object(_checkImage_js__WEBPACK_IMPORTED_MODULE_1__["default"])(mapPath);
+
+  // Create map
+  const map = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.map(target, {
+    crs: leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.CRS.Simple,
+    zoomSnap: 0.20,
+  });
+
+  // Config map size
+  const width = Math.round(img.width / 10);
+  const height = Math.round(img.height / 10);
+  const bounds = [[0, 0], [height, width]];
+
+  leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.imageOverlay(mapPath, bounds).addTo(map);
+  map.fitBounds(bounds);
+
+  // Config defualt map zoom.
+  const zoom = map.getZoom();
+  map.setZoom(zoom + 0.5);
+  map.setMaxZoom(zoom + 4);
+  map.setMinZoom(zoom - 0.5);
+
+  return map;
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/rpg-quick-encounter/src/utils/template.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/rpg-quick-encounter/src/utils/template.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+function safeText(text) {
+  // Render as text node
+  const html = document.createElement('p');
+  html.appendChild(document.createTextNode(text));
+  return html.innerHTML;
+}
+
+function Template(methods) {
+  this.render = function(...args) {
+    // Escape input values
+    if (methods.safe !== false) {
+      // Ensure args are safe
+      args = args.map((value) => {
+        return safeText(value);
+      });
+    }
+
+    // Render template itself
+    const container = document.createElement('div');
+    const tpl = methods.template(...args);
+    container.innerHTML = tpl;
+
+    if (methods.className) {
+      container.className = methods.className;
+    }
+
+    // Return element
+    return container;
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Template);
+
+
+/***/ }),
+
 /***/ "./resources/js/Components/ContentNav.js":
 /*!***********************************************!*\
   !*** ./resources/js/Components/ContentNav.js ***!
@@ -16192,199 +17518,30 @@ var menu = function menu(title) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
-/* harmony import */ var _Map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Map.js */ "./resources/js/Components/Encounter/Map.js");
-/* harmony import */ var _Players_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Players.js */ "./resources/js/Components/Encounter/Players.js");
-
+/* harmony import */ var rpg_quick_encounter_src_Encounter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rpg-quick-encounter/src/Encounter.js */ "./node_modules/rpg-quick-encounter/src/Encounter.js");
 
 
 /* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_0__["default"].define({
   initialize: function initialize() {
-    var map = _Map_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
-      state: this.state
-    });
-    var players = _Players_js__WEBPACK_IMPORTED_MODULE_2__["default"].make({
-      state: this.state
-    });
-    players.on('select:player', function (player) {
-      map.trigger('select:player', player);
+    var url = new URLSearchParams(window.location.search);
+    var map = url.get('map');
+    var options = {
+      'assetPath': this.state.get('url') + '/images/encounter/',
+      'map': map,
+      'players': [{
+        id: 1,
+        name: "test",
+        spawned: false,
+        x: 0,
+        y: 0
+      }]
+    };
+    rpg_quick_encounter_src_Encounter_js__WEBPACK_IMPORTED_MODULE_1__["default"].make({
+      options: options,
+      save: true
     });
   },
-  events: {},
   render: function render() {}
-}));
-
-/***/ }),
-
-/***/ "./resources/js/Components/Encounter/Map.js":
-/*!**************************************************!*\
-  !*** ./resources/js/Components/Encounter/Map.js ***!
-  \**************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
-/* harmony import */ var _Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Service/leafletMap.js */ "./resources/js/Service/leafletMap.js");
-/* harmony import */ var _Service_fogOfWar_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../Service/fogOfWar.js */ "./resources/js/Service/fogOfWar.js");
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
-  el: document.querySelector('#map'),
-  map: null,
-  initialize: function initialize() {
-    this.render();
-  },
-  events: {
-    "select:player": "selectPlayer"
-  },
-  selectPlayer: function selectPlayer() {
-    // focus on them or create them
-    var testIcon2 = L.divIcon({
-      className: 'character-icon',
-      html: "<img src='https://placeimg.com/70/70/animals'><span>Hello world</span>",
-      iconSize: [70, 90],
-      iconAnchor: [35, 35]
-    });
-    L.marker(this.map.getCenter(), {
-      icon: testIcon2,
-      draggable: true
-    }).addTo(this.map);
-  },
-  render: function () {
-    var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var url, image, fog;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              // Grab image from URL
-              url = new URLSearchParams(window.location.search);
-              image = url.get('img');
-              _context.next = 4;
-              return Object(_Service_leafletMap_js__WEBPACK_IMPORTED_MODULE_2__["default"])('map', image);
-
-            case 4:
-              this.map = _context.sent;
-              fog = Object(_Service_fogOfWar_js__WEBPACK_IMPORTED_MODULE_3__["default"])(this.map);
-              this.map.on('click', function (e) {
-                fog.clearFog(e.latlng);
-              });
-              this.map.on('contextmenu', function (e) {
-                fog.addFog(e.latlng);
-              });
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    function render() {
-      return _render.apply(this, arguments);
-    }
-
-    return render;
-  }()
-}));
-
-/***/ }),
-
-/***/ "./resources/js/Components/Encounter/Players.js":
-/*!******************************************************!*\
-  !*** ./resources/js/Components/Encounter/Players.js ***!
-  \******************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lumpjs/src/component.js */ "./node_modules/lumpjs/src/component.js");
-/* harmony import */ var _Service_utils_dragSort_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Service/utils/dragSort.js */ "./resources/js/Service/utils/dragSort.js");
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-
-
-
-var playerTpl = function playerTpl(player) {
-  var tpl = "\n        <img src=\"".concat(player.img, "\">\n        ").concat(player.name, "\n    ");
-  var template = document.createElement('div');
-  template.innerHTML = tpl;
-  return template;
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (lumpjs_src_component_js__WEBPACK_IMPORTED_MODULE_1__["default"].define({
-  el: document.querySelector('#players'),
-  initialize: function initialize() {
-    this.render();
-  },
-  events: {
-    "click div": "playerSelect"
-  },
-  playerSelect: function playerSelect(e, target) {
-    this.trigger("select:player");
-  },
-  render: function () {
-    var _render = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var _this = this;
-
-      var data;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              data = [{
-                "name": "Player 1",
-                img: "https://placeimg.com/70/70/animals"
-              }, {
-                "name": "Player 2",
-                img: "https://placeimg.com/70/70/animals?2"
-              }, {
-                "name": "Player 3",
-                img: "https://placeimg.com/70/70/animals?3"
-              }, {
-                "name": "Player 4",
-                img: "https://placeimg.com/70/70/animals?4"
-              }, {
-                "name": "Player 5",
-                img: "https://placeimg.com/70/70/animals?5"
-              }];
-              data.map(function (player) {
-                _this.el.appendChild(playerTpl(player));
-              });
-              Object(_Service_utils_dragSort_js__WEBPACK_IMPORTED_MODULE_2__["default"])(document.querySelectorAll("#players div"));
-
-            case 3:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-
-    function render() {
-      return _render.apply(this, arguments);
-    }
-
-    return render;
-  }()
 }));
 
 /***/ }),
@@ -17292,7 +18449,7 @@ var editTpl = function editTpl(content) {
   },
   viewImage: function viewImage(e, target) {
     console.log(this.state.getEncounterUrl());
-    var win = window.open(this.state.getEncounterUrl() + '?img=' + target.src, '_blank');
+    var win = window.open(this.state.getEncounterUrl() + '?map=' + target.src, '_blank');
     win.focus();
   },
   upload: function () {
@@ -17689,67 +18846,6 @@ lumpjs_src_model_js__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.deleteItem
 
 /***/ }),
 
-/***/ "./resources/js/Service/fogOfWar.js":
-/*!******************************************!*\
-  !*** ./resources/js/Service/fogOfWar.js ***!
-  \******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/circleToPolygon.js */ "./resources/js/Service/utils/circleToPolygon.js");
-/* harmony import */ var _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/fogManager.js */ "./resources/js/Service/utils/fogManager.js");
-
-
-
-leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Fog = leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Rectangle.extend({
-  options: {
-    stroke: false,
-    color: '#111',
-    fillOpacity: 0.7,
-    clickable: false
-  },
-  initialize: function initialize(bounds, options) {
-    leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Polygon.prototype.initialize.call(this, [this._boundsToLatLngs(bounds)], options);
-  },
-  clearFog: function clearFog(latLng) {
-    var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 36;
-    // Get area Poly
-    var areaPoly = Object(_utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__["default"])([latLng.lat, latLng.lng], size);
-    var cutouts = _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_2__["default"].addCutOut(areaPoly);
-    return this.applyFog(cutouts);
-  },
-  addFog: function addFog(latLng) {
-    var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 36;
-    var areaPoly = Object(_utils_circleToPolygon_js__WEBPACK_IMPORTED_MODULE_1__["default"])([latLng.lat, latLng.lng], size);
-    var cutouts = _utils_fogManager_js__WEBPACK_IMPORTED_MODULE_2__["default"].removeCutOut(areaPoly);
-    return this.applyFog(cutouts);
-  },
-  applyFog: function applyFog(cutouts) {
-    var _this = this;
-
-    this._latlngs = [this._latlngs[0]];
-    cutouts.map(function (value, index) {
-      _this._latlngs[index + 1] = _this._convertLatLngs(value);
-    });
-    return this.redraw();
-  }
-});
-
-leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.fog = function (bounds, options) {
-  return new leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.Fog(bounds, options);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (function (map) {
-  // Create fog of war mask
-  return leaflet__WEBPACK_IMPORTED_MODULE_0___default.a.fog(map.getBounds()).addTo(map);
-});
-
-/***/ }),
-
 /***/ "./resources/js/Service/leafletMap.js":
 /*!********************************************!*\
   !*** ./resources/js/Service/leafletMap.js ***!
@@ -17825,128 +18921,6 @@ function _ref() {
   }));
   return _ref.apply(this, arguments);
 }
-
-/***/ }),
-
-/***/ "./resources/js/Service/utils/circleToPolygon.js":
-/*!*******************************************************!*\
-  !*** ./resources/js/Service/utils/circleToPolygon.js ***!
-  \*******************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (function (center, radius) {
-  var n = 20;
-  var angles = 2 * Math.PI / n;
-  var coordinates = [];
-
-  for (var i = 0; i < n; i++) {
-    var x = center[0] + radius * Math.cos(i * angles);
-    var y = center[1] + radius * Math.sin(i * angles);
-    coordinates.push([x, y]);
-  } // Form valid poly line by adding first to the end
-
-
-  coordinates.push(coordinates[0]);
-  return coordinates;
-});
-;
-
-/***/ }),
-
-/***/ "./resources/js/Service/utils/dragSort.js":
-/*!************************************************!*\
-  !*** ./resources/js/Service/utils/dragSort.js ***!
-  \************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-var selected = null;
-
-function dragOver(e) {
-  if (isBefore(selected, e.target)) {
-    e.target.parentNode.insertBefore(selected, e.target);
-  } else {
-    e.target.parentNode.insertBefore(selected, e.target.nextSibling);
-  }
-}
-
-function dragEnd() {
-  selected = null;
-}
-
-function dragStart(e) {
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', null);
-  selected = e.target;
-}
-
-function isBefore(el1, el2) {
-  var cur;
-
-  if (el2.parentNode === el1.parentNode) {
-    for (cur = el1.previousSibling; cur; cur = cur.previousSibling) {
-      if (cur === el2) return true;
-    }
-  }
-
-  return false;
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (function (elements) {
-  console.log(elements);
-  Array.from(elements).map(function (el) {
-    console.log(el);
-    el.addEventListener('dragend', dragEnd);
-    el.addEventListener('dragstart', dragStart);
-    el.addEventListener('dragover', dragOver);
-    el.draggable = true;
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/js/Service/utils/fogManager.js":
-/*!**************************************************!*\
-  !*** ./resources/js/Service/utils/fogManager.js ***!
-  \**************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _turf_turf__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @turf/turf */ "./node_modules/@turf/turf/turf.min.js");
-/* harmony import */ var _turf_turf__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_turf_turf__WEBPACK_IMPORTED_MODULE_0__);
- // Keep track of cut out sections
-
-/* harmony default export */ __webpack_exports__["default"] = (new function () {
-  this.cutouts = null;
-
-  this.addCutOut = function (poly) {
-    if (!this.cutouts) {
-      this.cutouts = [poly];
-      return this.cutouts;
-    }
-
-    var cutoutPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["multiPolygon"](this.cutouts);
-    var newPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["polygon"]([poly]);
-    var u = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["union"](cutoutPoly, newPoly);
-    this.cutouts = u.geometry.coordinates;
-    return this.cutouts;
-  };
-
-  this.removeCutOut = function (poly) {
-    var cutoutPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["multiPolygon"](this.cutouts);
-    var newPoly = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["polygon"]([poly]);
-    var u = _turf_turf__WEBPACK_IMPORTED_MODULE_0__["difference"](cutoutPoly, newPoly);
-    this.cutouts = u.geometry.coordinates;
-    return this.cutouts;
-  };
-}());
 
 /***/ }),
 
