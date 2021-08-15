@@ -16,9 +16,9 @@ class EntityObserver
      */
     public function created(Entity $entity)
     {
-    	// create initial block
+        // create initial block
         $entity->blocks()->save(
-         	Block::make(['type' => 'text', 'content' => ''])
+            Block::make(['type' => 'text', 'content' => ''])
         );
     }
 }

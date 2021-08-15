@@ -19,7 +19,7 @@ class MapTest extends TestCase
         parent::setUp();
 
         // User 1 with campaign 1
-        $this->user = User::factory()->create(); 
+        $this->user = User::factory()->create();
         $this->campaign = Campaign::make(['name'=>'test', 'description'=>'hi']);
         $this->user->campaigns()->save($this->campaign);
         $this->map = Map::make(['name' => 'yo', 'path' => 'yep']);
