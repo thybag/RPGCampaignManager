@@ -14,12 +14,12 @@ const categoryTpl = function(title, links) {
 }
 
 export default Component.define({
-    data: {},
     filtered: {},
     open: true,
+    content: [],
     initialize: async function () {
         this.el = document.createElement('div');
-        this.filtered = this.data;
+        this.filtered = this.content;
         this.render();
     },
     events: 
@@ -30,7 +30,7 @@ export default Component.define({
     },
     filter: function(filter) {
        this.filtered = {};
-       Object.entries(this.data).map(([key, entity]) => {
+       Object.entries(this.content).map(([key, entity]) => {
             if (entity._search.indexOf(filter.toLowerCase()) != -1){
                 this.filtered[key] = entity;
             }
@@ -41,7 +41,7 @@ export default Component.define({
     {
        // this.data[entity.id] = entity.data;
        // this.data[entity.id]._search = entity.data.name.toLowerCase();
-        this.filtered = this.data;
+        this.filtered = this.content;
         this.render();
     },
     render: function ()

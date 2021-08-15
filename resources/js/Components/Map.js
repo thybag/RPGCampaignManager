@@ -11,7 +11,7 @@ export default Component.define({
     _editingPoi: null,
     initialize: function () {
         // Connect to state
-        this.listenTo(this.state);
+        this.subscribeTo(this.state);
     },
     events: {
         'update:tab':       'showMap',

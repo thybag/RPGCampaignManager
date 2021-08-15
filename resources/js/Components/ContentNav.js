@@ -3,8 +3,7 @@ import NavCategory from './ContentNav/NavCategory.js';
 
 export default Component.define({
     el: document.querySelector('nav.content-nav'),
-    data: {},
-    content: null,
+    content: [],
     children: {},
     events: 
     {
@@ -23,11 +22,11 @@ export default Component.define({
     },
     render: function ()
     {
-        for (let [key, value] of Object.entries(this.data)) {
+        for (let [key, value] of Object.entries(this.content)) {
             if (this.children[key]) {
                 this.children[key].update();
             } else {
-                 const section = NavCategory.make({category: key, data: value, state: this.state});
+                 const section = NavCategory.make({category: key, content: value, state: this.state});
                 this.children[key] = section;
                 this.container.appendChild(section.el);
             }
@@ -48,8 +47,8 @@ export default Component.define({
         this.render();
     },
     createEntity: function(item) {
-        this.data[item.data.category] = (this.data[item.data.category] || {});
-        this.data[item.data.category][item.id] = item.data;
-        this.data[item.data.category][item.id]._search = item.data.name.toLowerCase();
+        this.content[item.data.category] = (this.content[item.data.category] || {});
+        this.content[item.data.category][item.id] = item.data;
+        this.content[item.data.category][item.id]._search = item.data.name.toLowerCase();
     },
 });

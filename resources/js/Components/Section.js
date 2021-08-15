@@ -40,8 +40,6 @@ export default Component.define({
     },
     viewImage: function(e, target)
     {   
-        console.log(this.state.getEncounterUrl());
-
         var win = window.open(this.state.getEncounterUrl()+'?map='+target.src, '_blank');
         win.focus();
     },
@@ -97,7 +95,6 @@ export default Component.define({
         } else {
             json = await (await this.state.request('POST', this.data.links.create, payload)).json();
         }
-        console.log(json);
         
         this.data = json;
 

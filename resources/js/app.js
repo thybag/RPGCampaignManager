@@ -31,7 +31,6 @@ function bootCampaign()
 
 function bootEncounter()
 {
-	console.log("hi");
 	const map = Encounter.make({state: Bus});
 }
 

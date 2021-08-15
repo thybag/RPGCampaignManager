@@ -1,6 +1,7 @@
 {
     "private": true,
     "scripts": {
+        "rollup": "rollup -c",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "npm run development -- --watch",
@@ -19,10 +20,14 @@
     "dependencies": {
         "@babel/helper-validator-option": "^7.12.17",
         "@geoman-io/leaflet-geoman-free": "^2.7.0",
+        "@rollup/plugin-commonjs": "^20.0.0",
+        "@rollup/plugin-node-resolve": "^13.0.4",
         "@turf/turf": "^6.2.0",
         "leaflet": "^1.7.1",
         "lumpjs": "git+ssh://git@github.com/thybag/lump.js.git",
         "marked": "^2.0.1",
+        "rollup": "^2.56.2",
+        "rollup-plugin-scss": "^3.0.0",
         "rpg-encounter": "github:thybag/rpg-quick-encounter"
     },
     "name": "dndcampaignmanager"

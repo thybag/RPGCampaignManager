@@ -8,13 +8,18 @@ export default Component.define({
         const url = new URLSearchParams(window.location.search);
         const map = url.get('map');
 
-        const options = {
-            'assetPath': this.state.get('url') + '/images/encounter/',
-            'map': map,
-            'players': EncounterStorage.getPlayers()
-        };
+        QuickEncounter.make({
+            el: document.getElementById('encounter-zone'),
+            options: {
+                data: {
+                    'assetPath': this.state.get('url') + '/images/encounter/',
+                    'map': map,
+                    'players': EncounterStorage.getPlayers()
+                }
+            }
+        });
 
-        QuickEncounter.make({options, save: true});
+        document.querySelector('#encounter-zone #map').style.height = 'calc(100vh - 74px)'
     },
     render: function () 
     {

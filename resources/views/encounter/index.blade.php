@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+<div id="encounter-zone"></div>
 <div class="wrapper encounter">
     <div id="map"></div>
 	<div id="player-bar"></div>
