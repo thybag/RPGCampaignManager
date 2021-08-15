@@ -19,14 +19,14 @@ class ImageTest extends TestCase
         parent::setUp();
 
         // User 1 with campaign 1
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $this->campaign = Campaign::make(['name'=>'test', 'description'=>'hi']);
         $this->user->campaigns()->save($this->campaign);
         $this->image = Image::make(['name' => 'Hi', 'path' => '..']);
         $this->campaign->images()->save($this->image);
 
         // User 2 with campaign 2
-        $this->user2 = factory(User::class)->create();
+        $this->user2 = User::factory()->create();
         $this->campaign2 = Campaign::make(['name'=>'Campaign 2', 'description'=>'hi']);
         $this->user2->campaigns()->save($this->campaign2);
         $this->image2 = Image::make(['name' => 'Sup', 'path' => '...']);

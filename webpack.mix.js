@@ -16,4 +16,4 @@ mix.js('resources/js/app.js', 'public/js')
         processCssUrls: false,
     });
 
-mix.copy('node_modules/rpg-quick-encounter/assets', 'public/images/encounter');
+mix.copy('node_modules/rpg-encounter/assets', 'public/images/encounter');

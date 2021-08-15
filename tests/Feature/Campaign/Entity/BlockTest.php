@@ -17,12 +17,11 @@ class BlockTest extends TestCase
         parent::setUp();
 
         // User 1 with campaign 1
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $this->campaign = Campaign::make(['name'=>'test', 'description'=>'hi']);
         $this->user->campaigns()->save($this->campaign);
-        // $this->campaign->entities()->first()->blocks()->save(Block::make(['content'=>'howdy']));
         // User 2 with campaign 2
-        $this->user2 = factory(User::class)->create();
+        $this->user2 = User::factory()->create();
         $this->campaign2 = Campaign::make(['name'=>'Campaign 2', 'description'=>'hi']);
         $this->user2->campaigns()->save($this->campaign2);
     }
@@ -55,6 +54,7 @@ class BlockTest extends TestCase
     /**
      * Check can only view their own block data
      *
+     * @group aa
      * @return void
      */
     public function testCannotViewOthersCampaignTest()

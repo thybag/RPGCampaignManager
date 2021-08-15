@@ -139,7 +139,7 @@ textarea,input {
 
 
 .encounter {
-    @import '~rpg-quick-encounter/dist/encounter.css';
+    @import '~rpg-encounter/dist/encounter.css';
 
     #map {
         height: calc(100vh - 74px);

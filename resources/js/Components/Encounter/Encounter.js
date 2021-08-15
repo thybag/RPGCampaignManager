@@ -1,5 +1,6 @@
 import Component from 'lumpjs/src/component.js';
-import QuickEncounter from 'rpg-quick-encounter/src/Encounter.js';
+import QuickEncounter from 'rpg-encounter/src/Encounter.js';
+import EncounterStorage from 'rpg-encounter/src/services/localData.js';
 
 export default Component.define({
     initialize: function () {
@@ -10,9 +11,7 @@ export default Component.define({
         const options = {
             'assetPath': this.state.get('url') + '/images/encounter/',
             'map': map,
-            'players':[
-                {id: 1, name: "test", spawned: false, x: 0, y: 0}
-            ],
+            'players': EncounterStorage.getPlayers()
         };
 
         QuickEncounter.make({options, save: true});

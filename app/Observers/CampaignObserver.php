@@ -24,23 +24,20 @@ class CampaignObserver
         $campaign->entities()->save($entity);
         $campaign->update(['default_entity_id' => $entity->id]);
 
-        $entity->blocks()->save(
-            Block::make(
-                [
-                    'type' => 'text',
-                    'content' => implode(
+        $entity->blocks->first()->update(
+            [
+                'content' => implode(
+                    "\n",
+                    [
+                        "Welcome to your new RPG Campaign! \n",
+                        " * To add a map, select the main menu (top right) and Campaign maps.",
+                        " * To add a content section, hit New... on the left hand menu.",
+                        " * You can add images to content by dragging them in to the text area.",
                         "\n",
-                        [
-                            "Welcome to your new RPG Campaign! \n",
-                            " * To add a map, select the main menu (top right) and Campaign maps.",
-                            " * To add a content section, hit New... on the left hand menu.",
-                            " * You can add images to content by dragging them in to the text area.",
-                            "\n",
-                            "Thanks for trying RPG Campaign Manager."
-                        ]
-                    )
-                 ]
-            )
+                        "Thanks for trying RPG Campaign Manager."
+                    ]
+                )
+             ]
         );
     }
 }
