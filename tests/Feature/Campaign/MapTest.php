@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Campaign;
 
 use Storage;
 use Tests\TestCase;
