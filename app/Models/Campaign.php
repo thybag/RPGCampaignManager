@@ -6,9 +6,12 @@ use App\Models\Model;
 use App\Models\Campaign\Map;
 use App\Models\Campaign\Image;
 use App\Models\Campaign\Entity;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Campaign extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'description',

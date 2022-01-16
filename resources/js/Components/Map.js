@@ -1,6 +1,7 @@
 import Component from 'lumpjs/src/component.js';
 import L from 'leaflet';
 import '@geoman-io/leaflet-geoman-free';
+import createMap from '../Service/leafletMap.js';
 
 export default Component.define({
     el: document.querySelector('#map'),
@@ -10,7 +11,7 @@ export default Component.define({
     _editingPoi: null,
     initialize: function () {
         // Connect to state
-        this.listenTo(this.state);
+        this.subscribeTo(this.state);
     },
     events: {
         'update:tab':       'showMap',
@@ -124,33 +125,8 @@ export default Component.define({
             this.clearMap();
         }
 
-        const mapPath = map.data.image.data.url;
-        // Load image
-        let img = await new Promise((resolve, reject) => {
-                let img = document.createElement('img');
-                img.src = mapPath;
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-        });
-        
-        // Create map
-        this.map = L.map('map', {
-            crs: L.CRS.Simple,
-            zoomSnap: 0.20,
-        });
-
-        // Config map size
-        const width = Math.round(img.width/10);
-        const height = Math.round(img.height/10);
-        const bounds = [[0,0], [height,width]];
-        const image = L.imageOverlay(mapPath, bounds).addTo(this.map);
-        this.map.fitBounds(bounds);    
-
-        // Config map zoom.
-        const zoom = this.map.getZoom();
-        this.map.setZoom(zoom+.5);
-        this.map.setMaxZoom(zoom+4);
-        this.map.setMinZoom(zoom-.5);
+        // Make the map
+        this.map = await createMap('map', map.data.image.data.url);
 
         // Controls
         this.map.pm.addControls({

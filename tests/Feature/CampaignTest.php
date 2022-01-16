@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use UserSeeder;
 use App\Models\Campaign;
 use Tests\DatabaseTestCase;
+use Database\Seeders\UserSeeder;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -56,8 +56,6 @@ class CampaignTest extends DatabaseTestCase
 
     protected function getDummyData(): array
     {
-        return factory(Campaign::class)
-            ->make()
-            ->toArray();
+        return Campaign::factory()->make()->toArray();
     }
 }

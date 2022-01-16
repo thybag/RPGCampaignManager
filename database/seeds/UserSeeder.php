@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -15,7 +16,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         foreach (static::USERS as $data) {
-            factory(User::class)->create(['password' => Hash::make($data['password'])] + $data);
+            User::factory()->create(['password' => Hash::make($data['password'])] + $data);
         }
     }
 }

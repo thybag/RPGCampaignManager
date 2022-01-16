@@ -32,15 +32,30 @@ textarea,input {
     .row { margin: 0 1rem; }
 }
 
+
+// Overall component sizing
 #map {
-    width: calc(100vw - 200px);
+    width: calc(100vw);
     height: calc(100vh - 37px);
     margin:0;   
+}
+.content-nav {
+    width:210px;
+}
+.panel.min {
+    width: 31vw;
 }
 
 .menu-content {
     @include menu;
 }
+
+@media only screen and (min-width: 1921px) {
+    .content-nav {
+        width:280px;
+    }
+}
+
 
 
 
@@ -121,3 +136,12 @@ textarea,input {
     .controls {
         text-align:center;
     }
+
+
+.encounter {
+    @import '~rpg-encounter/dist/encounter.css';
+
+    #map {
+        height: calc(100vh - 74px);
+    }
+}

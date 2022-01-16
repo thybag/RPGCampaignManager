@@ -15,6 +15,7 @@ const templateNoMap = `
     <span data-action="add">Add a map?</span>
 `;
 export default Component.define({
+    initialize() {},
     events: 
     {
         "click span[data-action='locate']": "locate",

@@ -64,10 +64,14 @@ export default Component.define({
     children: [],
     geoControls: null,
     initialize: function () {
+
         // Listen to model events
-        this.listenTo(this.state);
+        this.subscribeTo(this.state);
+
         // Setup controls
         this.geoControls = GeoControl.make({state: this.state});
+
+
     },
     content: null,
     mode: 'hide',
