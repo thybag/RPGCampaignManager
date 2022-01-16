@@ -19246,8 +19246,10 @@
             QuickEncounter.make({
                 el: document.getElementById('encounter-zone'),
                 options: {
-                    data: {
+                    config: {
                         'assetPath': this.state.get('url') + '/images/encounter/',
+                    },
+                    data: {
                         'map': map,
                         'players': EncounterStorage.getPlayers()
                     }

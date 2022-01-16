@@ -1,6 +1,7 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs'; // Leaflet
-import scss from 'rollup-plugin-scss'
+import scss from 'rollup-plugin-scss';
+import copy from 'rollup-plugin-copy';
 
 export default {
     input: 'resources/js/app.js',
@@ -14,15 +15,11 @@ export default {
         scss({
             output: 'public/css',
             watch: 'src/scss'
+        }),
+        copy({
+          targets: [
+            { src: 'node_modules/rpg-encounter/assets', dest: 'public/images/encounter' },
+          ]
         })
     ]
 };
-
-/*
-mix.babel('resources/js/app.js', 'public/js')
-   .sass('resources/sass/main.scss', 'public/css').options({
-        processCssUrls: false,
-    });
-
-mix.copy('node_modules/rpg-encounter/assets', 'public/images/encounter');
-*/
